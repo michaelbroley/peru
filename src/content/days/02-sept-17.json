@@ -1,0 +1,54 @@
+{
+  "order": 2,
+  "slug": "thu-sept-17-lima-culture-maido",
+  "date": "Thu, Sept 17",
+  "dayNumber": "17",
+  "month": "Sept",
+  "weekday": "Thu",
+  "title": "Lima culture + Maido",
+  "pick": false,
+  "overnight": "Barranco or Miraflores, Lima",
+  "weather": {
+    "high": "~20°",
+    "low": "15°",
+    "icon": "fog",
+    "note": "Same soft, overcast day; comfortable for walking and museums; light layer for the evening."
+  },
+  "glance": "A full Lima day now you've recovered. Keep lunch light — tonight is Maido. Culture-heavy by day so you arrive hungry.",
+  "logistics": [],
+  "journey": [],
+  "reservations": [
+    {
+      "name": "Maido",
+      "time": "evening",
+      "address": "Maido, Calle San Martín 399, Miraflores, Lima",
+      "note": "Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual, arrive hungry."
+    }
+  ],
+  "picksLabel": "Do this by day",
+  "picks": [
+    {
+      "name": "Larco Museum",
+      "area": "Pueblo Libre",
+      "note": "World-class pre-Columbian art in a garden mansion; the single best museum in Lima. Beautiful café on site.",
+      "address": "Av. Simón Bolívar 1515, Pueblo Libre, Lima",
+      "pick": true,
+      "lens": "art"
+    },
+    {
+      "name": "Convento de San Francisco",
+      "area": "Historic Centre",
+      "note": "Baroque monastery with underground catacomb ossuary and a 20,000-volume antique library. Guided entry only.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Barranco street-art walk",
+      "note": "Bajada de Baños, Pasaje Oroya, and the Bridge of Sighs. Lima's open-air mural gallery. Golden hour is best.",
+      "pick": true,
+      "lens": "art"
+    }
+  ],
+  "notes": [],
+  "lbb": ["lima-art", "lima-history"]
+}

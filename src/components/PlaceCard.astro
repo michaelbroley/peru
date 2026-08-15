@@ -1,0 +1,155 @@
+---
+import { gmapsUrl, telUrl, placeQuery } from '../lib/links';
+import { STAR } from '../lib/glyphs';
+
+/**
+ * One entry from the Little Black Book, or one of a day's suggestions.
+ * Renders on cream by default; pass `surface="ink"` inside a dark block.
+ * `pick` (★ in the source) gets the gold treatment.
+ */
+interface Props {
+  name: string;
+  area?: string | undefined;
+  note: string;
+  address?: string | undefined;
+  phone?: string | undefined;
+  pick?: boolean;
+  lens?: 'food' | 'art' | 'skate';
+  verify?: string | undefined;
+  surface?: 'cream' | 'ink';
+}
+const { name, area, note, address, phone, pick = false, lens = 'food', verify, surface = 'cream' } = Astro.props;
+
+const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
+const telHref = phone ? telUrl(phone) : null;
+---
+
+<article class:list={['place', { 'place--pick': pick, 'place--ink': surface === 'ink' }]} data-lens={lens}>
+  <h4 class="place__name">
+    {pick && <span class="place__star" aria-label="Top pick">{STAR}</span>}
+    <span class="place__nametext">{name}</span>
+    {area && <span class="place__area">· {area}</span>}
+  </h4>
+
+  <p class="place__note">{note}</p>
+
+  {
+    verify && (
+      <p class="place__verify">
+        <span class="place__verify-mark" aria-hidden="true">
+          !
+        </span>
+        {verify}
+      </p>
+    )
+  }
+
+  {
+    (mapHref || telHref) && (
+      <p class="place__links">
+        {mapHref && (
+          <a
+            class="place__link"
+            href={mapHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${name} in Google Maps — ${address}`}
+          >
+            {address}
+          </a>
+        )}
+        {telHref && phone && (
+          <a class="place__link" href={telHref} aria-label={`Call ${name} on ${phone}`}>
+            {phone}
+          </a>
+        )}
+      </p>
+    )
+  }
+</article>
+
+<style>
+  .place {
+    font-size: var(--fs-body-sm);
+    line-height: 1.5;
+  }
+
+  .place__name {
+    font-size: inherit;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .place__nametext {
+    font-weight: 700;
+  }
+
+  .place__star {
+    color: var(--pink);
+  }
+
+  .place__area {
+    font-weight: 400;
+    color: var(--ink-50);
+  }
+
+  .place__note {
+    margin: 0;
+  }
+
+  .place__verify {
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    margin: 5px 0 0;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--ink-62);
+  }
+
+  .place__verify-mark {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+  }
+
+  .place__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 3px 0 0;
+    font-size: var(--fs-small);
+  }
+
+  /* Comfortable tap target without disturbing the design's tight rhythm. */
+  .place__link {
+    display: inline-block;
+    padding: 3px 0;
+    min-height: 24px;
+  }
+
+  /* On the ink "Little black book" panels. */
+  .place--ink .place__area {
+    color: var(--cream-50);
+  }
+  .place--ink .place__star {
+    color: var(--gold);
+  }
+  .place--ink .place__verify {
+    color: var(--cream-55);
+  }
+
+  /* ★ picks: a gold spine so they read at a glance while walking. */
+  .place--pick {
+    border-left: 3px solid var(--gold);
+    padding-left: 11px;
+  }
+</style>

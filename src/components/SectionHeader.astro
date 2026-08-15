@@ -1,0 +1,52 @@
+---
+/** The design's numbered section head: outlined "01" over an Anton title. */
+interface Props {
+  num: string;
+  title: string;
+  lead?: string | undefined;
+  id?: string | undefined;
+}
+const { num, title, lead } = Astro.props;
+---
+
+<header class="sechead">
+  <p class="section__num" aria-hidden="true">{num}</p>
+  <h2 class="sechead__title">{title}</h2>
+  {lead && <p class="sechead__lead">{lead}</p>}
+</header>
+
+<style>
+  .section__num {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-secnum);
+    line-height: 0.78;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--pink);
+  }
+
+  /* Safari/Firefox without -webkit-text-stroke would render nothing. */
+  @supports not (-webkit-text-stroke: 1px black) {
+    .section__num {
+      color: var(--pink);
+      opacity: 0.35;
+    }
+  }
+
+  .sechead__title {
+    margin: 8px 0 0;
+    font-family: var(--display);
+    font-size: var(--fs-section);
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .sechead__lead {
+    margin: 10px 0 0;
+    max-width: 40ch;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--ink-60);
+  }
+</style>

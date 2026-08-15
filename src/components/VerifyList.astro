@@ -1,0 +1,129 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * Book-ahead / verify list. Real checkboxes so it's keyboard- and
+ * screen-reader-native; ticks persist to localStorage on this device.
+ */
+interface Props {
+  items: CollectionEntry<'checklist'>[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="verify">
+  {
+    items.map((item) => (
+      <li class="verify__row">
+        <label class="verify__label">
+          <input class="verify__input" type="checkbox" data-verify-id={item.id} />
+          <span class="verify__box" aria-hidden="true">
+            ✓
+          </span>
+          <span class="verify__text">{item.data.label}</span>
+        </label>
+      </li>
+    ))
+  }
+</ul>
+
+<script>
+  // Ticks are a convenience, not content — if storage is unavailable
+  // (private mode, cleared site data) the list still works, just unticked.
+  const KEY = 'peru-trip-todo';
+  const boxes = document.querySelectorAll<HTMLInputElement>('.verify__input');
+
+  function read(): Record<string, boolean> {
+    try {
+      return JSON.parse(localStorage.getItem(KEY) ?? '{}') as Record<string, boolean>;
+    } catch {
+      return {};
+    }
+  }
+
+  function write(state: Record<string, boolean>): void {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch {
+      /* storage unavailable — ticks just won't survive a reload */
+    }
+  }
+
+  const state = read();
+  for (const box of boxes) {
+    const id = box.dataset.verifyId;
+    if (id && state[id]) box.checked = true;
+    box.addEventListener('change', () => {
+      const next = read();
+      if (!id) return;
+      next[id] = box.checked;
+      write(next);
+    });
+  }
+</script>
+
+<style>
+  .verify {
+    display: grid;
+    gap: 1px;
+    margin-top: 16px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .verify__row {
+    background: var(--cream);
+  }
+
+  .verify__label {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    padding: 13px 15px;
+    cursor: pointer;
+  }
+
+  .verify__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .verify__box {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border: 1px solid var(--ink-35);
+    border-radius: 3px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: var(--fs-micro);
+    line-height: 1;
+    color: transparent;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+  }
+
+  .verify__input:checked + .verify__box {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: var(--cream);
+  }
+
+  .verify__input:focus-visible + .verify__box {
+    outline: 2px solid var(--pink);
+    outline-offset: 2px;
+  }
+
+  .verify__text {
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+  }
+
+  .verify__input:checked ~ .verify__text {
+    text-decoration: line-through;
+    color: var(--ink-40);
+  }
+</style>

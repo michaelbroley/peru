@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Peru Field Guide">
+  <rect width="100" height="100" fill="#E4007C"/>
+  <path d="M10 76 L34 30 L48 52 L70 18 L92 76 Z" fill="#12100F"/>
+  <circle cx="70" cy="18" r="6" fill="#FFC300"/>
+  <rect x="10" y="83" width="82" height="5" fill="#FFFBF5"/>
+  <rect x="10" y="91" width="48" height="5" fill="#FFC300"/>
+</svg>

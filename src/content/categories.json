@@ -1,0 +1,93 @@
+[
+  {
+    "id": "lima-ceviche",
+    "order": 1,
+    "slug": "lima-ceviche-and-seafood-ceviche-is-a-lunch-dish-go-midday",
+    "title": "Lima — Ceviche & seafood",
+    "aside": "Ceviche is a lunch dish; go midday.",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-street",
+    "order": 2,
+    "slug": "lima-street-food-and-sandwiches",
+    "title": "Lima — Street food & sandwiches",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-special",
+    "order": 3,
+    "slug": "lima-special-meals-beyond-maido-and-central",
+    "title": "Lima — Special meals",
+    "aside": "Beyond Maido & Central.",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-drink",
+    "order": 4,
+    "slug": "lima-drink-barranco-is-the-bar-district",
+    "title": "Lima — Drink",
+    "aside": "Barranco is the bar district.",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-art",
+    "order": 5,
+    "slug": "lima-art-and-street-art-barranco-is-an-open-air-gallery",
+    "title": "Lima — Art & street art",
+    "aside": "Barranco is an open-air gallery.",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-skate",
+    "order": 6,
+    "slug": "lima-skate-and-streetwear-for-michael-buy-good-gear-here-cusco-is-thin",
+    "title": "Lima — Skate & streetwear",
+    "aside": "For Michael; buy good gear here, Cusco is thin.",
+    "region": "Lima"
+  },
+  {
+    "id": "lima-history",
+    "order": 7,
+    "slug": "lima-history-and-oddities",
+    "title": "Lima — History & oddities",
+    "region": "Lima"
+  },
+  {
+    "id": "cusco-eat",
+    "order": 8,
+    "slug": "cusco-eat-and-drink-picanterías-for-the-real-thing-san-blas-for-cafés",
+    "title": "Cusco — Eat & drink",
+    "aside": "Picanterías for the real thing; San Blas for cafés.",
+    "region": "Cusco"
+  },
+  {
+    "id": "cusco-art",
+    "order": 9,
+    "slug": "cusco-art-history-and-skate",
+    "title": "Cusco — Art, history & skate",
+    "region": "Cusco"
+  },
+  {
+    "id": "sacred-valley",
+    "order": 10,
+    "slug": "sacred-valley",
+    "title": "Sacred Valley",
+    "region": "Sacred Valley"
+  },
+  {
+    "id": "aguas-calientes",
+    "order": 11,
+    "slug": "aguas-calientes-machu-picchu-base-town-food-costs-more-it-all-arrives-by-train",
+    "title": "Aguas Calientes",
+    "aside": "Machu Picchu base town; food costs more — it all arrives by train.",
+    "region": "Aguas Calientes"
+  },
+  {
+    "id": "puno-titicaca",
+    "order": 12,
+    "slug": "puno-and-lake-titicaca",
+    "title": "Puno & Lake Titicaca",
+    "region": "Puno"
+  }
+]

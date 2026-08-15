@@ -1,0 +1,3 @@
+# Private trip guide — not for indexing.
+User-agent: *
+Disallow: /

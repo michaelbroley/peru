@@ -1,0 +1,80 @@
+[
+  {
+    "id": "snapshot",
+    "travellers": "Michael & Laura Broley",
+    "onTheGround": "Sept 16 – 26, 2026",
+    "tour": "Intrepid \"Classic Peru\" (code GGSD), Sept 18–26",
+    "intro": "Two free days in Lima, then Intrepid's <em>Classic Peru</em> (GGSD) — Sept 18 to 26. Sea level to 3,800 m and back.",
+    "stats": [
+      { "value": "11", "label": "Days" },
+      { "value": "5", "label": "Stops" },
+      { "value": "3,800", "label": "Metres up" }
+    ],
+    "flights": [
+      {
+        "label": "Arrive",
+        "text": "Wed Sept 16, <strong>6:55 AM</strong> — Air Transat 150 from Montreal (YUL). Seats 26C &amp; 26H."
+      },
+      {
+        "label": "Depart",
+        "text": "Sat Sept 26, <strong>8:25 AM</strong> — Air Transat 151 to Montreal (arrives 5:45 PM). Seats 26H &amp; 26J."
+      }
+    ],
+    "snapshot": [
+      {
+        "label": "Free days",
+        "text": "Sept 16 &amp; 17 in Lima; free evening Sept 25."
+      },
+      {
+        "label": "Tour meeting point",
+        "text": "Hotel El Señorial, {address}. Welcome meeting Day 1 (Sept 18) at 2:00 PM.",
+        "address": "Hotel El Señorial, Calle José Gonzáles 567, Miraflores, Lima",
+        "addressLabel": "Calle José Gonzáles 567, Miraflores, Lima"
+      },
+      {
+        "label": "Included meals on tour",
+        "text": "8 breakfasts, 2 lunches, 1 dinner."
+      },
+      {
+        "label": "Luggage",
+        "text": "Main bags stay at hotels in Cusco and Puno — pack a daypack for Aguas Calientes (Sept 20–21) and the Lake Titicaca homestay (Sept 24)."
+      }
+    ],
+    "altitude": {
+      "text": "Sea level in Lima → <strong>Cusco 3,450 m</strong> (Sept 19) → <strong>Lake Titicaca 3,800 m</strong> (Sept 23–24). Go slow, hydrate, ask a doctor about altitude meds.",
+      "profile": [
+        { "day": "Sept 16", "metres": 0, "tone": "low" },
+        { "day": "Sept 17", "metres": 0, "tone": "low" },
+        { "day": "Sept 18", "metres": 0, "tone": "low" },
+        { "day": "Sept 19", "metres": 3450, "tone": "mid" },
+        { "day": "Sept 20", "metres": 2900, "tone": "mid" },
+        { "day": "Sept 21", "metres": 3450, "tone": "mid" },
+        { "day": "Sept 22", "metres": 3450, "tone": "mid" },
+        { "day": "Sept 23", "metres": 3800, "tone": "high" },
+        { "day": "Sept 24", "metres": 3800, "tone": "high" },
+        { "day": "Sept 25", "metres": 0, "tone": "low" },
+        { "day": "Sept 26", "metres": 0, "tone": "low" }
+      ],
+      "axis": ["16 Lima", "19 Cusco", "24 Titicaca", "26 Home"]
+    },
+    "reservations": [
+      {
+        "name": "Lady Bee",
+        "time": "Wed Sept 16, 20:00",
+        "address": "Lady Bee, Av. Pedro de Osma 205, Barranco, Lima",
+        "phone": "+51 1 438 3775",
+        "note": "Peru's top-ranked cocktail bar; small plates too."
+      },
+      {
+        "name": "Maido",
+        "time": "Thu Sept 17, evening",
+        "address": "Maido, Calle San Martín 399, Miraflores, Lima",
+        "note": "Mitsuharu Tsumura's Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual."
+      }
+    ],
+    "farewell": {
+      "title": "Have the best trip",
+      "text": "Eleven days, four altitudes, one very cold night on a reed island. Michael &amp; Laura, Sept 2026."
+    }
+  }
+]

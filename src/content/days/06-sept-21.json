@@ -1,0 +1,45 @@
+{
+  "order": 6,
+  "slug": "mon-sept-21-tour-day-4-machu-picchu-back-to-cusco",
+  "date": "Mon, Sept 21",
+  "dayNumber": "21",
+  "month": "Sept",
+  "weekday": "Mon",
+  "tourDay": "Tour day 4",
+  "title": "Machu Picchu, back to Cusco",
+  "pick": true,
+  "overnight": "Hotel, Cusco",
+  "weather": {
+    "high": "~15°",
+    "low": "5°",
+    "icon": "rain",
+    "note": "Cloud forest; highest shower chance of the trip; misty mornings often clear. Layers + rain shell."
+  },
+  "glance": "Early bus up the switchbacks for a guided tour of one of the Seven Wonders of the World, then train & drive back to Cusco.",
+  "logistics": ["First bus 6:00 AM", "bring passport (checked)", "also water, bug spray, rain layer"],
+  "journey": ["Aguas Calientes", "(bus up)", "Machu Picchu", "Cusco"],
+  "reservations": [],
+  "picksLabel": "Back in Cusco tonight",
+  "picks": [
+    {
+      "name": "Cicciolina",
+      "area": "Centre, 2nd floor, Calle Triunfo 393",
+      "note": "Long-loved creative Andean-Mediterranean cooking; a great celebratory dinner.",
+      "address": "Cicciolina, Calle Triunfo 393, Cusco",
+      "pick": false,
+      "lens": "food"
+    },
+    {
+      "name": "Museo del Pisco",
+      "area": "Central Cusco",
+      "note": "Pisco bar with tastings & live music; a fun, low-key night.",
+      "pick": false,
+      "lens": "food"
+    }
+  ],
+  "notes": [
+    "Site opens after sunrise (no sunrise visit); once the guided tour ends you must exit.",
+    "Wayna Picchu needs a separate permit booked months ahead — Intrepid leaders can't help arrange it, so sort it yourself early if you want the climb."
+  ],
+  "lbb": []
+}

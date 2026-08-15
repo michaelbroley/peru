@@ -1,0 +1,66 @@
+{
+  "order": 1,
+  "slug": "wed-sept-16-arrival-lady-bee",
+  "date": "Wed, Sept 16",
+  "dayNumber": "16",
+  "month": "Sept",
+  "weekday": "Wed",
+  "title": "Arrival + Lady Bee",
+  "pick": false,
+  "overnight": "Barranco or Miraflores, Lima",
+  "regionStart": {
+    "title": "Lima",
+    "meta": "Sept 16–18 · sea level"
+  },
+  "weather": {
+    "high": "~20°",
+    "low": "15°",
+    "icon": "fog",
+    "note": "Grey & mild; coastal fog, high humidity, little sun. Light jacket, not a raincoat."
+  },
+  "glance": "Land off the redeye at 6:55 AM — take it easy. Check in, nap, gentle wander, then 8 PM cocktails at Lady Bee.",
+  "logistics": [
+    "Land 6:55 AM",
+    "Airport→Miraflores 30–90 min",
+    "Taxi: Green Taxi ~PEN 100"
+  ],
+  "journey": [],
+  "map": "lima",
+  "reservations": [
+    {
+      "name": "Lady Bee",
+      "time": "8:00 PM",
+      "address": "Lady Bee, Av. Pedro de Osma 205, Barranco, Lima",
+      "phone": "+51 1 438 3775",
+      "note": "Wed Sept 16, 20:00. Peru's top-ranked cocktail bar (World's 50 Best); small plates too — arrive a little hungry."
+    }
+  ],
+  "picksLabel": "Ease into it",
+  "picks": [
+    {
+      "name": "Malecón de Miraflores",
+      "area": "Miraflores",
+      "note": "Clifftop boardwalk over the Pacific; paragliders, ocean air, sunset. Walk to Parque del Amor.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Parque Kennedy / Cat Park",
+      "area": "Miraflores",
+      "note": "Dozens of friendly resident cats, artists, food carts. Grab picarones from a cart.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Ceviche lunch",
+      "note": "Get the classic in today so Maido stands alone tomorrow. See La Mar, Canta Rana and Isolina below.",
+      "pick": false,
+      "lens": "food"
+    }
+  ],
+  "notes": [],
+  "lbb": [
+    "lima-ceviche",
+    "lima-street"
+  ]
+}

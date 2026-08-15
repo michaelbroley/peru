@@ -1,0 +1,59 @@
+{
+  "order": 7,
+  "slug": "tue-sept-22-tour-day-5-free-day-in-cusco",
+  "date": "Tue, Sept 22",
+  "dayNumber": "22",
+  "month": "Sept",
+  "weekday": "Tue",
+  "tourDay": "Tour day 5",
+  "title": "Free day in Cusco",
+  "pick": false,
+  "overnight": "Hotel, Cusco",
+  "weather": {
+    "high": "~21°",
+    "low": "4°",
+    "icon": "sun",
+    "note": "Classic Cusco; bright sunny ~21°C, cold once the sun dips. Great for a high hike — start early, layer up."
+  },
+  "glance": "Your one truly flexible day. Big-adventure option (Rainbow Mountain, Humantay) or a relaxed art-market-and-café crawl through San Blas — a lighter day here is smart before Titicaca.",
+  "logistics": [],
+  "journey": [],
+  "reservations": [],
+  "picks": [
+    {
+      "group": "Active options",
+      "name": "Palcoyo Rainbow Mountain",
+      "area": "day trip, ~USD 100",
+      "note": "Quieter, easier alternative to Vinicunca; three rainbow ridges, less crowd. Long day at altitude.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "group": "Active options",
+      "name": "Humantay Lake",
+      "area": "day trip, ~USD 130",
+      "note": "Turquoise glacial lake below a snow peak; gorgeous, a real leg-burner.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "group": "Relaxed option — San Blas",
+      "name": "San Blas artisan quarter",
+      "note": "Cobbled galleries & workshops; Casa Mérida ceramics, Mendívil figures, the 7 Angelitos alley.",
+      "address": "Plazoleta San Blas, Cusco",
+      "pick": true,
+      "lens": "art"
+    },
+    {
+      "group": "Relaxed option — San Blas",
+      "name": "ChocoMuseo",
+      "area": "Plaza Regocijo 216",
+      "note": "Bean-to-bar chocolate workshops and a pisco/coffee/chocolate tasting; fun and hands-on.",
+      "address": "ChocoMuseo, Plaza Regocijo 216, Cusco",
+      "pick": false,
+      "lens": "food"
+    }
+  ],
+  "notes": [],
+  "lbb": []
+}

@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Print / save-as-PDF. This guide started life as a PDF, so it should still
+   go back to one cleanly: everything expanded, black on white, links spelled
+   out, nothing chopped across a page break.
+   ========================================================================== */
+
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  :root {
+    --wrap: 100%;
+    --pad: 0px;
+    --scroll-offset: 0px;
+  }
+
+  html,
+  body,
+  .page,
+  .shell {
+    background: #fff !important;
+    color: #000 !important;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+  }
+
+  /* Screen-only furniture. */
+  .toc,
+  .lens,
+  .day-controls,
+  .skip-link,
+  .back-to-top,
+  .checkbox {
+    display: none !important;
+  }
+
+  /* Ink-on-cream blocks invert to a rule-bounded box so they don't burn toner. */
+  .on-ink,
+  .hero,
+  .lbb,
+  .altitude,
+  .farewell,
+  .region-bar {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #999 !important;
+    box-shadow: none !important;
+  }
+
+  /* Gold and cream text sat on ink; once those blocks go white it has to
+     darken or it disappears. */
+  .hero *,
+  .region-bar *,
+  .altitude *,
+  .lbb *,
+  .farewell *,
+  .on-ink * {
+    color: #000 !important;
+  }
+
+  .hero__title,
+  .section__num {
+    color: #000 !important;
+    -webkit-text-stroke: 0 !important;
+  }
+
+  /* Chrome's "Save as PDF" turns background graphics off by default, which
+     empties any bar drawn as a background. Drop them rather than print gaps —
+     every one of these is decorative and the numbers beside it carry the fact. */
+  .altitude__chart,
+  .weather-card__track,
+  .wchip__track,
+  .journey__dot {
+    display: none !important;
+  }
+
+  /* The journey strip reads as plain text once its chips lose their fill. */
+  .journey__stop {
+    border: 1px solid #999;
+    padding: 3px 7px;
+  }
+
+  /* Every day open, no disclosure affordance. */
+  details {
+    display: block !important;
+  }
+  details > summary {
+    cursor: default;
+  }
+  .day__chevron {
+    display: none !important;
+  }
+
+  /* Every link's own text is the address or phone number it points at, so
+     there's nothing to spell out in a footnote — just keep them underlined. */
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+
+  .day,
+  .place,
+  .weather-card,
+  .packing-group,
+  .reservation,
+  .lbb {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .section {
+    break-before: page;
+    page-break-before: always;
+  }
+  .section:first-of-type {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

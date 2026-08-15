@@ -1,0 +1,447 @@
+[
+  {
+    "id": "peru",
+    "order": 1,
+    "caption": "The whole route. Gold pins are the highlights — tap any pin.",
+    "height": 330,
+    "showLabels": true,
+    "points": [
+      {
+        "name": "Lima",
+        "lat": -12.0464,
+        "lng": -77.0428,
+        "note": "Sept 16–18 & 25–26. Sea level.",
+        "pick": true,
+        "labelDir": "right"
+      },
+      {
+        "name": "Cusco",
+        "lat": -13.532,
+        "lng": -71.9675,
+        "note": "Sept 19, 21, 22. 3,450 m.",
+        "pick": true,
+        "labelDir": "right"
+      },
+      {
+        "name": "Ollantaytambo",
+        "lat": -13.2586,
+        "lng": -72.2635,
+        "note": "Sacred Valley — train to Aguas Calientes.",
+        "pick": false,
+        "labelDir": "top"
+      },
+      {
+        "name": "Machu Picchu",
+        "lat": -13.1631,
+        "lng": -72.545,
+        "note": "Sept 21. Guided tour, first bus 6:00 AM.",
+        "pick": true,
+        "labelDir": "left"
+      },
+      {
+        "name": "Puno",
+        "lat": -15.8402,
+        "lng": -70.0219,
+        "note": "Sept 23. Lake Titicaca, 3,800 m.",
+        "pick": true,
+        "labelDir": "left"
+      },
+      {
+        "name": "Uros Islands",
+        "lat": -15.8,
+        "lng": -69.97,
+        "note": "Sept 24 — floating reed islands + homestay.",
+        "pick": true,
+        "labelDir": "bottom"
+      }
+    ],
+    "route": [
+      [
+        -12.0464,
+        -77.0428
+      ],
+      [
+        -13.532,
+        -71.9675
+      ],
+      [
+        -13.2586,
+        -72.2635
+      ],
+      [
+        -13.1631,
+        -72.545
+      ],
+      [
+        -13.532,
+        -71.9675
+      ],
+      [
+        -15.8402,
+        -70.0219
+      ],
+      [
+        -15.8,
+        -69.97
+      ]
+    ]
+  },
+  {
+    "id": "lima",
+    "order": 2,
+    "caption": "Lima — everything in this guide, Miraflores to Barranco.",
+    "height": 240,
+    "showLabels": false,
+    "points": [
+      {
+        "name": "Lady Bee",
+        "lat": -12.1489,
+        "lng": -77.0225,
+        "note": "Booked Sept 16, 20:00 · Av. Pedro de Osma 205, Barranco",
+        "pick": true
+      },
+      {
+        "name": "Maido",
+        "lat": -12.1215,
+        "lng": -77.0303,
+        "note": "Booked Sept 17 · Calle San Martín 399, Miraflores",
+        "pick": true
+      },
+      {
+        "name": "Hotel El Señorial",
+        "lat": -12.1236,
+        "lng": -77.0271,
+        "note": "Tour meeting point · Calle José Gonzáles 567",
+        "pick": false
+      },
+      {
+        "name": "Museo Larco",
+        "lat": -12.0708,
+        "lng": -77.07,
+        "note": "Av. Simón Bolívar 1515, Pueblo Libre",
+        "pick": true
+      },
+      {
+        "name": "La Mar",
+        "lat": -12.093,
+        "lng": -77.053,
+        "note": "Lunch only, no reservations · Av. Mariscal La Mar 770",
+        "pick": true
+      },
+      {
+        "name": "Isolina",
+        "lat": -12.1443,
+        "lng": -77.0223,
+        "note": "Av. San Martín 101, Barranco",
+        "pick": true
+      },
+      {
+        "name": "Canta Rana",
+        "lat": -12.1462,
+        "lng": -77.0227,
+        "note": "Génova 101, Barranco · cash only",
+        "pick": false
+      },
+      {
+        "name": "Grimanesa Vargas",
+        "lat": -12.118,
+        "lng": -77.035,
+        "note": "Anticuchos · Calle Ignacio Merino 466",
+        "pick": true
+      },
+      {
+        "name": "La Lucha",
+        "lat": -12.1215,
+        "lng": -77.0295,
+        "note": "Sanguchería · Parque Kennedy",
+        "pick": false
+      },
+      {
+        "name": "Faster Skateshop",
+        "lat": -12.129,
+        "lng": -77.029,
+        "note": "Av. Larco 345, Multicentro basement",
+        "pick": true
+      },
+      {
+        "name": "Dédalo",
+        "lat": -12.147,
+        "lng": -77.0215,
+        "note": "Jirón Sáenz Peña 295, Barranco",
+        "pick": true
+      },
+      {
+        "name": "Bridge of Sighs",
+        "lat": -12.1478,
+        "lng": -77.0224,
+        "note": "Bajada de Baños street-art walk",
+        "pick": true
+      },
+      {
+        "name": "Huaca Pucllana",
+        "lat": -12.111,
+        "lng": -77.035,
+        "note": "Pre-Inca adobe pyramid, Miraflores",
+        "pick": false
+      },
+      {
+        "name": "Parque Kennedy",
+        "lat": -12.1213,
+        "lng": -77.0297,
+        "note": "Cat park, picarones carts",
+        "pick": false
+      },
+      {
+        "name": "San Francisco",
+        "lat": -12.0455,
+        "lng": -77.029,
+        "note": "Catacombs, Historic Centre",
+        "pick": false
+      },
+      {
+        "name": "Central / Kjolle",
+        "lat": -12.1483,
+        "lng": -77.0222,
+        "note": "Av. Pedro de Osma 301, Barranco",
+        "pick": false
+      },
+      {
+        "name": "Carnaval",
+        "lat": -12.0975,
+        "lng": -77.038,
+        "note": "Av. Pardo y Aliaga 662, San Isidro",
+        "pick": false
+      }
+    ]
+  },
+  {
+    "id": "cusco",
+    "order": 3,
+    "caption": "Cusco — the old town, San Blas and where to eat.",
+    "height": 240,
+    "showLabels": false,
+    "points": [
+      {
+        "name": "Plaza de Armas",
+        "lat": -13.5167,
+        "lng": -71.9789,
+        "note": "Main square",
+        "pick": false
+      },
+      {
+        "name": "Qorikancha",
+        "lat": -13.5203,
+        "lng": -71.9757,
+        "note": "Inca Sun Temple, Av. El Sol",
+        "pick": false
+      },
+      {
+        "name": "San Blas",
+        "lat": -13.5152,
+        "lng": -71.9739,
+        "note": "Artisan quarter, Plazoleta San Blas",
+        "pick": true
+      },
+      {
+        "name": "San Pedro Market",
+        "lat": -13.5203,
+        "lng": -71.9856,
+        "note": "Juices, cheeses, caldo de gallina",
+        "pick": false
+      },
+      {
+        "name": "12-Angled Stone",
+        "lat": -13.5158,
+        "lng": -71.9756,
+        "note": "Hatun Rumiyoc",
+        "pick": false
+      },
+      {
+        "name": "Cicciolina",
+        "lat": -13.5157,
+        "lng": -71.9762,
+        "note": "Calle Triunfo 393, 2nd floor",
+        "pick": false
+      },
+      {
+        "name": "Pachapapa",
+        "lat": -13.515,
+        "lng": -71.9737,
+        "note": "Plazoleta San Blas, clay oven",
+        "pick": true
+      },
+      {
+        "name": "Museo del Pisco",
+        "lat": -13.5175,
+        "lng": -71.977,
+        "note": "Tastings + live music",
+        "pick": false
+      },
+      {
+        "name": "ChocoMuseo",
+        "lat": -13.5178,
+        "lng": -71.982,
+        "note": "Plaza Regocijo 216",
+        "pick": false
+      },
+      {
+        "name": "Green Point",
+        "lat": -13.5145,
+        "lng": -71.9745,
+        "note": "Vegan tasting lunch, San Blas",
+        "pick": false
+      },
+      {
+        "name": "Sacsayhuamán",
+        "lat": -13.5095,
+        "lng": -71.982,
+        "note": "Warachicuy reenactment site",
+        "pick": false
+      }
+    ]
+  },
+  {
+    "id": "valley",
+    "order": 4,
+    "caption": "The Sacred Valley and Aguas Calientes, on the way to Machu Picchu.",
+    "height": 240,
+    "showLabels": false,
+    "points": [
+      {
+        "name": "Maras Salt Mines",
+        "lat": -13.2967,
+        "lng": -72.16,
+        "note": "Salineras de Maras",
+        "pick": false
+      },
+      {
+        "name": "Moray",
+        "lat": -13.33,
+        "lng": -72.193,
+        "note": "Concentric Inca terraces",
+        "pick": false
+      },
+      {
+        "name": "Mil",
+        "lat": -13.3305,
+        "lng": -72.195,
+        "note": "Virgilio Martínez, book far ahead",
+        "pick": true
+      },
+      {
+        "name": "Ollantaytambo",
+        "lat": -13.2586,
+        "lng": -72.2635,
+        "note": "Fortress-temple + train station",
+        "pick": false
+      },
+      {
+        "name": "Chuncho",
+        "lat": -13.2585,
+        "lng": -72.2648,
+        "note": "Andean cooking, Ollantaytambo",
+        "pick": false
+      },
+      {
+        "name": "Pisac",
+        "lat": -13.42,
+        "lng": -71.849,
+        "note": "Ruins + craft market",
+        "pick": false
+      },
+      {
+        "name": "Aguas Calientes",
+        "lat": -13.1547,
+        "lng": -72.5254,
+        "note": "Overnight Sept 20",
+        "pick": false
+      },
+      {
+        "name": "Indio Feliz",
+        "lat": -13.1554,
+        "lng": -72.525,
+        "note": "Most-loved spot in town",
+        "pick": true
+      },
+      {
+        "name": "Machu Picchu",
+        "lat": -13.1631,
+        "lng": -72.545,
+        "note": "First bus 6:00 AM, bring passport",
+        "pick": true
+      }
+    ]
+  },
+  {
+    "id": "puno",
+    "order": 5,
+    "caption": "Puno and Lake Titicaca — the islands are out on the water.",
+    "height": 240,
+    "showLabels": false,
+    "points": [
+      {
+        "name": "Puno",
+        "lat": -15.8402,
+        "lng": -70.0219,
+        "note": "Overnight Sept 23, 3,800 m",
+        "pick": false
+      },
+      {
+        "name": "Jirón Lima",
+        "lat": -15.839,
+        "lng": -70.027,
+        "note": "Pedestrian spine — alpaca wool, trout",
+        "pick": false
+      },
+      {
+        "name": "Puno Cathedral",
+        "lat": -15.8404,
+        "lng": -70.0281,
+        "note": "Andean-Baroque façade",
+        "pick": false
+      },
+      {
+        "name": "Kuntur Wasi",
+        "lat": -15.833,
+        "lng": -70.03,
+        "note": "Condor Hill viewpoint",
+        "pick": false
+      },
+      {
+        "name": "Yavarí Steamship",
+        "lat": -15.829,
+        "lng": -70.018,
+        "note": "160-year-old floating museum",
+        "pick": false
+      },
+      {
+        "name": "Uros Islands",
+        "lat": -15.8,
+        "lng": -69.97,
+        "note": "Floating reed islands",
+        "pick": true
+      },
+      {
+        "name": "Taquile Island",
+        "lat": -15.77,
+        "lng": -69.69,
+        "note": "UNESCO textiles, trout lunch",
+        "pick": true
+      },
+      {
+        "name": "Sillustani",
+        "lat": -15.7228,
+        "lng": -70.16,
+        "note": "Chullpa funerary towers",
+        "pick": false
+      },
+      {
+        "name": "Juliaca",
+        "lat": -15.4939,
+        "lng": -70.158,
+        "note": "Airport — flight back to Lima Sept 25",
+        "pick": false
+      }
+    ]
+  }
+]

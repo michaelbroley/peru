@@ -1,0 +1,42 @@
+{
+  "order": 3,
+  "slug": "fri-sept-18-tour-day-1-lima-tour-begins",
+  "date": "Fri, Sept 18",
+  "dayNumber": "18",
+  "month": "Sept",
+  "weekday": "Fri",
+  "tourDay": "Tour day 1",
+  "title": "Lima (tour begins)",
+  "pick": false,
+  "overnight": "Hotel, Lima (Miraflores)",
+  "weather": {
+    "high": "~20°",
+    "low": "15°",
+    "icon": "fog",
+    "note": "Mild & grey; easy walking weather."
+  },
+  "glance": "Tour starts with a 2 PM welcome meeting and an easy leader-led walk downtown. You've already seen Lima well — today is about meeting the group.",
+  "logistics": ["Welcome meeting 2:00 PM", "at Hotel El Señorial", "bring insurance + emergency contacts"],
+  "journey": ["Miraflores", "(leader-led walk)", "Downtown Lima"],
+  "reservations": [],
+  "picksLabel": "If you have the afternoon",
+  "picks": [
+    {
+      "name": "Huaca Pucllana",
+      "area": "Miraflores",
+      "note": "Pre-Inca adobe pyramid rising out of the city; lit at night, restaurant on site.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Optional group dinner",
+      "note": "Relaxed first night with fellow travellers; leader will suggest a spot.",
+      "pick": false,
+      "lens": "food"
+    }
+  ],
+  "notes": [
+    "Don't miss the 2 PM meeting — it's where insurance & emergency details are collected. Late? Tell reception."
+  ],
+  "lbb": ["lima-skate", "lima-drink"]
+}

@@ -1,0 +1,345 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WeatherChip from './WeatherChip.astro';
+import JourneyStrip from './JourneyStrip.astro';
+import ReservationBanner from './ReservationBanner.astro';
+import PlaceCard from './PlaceCard.astro';
+import LbbPanel from './LbbPanel.astro';
+import MapPanel from './MapPanel.astro';
+import { STAR } from '../lib/glyphs';
+
+interface Props {
+  day: CollectionEntry<'days'>['data'];
+  categories: CollectionEntry<'categories'>[];
+  places: CollectionEntry<'places'>['data'][];
+  maps: CollectionEntry<'maps'>[];
+  /** Sept 16 opens by default so the guide isn't a wall of closed rows. */
+  open?: boolean;
+  last?: boolean;
+}
+const { day, categories, places, maps, open = false, last = false } = Astro.props;
+
+const map = day.map ? maps.find((m) => m.id === day.map) : undefined;
+
+// The design stars a day that has a booked table, as well as one the source
+// marks with ★ directly.
+const starred = day.pick || day.reservations.length > 0;
+
+// Days split their suggestions into groups (Sept 22) or use one label.
+type Pick = (typeof day.picks)[number];
+const groups: { label: string | undefined; items: Pick[] }[] = [];
+for (const pick of day.picks) {
+  const label = pick.group ?? day.picksLabel;
+  const last_ = groups.at(-1);
+  if (last_ && last_.label === label) last_.items.push(pick);
+  else groups.push({ label, items: [pick] });
+}
+
+// Little Black Book categories this day surfaces, resolved to their entries.
+const lbb = day.lbb.flatMap((categoryId) => {
+  const entry = categories.find((c) => c.id === categoryId);
+  if (!entry) return [];
+  return [{ category: entry.data, places: places.filter((p) => p.category === categoryId) }];
+});
+---
+
+{
+  day.regionStart && (
+    <div class="region-bar">
+      <h3 class="region-bar__title">{day.regionStart.title}</h3>
+      <p class="region-bar__meta">{day.regionStart.meta}</p>
+    </div>
+  )
+}
+
+<details class:list={['day', { 'day--last': last }]} id={day.slug} open={open} data-day>
+  <summary class="day__summary">
+    <div class="day__date">
+      <span class="day__num">{day.dayNumber}</span>
+      <span class="day__month">{day.month}</span>
+    </div>
+
+    <div class="day__head">
+      <div class="day__meta">
+        <span class="day__weekday">
+          {day.weekday}{day.tourDay && <> · {day.tourDay}</>}
+        </span>
+        <span class="day__chevron" aria-hidden="true">▼</span>
+      </div>
+
+      <h3 class="day__title">
+        {day.title}
+        {starred && <span class="day__star" aria-label="Highlight">{STAR}</span>}
+      </h3>
+
+      <p class="day__glance">{day.glance}</p>
+
+      <div class="day__chips">
+        {day.overnight && <span class="day__chip">{day.overnight}</span>}
+        <WeatherChip high={day.weather.high} low={day.weather.low} icon={day.weather.icon} />
+      </div>
+    </div>
+  </summary>
+
+  <div class="day__body">
+    <p class="day__weathernote">{day.weather.note}</p>
+
+    {
+      day.logistics.length > 0 && (
+        <div class="day__block">
+          <p class="eyebrow">Logistics</p>
+          <ul class="day__logistics">
+            {day.logistics.map((item) => (
+              <li class="day__logistic">{item}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    {day.journey.length > 0 && <JourneyStrip stops={day.journey} />}
+
+    {day.reservations.map((res) => <ReservationBanner {...res} showTimeInEyebrow={true} />)}
+
+    {
+      groups.map((group) => (
+        <div class="day__block">
+          {group.label && <p class="eyebrow">{group.label}</p>}
+          <div class="day__picks">
+            {group.items.map((pick) => (
+              <PlaceCard {...pick} />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    {
+      day.notes.map((note) => (
+        <p class="day__note">
+          <span class="day__note-label">Note</span>
+          {note}
+        </p>
+      ))
+    }
+
+    {
+      lbb.map(({ category, places: catPlaces }) => (
+        <LbbPanel category={category} places={catPlaces} href={`#${category.slug}`} />
+      ))
+    }
+
+    {map && <MapPanel view={map.data} id={`day-${day.slug}`} label={`${day.title} map`} />}
+  </div>
+</details>
+
+<style>
+  /* Leg divider: "Lima / Sept 16–18 · sea level". */
+  .region-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding: 15px 16px;
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .region-bar__title {
+    font-family: var(--display);
+    font-size: var(--fs-cardtitle);
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .region-bar__meta {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .day {
+    border-top: 1px solid var(--rule-strong);
+  }
+  .day--last {
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .day__summary {
+    cursor: pointer;
+    padding: 20px 0;
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 0 14px;
+    align-items: start;
+  }
+
+  .day__date {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding-top: 2px;
+  }
+
+  .day__num {
+    font-family: var(--display);
+    font-size: var(--fs-daynum);
+    line-height: 0.78;
+    color: var(--pink);
+  }
+
+  .day__month {
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+  }
+
+  .day__head {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .day__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .day__weekday {
+    font-weight: 700;
+    font-size: var(--fs-micro);
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pink);
+  }
+
+  .day__chevron {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ink-08);
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-label-sm);
+    color: var(--ink-60);
+    transition: transform 0.18s ease;
+  }
+  .day[open] .day__chevron {
+    transform: rotate(180deg);
+  }
+
+  .day__title {
+    font-family: var(--display);
+    font-size: var(--fs-daytitle);
+    line-height: 1.02;
+    text-transform: uppercase;
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  .day__star {
+    color: var(--gold);
+  }
+
+  .day__glance {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.5;
+    color: var(--ink-72);
+    text-wrap: pretty;
+  }
+
+  .day__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: stretch;
+  }
+
+  .day__chip {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+    background: var(--ink-07);
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .day__body {
+    padding: 0 0 24px;
+    display: grid;
+    gap: var(--gap);
+  }
+
+  .day__weathernote {
+    margin: 0;
+    padding-left: 11px;
+    border-left: 2px solid var(--pink);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--ink-62);
+  }
+
+  .day__block {
+    display: grid;
+    gap: 8px;
+  }
+
+  .day__logistics {
+    display: grid;
+    gap: 4px;
+    font-size: var(--fs-meta);
+    line-height: 1.4;
+  }
+
+  .day__logistic {
+    display: flex;
+    gap: 8px;
+  }
+  .day__logistic::before {
+    content: '·';
+    color: var(--pink);
+    font-weight: 700;
+  }
+
+  .day__picks {
+    display: grid;
+    gap: 12px;
+  }
+
+  .day__note {
+    margin: 0;
+    padding: 11px 13px;
+    background: var(--ink-07);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+
+  .day__note-label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pink);
+  }
+</style>

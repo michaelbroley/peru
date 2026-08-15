@@ -1,0 +1,21 @@
+{
+  "name": "peru-field-guide",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Peru Field Guide — a mobile-first travel guide for Michael & Laura, Sept 16–26 2026",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^7.2.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
+  }
+}

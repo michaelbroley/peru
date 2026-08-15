@@ -1,0 +1,52 @@
+[
+  {
+    "id": "layers",
+    "order": 1,
+    "title": "Layers & clothing",
+    "accent": "ink",
+    "items": [
+      "Thin thermals (top & bottom)",
+      "Fleece or light down mid-layer",
+      "Waterproof / windproof shell",
+      "Broken-in walking shoes",
+      "Warm hat, gloves, buff; sun hat & sunglasses"
+    ]
+  },
+  {
+    "id": "altitude",
+    "order": 2,
+    "title": "Altitude & sun",
+    "accent": "ink",
+    "items": [
+      "Altitude meds (ask your doctor)",
+      "Reusable water bottle",
+      "High-SPF sunscreen & lip balm",
+      "Insect repellent (Machu Picchu)"
+    ]
+  },
+  {
+    "id": "daypack",
+    "order": 3,
+    "title": "Daypack",
+    "aside": "Main bags left behind in Cusco and Puno.",
+    "accent": "pink",
+    "items": [
+      "Small overnight bag for Aguas Calientes & homestay",
+      "2 nights of clothes + toiletries + quick-dry towel",
+      "Headlamp; extra layers for the cold homestay",
+      "Small gifts for the homestay family"
+    ]
+  },
+  {
+    "id": "dont-forget",
+    "order": 4,
+    "title": "Don't forget",
+    "accent": "ink",
+    "items": [
+      "Passport (checked at Machu Picchu)",
+      "Printed tour & flight confirmations",
+      "Cash in soles (PEN)",
+      "Power bank & plug adapter (type A/C)"
+    ]
+  }
+]

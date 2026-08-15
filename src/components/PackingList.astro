@@ -1,0 +1,67 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  groups: CollectionEntry<'packing'>['data'][];
+}
+const { groups } = Astro.props;
+---
+
+<div class="packing">
+  {
+    groups.map((group) => (
+      <section class:list={['packing-group', { 'packing-group--pink': group.accent === 'pink' }]}>
+        <h3 class="packing-group__title">{group.title}</h3>
+        {group.aside && <p class="packing-group__aside">{group.aside}</p>}
+        <ul class="packing-group__items">
+          {group.items.map((item) => (
+            <li class="packing-group__item">{item}</li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .packing {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .packing-group {
+    border-top: 2px solid var(--ink);
+    padding-top: 12px;
+  }
+
+  .packing-group--pink {
+    border-top-color: var(--pink);
+  }
+
+  .packing-group__title {
+    font-family: var(--display);
+    font-size: var(--fs-group);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .packing-group--pink .packing-group__title {
+    color: var(--pink);
+  }
+
+  .packing-group__aside {
+    margin: 2px 0 0;
+    font-size: var(--fs-micro);
+    line-height: 1.4;
+    color: var(--ink-60);
+  }
+
+  .packing-group__items {
+    display: grid;
+    gap: 5px;
+    margin-top: 8px;
+    font-size: var(--fs-body-sm);
+    line-height: 1.45;
+  }
+</style>

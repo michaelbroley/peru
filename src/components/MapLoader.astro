@@ -1,0 +1,153 @@
+---
+/**
+ * Loads Leaflet once, the first time any map is about to scroll into view,
+ * then initialises every map on the page. Nothing here runs — and nothing is
+ * downloaded — if the reader never reaches a map.
+ */
+---
+
+<script>
+  interface MapPoint {
+    name: string;
+    lat: number;
+    lng: number;
+    note: string;
+    pick: boolean;
+    href: string;
+    labelDir?: 'left' | 'right' | 'top' | 'bottom';
+  }
+  interface MapConfig {
+    points: MapPoint[];
+    route: [number, number][] | null;
+    showLabels: boolean;
+  }
+
+  const LEAFLET_JS = '/vendor/leaflet/leaflet.js';
+  const LEAFLET_CSS = '/vendor/leaflet/leaflet.css';
+
+  const containers = Array.from(document.querySelectorAll<HTMLElement>('[data-map]'));
+  if (containers.length) {
+    let loading: Promise<void> | null = null;
+
+    function loadLeaflet(): Promise<void> {
+      if (loading) return loading;
+      loading = new Promise<void>((resolve, reject) => {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = LEAFLET_CSS;
+        document.head.appendChild(css);
+
+        const script = document.createElement('script');
+        script.src = LEAFLET_JS;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('leaflet failed to load'));
+        document.head.appendChild(script);
+      });
+      return loading;
+    }
+
+    function escapeHtml(value: string): string {
+      return value.replace(
+        /[&<>"']/g,
+        (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c,
+      );
+    }
+
+    function build(container: HTMLElement): void {
+      const raw = container.dataset.mapConfig;
+      if (!raw) return;
+      const config = JSON.parse(raw) as MapConfig;
+      // @ts-expect-error — Leaflet attaches itself to window at runtime.
+      const L = window.L;
+      if (!L) return;
+
+      container.classList.add('is-ready');
+
+      const map = L.map(container, {
+        scrollWheelZoom: false,
+        zoomControl: true,
+        attributionControl: true,
+      });
+
+      const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors © CARTO',
+      }).addTo(map);
+
+      // A handful of failures means no signal, not a bad tile — say so instead
+      // of leaving an empty beige rectangle.
+      let failures = 0;
+      tiles.on('tileerror', () => {
+        if (++failures >= 4) container.classList.add('is-tileless');
+      });
+      tiles.on('tileload', () => {
+        failures = 0;
+        container.classList.remove('is-tileless');
+      });
+
+      if (config.route) {
+        L.polyline(config.route, { color: '#E4007C', weight: 2.5, opacity: 0.9, dashArray: '6 5' }).addTo(map);
+      }
+
+      const bounds: [number, number][] = [];
+      for (const point of config.points) {
+        bounds.push([point.lat, point.lng]);
+
+        const marker = L.marker([point.lat, point.lng], {
+          title: point.name,
+          alt: point.name,
+          icon: L.divIcon({
+            className: '',
+            html: `<div class="peru-pin${point.pick ? ' peru-pin--pick' : ''}"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+          }),
+        }).addTo(map);
+
+        marker.bindPopup(
+          `<b>${escapeHtml(point.pick ? `★︎ ${point.name}` : point.name)}</b><br>${escapeHtml(point.note)}<br>` +
+            `<a class="peru-popup__link" href="${point.href}" target="_blank" rel="noopener noreferrer">Open in Google Maps →</a>`,
+        );
+
+        if (config.showLabels) {
+          const dir = point.labelDir ?? 'right';
+          const offset: [number, number] =
+            dir === 'left' ? [-10, 0] : dir === 'top' ? [0, -10] : dir === 'bottom' ? [0, 10] : [10, 0];
+          marker.bindTooltip(point.name, { permanent: true, direction: dir, offset, className: 'peru-label', opacity: 1 });
+        }
+      }
+
+      // Permanent labels stick out well past their pin, so the route map needs
+      // enough horizontal room for the widest one or the edges get clipped.
+      const sidePadding = config.showLabels ? Math.min(105, Math.round(container.clientWidth * 0.27)) : 46;
+      map.fitBounds(bounds, { padding: [46, sidePadding] });
+    }
+
+    function activate(container: HTMLElement): void {
+      loadLeaflet()
+        .then(() => build(container))
+        .catch(() => {
+          /* leave the fallback message in place */
+        });
+    }
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            obs.unobserve(entry.target);
+            activate(entry.target as HTMLElement);
+          }
+        },
+        // Start fetching a screen ahead so the map is drawn by the time it lands.
+        { rootMargin: '600px 0px' },
+      );
+      for (const container of containers) observer.observe(container);
+    } else {
+      for (const container of containers) activate(container);
+    }
+  }
+</script>

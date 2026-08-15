@@ -1,0 +1,383 @@
+---
+/**
+ * Sticky jump nav. Mirrors the Quick Links TOC from the source markdown.
+ *
+ * - Top row: the six top-level sections, as the design's pill chips.
+ * - "All sections" opens the full TOC (every day, every category) and closes
+ *   on selection — the mobile-friendly version of a desktop side list.
+ * - Lens chips filter the recommendations to one traveller's interests.
+ */
+interface TocItem {
+  href: string;
+  label: string;
+}
+interface Props {
+  sections: TocItem[];
+  days: TocItem[];
+  categories: TocItem[];
+}
+const { sections, days, categories } = Astro.props;
+---
+
+<nav class="toc" id="toc" aria-label="Sections">
+  <div class="toc__bar">
+    <ul class="toc__chips">
+      {
+        sections.map((item) => (
+          <li>
+            <a class="toc__chip" href={item.href} data-toc-link>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="toc__tools">
+      <button class="toc__more" type="button" aria-expanded="false" aria-controls="toc-panel" data-toc-toggle>
+        <span class="toc__more-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="toc__more-label">All sections</span>
+      </button>
+
+      <div class="toc__lens lens" role="group" aria-label="Filter recommendations">
+        <span class="toc__lens-label" aria-hidden="true">Lens</span>
+        <button class="toc__pill" type="button" data-lens-btn="all" aria-pressed="true">All</button>
+        <button class="toc__pill" type="button" data-lens-btn="food" aria-pressed="false">Laura’s food</button>
+        <button class="toc__pill" type="button" data-lens-btn="skate" aria-pressed="false">Michael’s skate</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc__panel" id="toc-panel" hidden data-toc-panel>
+    <div class="toc__group">
+      <p class="toc__grouplabel">Day by day</p>
+      <ul class="toc__list">
+        {
+          days.map((item) => (
+            <li>
+              <a class="toc__link" href={item.href} data-toc-link>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="toc__group">
+      <p class="toc__grouplabel">Recommendations</p>
+      <ul class="toc__list">
+        {
+          categories.map((item) => (
+            <li>
+              <a class="toc__link" href={item.href} data-toc-link>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('toc');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-toc-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-toc-panel]');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+
+  /* --- Keep --nav-h honest so scroll-margin-top always clears the header. --- */
+  if (nav) {
+    const setNavHeight = () => {
+      document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+    };
+    setNavHeight();
+    if (typeof ResizeObserver === 'function') {
+      new ResizeObserver(setNavHeight).observe(nav);
+    } else {
+      window.addEventListener('resize', setNavHeight, { passive: true });
+    }
+  }
+
+  /* --- Collapsible full TOC ------------------------------------------------ */
+  function closePanel(): void {
+    if (!panel || !toggle) return;
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  toggle?.addEventListener('click', () => {
+    if (!panel) return;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && panel && !panel.hidden) {
+      closePanel();
+      toggle?.focus();
+    }
+  });
+
+  /* --- Jumping ------------------------------------------------------------- */
+  for (const link of links) {
+    link.addEventListener('click', () => {
+      closePanel();
+      // A collapsed day can't be scrolled to usefully — open it first.
+      const target = document.querySelector(link.getAttribute('href') ?? '');
+      if (target instanceof HTMLDetailsElement) target.open = true;
+    });
+  }
+
+  // Deep links and back/forward should also open the day they land on.
+  function openHashTarget(): void {
+    if (!location.hash) return;
+    let target: Element | null = null;
+    try {
+      target = document.querySelector(decodeURIComponent(location.hash));
+    } catch {
+      return;
+    }
+    const details = target?.closest('details');
+    if (details) details.open = true;
+    target?.scrollIntoView({ block: 'start' });
+  }
+  window.addEventListener('hashchange', openHashTarget);
+  openHashTarget();
+
+  /* --- Active section highlighting ---------------------------------------- */
+  const watched = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
+  const chipFor = new Map<string, HTMLAnchorElement>();
+  for (const link of links) {
+    const id = link.getAttribute('href')?.slice(1);
+    if (id && link.classList.contains('toc__chip')) chipFor.set(decodeURIComponent(id), link);
+  }
+
+  if (watched.length && 'IntersectionObserver' in window) {
+    const visible = new Set<string>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        // Whichever visible section sits highest in the document wins.
+        const active = watched.find((section) => visible.has(section.id));
+        for (const [id, chip] of chipFor) {
+          const on = active?.id === id;
+          chip.classList.toggle('is-active', on);
+          if (on) chip.setAttribute('aria-current', 'true');
+          else chip.removeAttribute('aria-current');
+        }
+      },
+      // Band just below the sticky header: a section is "current" once its
+      // top passes the nav and until it has scrolled most of the way off.
+      { rootMargin: '-25% 0px -60% 0px', threshold: 0 },
+    );
+
+    for (const section of watched) observer.observe(section);
+  }
+
+  /* --- Lens filter --------------------------------------------------------- */
+  const lensButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lens-btn]'));
+  for (const button of lensButtons) {
+    button.addEventListener('click', () => {
+      const lens = button.dataset.lensBtn ?? 'all';
+      if (lens === 'all') delete document.documentElement.dataset.lens;
+      else document.documentElement.dataset.lens = lens;
+      for (const other of lensButtons) {
+        const on = other === button;
+        other.setAttribute('aria-pressed', String(on));
+        other.classList.toggle('is-active', on);
+      }
+    });
+  }
+  lensButtons.find((b) => b.dataset.lensBtn === 'all')?.classList.add('is-active');
+</script>
+
+<style>
+  .toc {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--ink);
+    color: var(--cream);
+    box-shadow: var(--shadow-nav);
+  }
+
+  .toc__bar {
+    display: grid;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .toc__chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .toc__chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toc__chip {
+    display: block;
+    padding: 7px 10px;
+    border: 1px solid var(--cream-28);
+    border-radius: var(--radius-pill);
+    color: var(--cream);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .toc__chip:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .toc__chip.is-active {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: var(--cream);
+  }
+
+  .toc__tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .toc__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    background: transparent;
+    border: 1px solid var(--cream-28);
+    border-radius: var(--radius-pill);
+    color: var(--cream);
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .toc__more:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .toc__more-icon {
+    display: grid;
+    gap: 2.5px;
+    width: 12px;
+  }
+  .toc__more-icon span {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .toc__more[aria-expanded='true'] .toc__more-icon span:nth-child(2) {
+    opacity: 0.35;
+  }
+
+  .toc__lens {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .toc__lens-label {
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .toc__pill {
+    padding: 7px 10px;
+    background: transparent;
+    border: 1px solid var(--cream-28);
+    border-radius: var(--radius-pill);
+    color: var(--cream);
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .toc__pill:hover {
+    border-color: var(--gold);
+  }
+  .toc__pill.is-active {
+    background: var(--pink);
+    border-color: var(--pink);
+  }
+
+  /* `display: grid` would otherwise beat the UA's [hidden] rule. */
+  .toc__panel[hidden] {
+    display: none;
+  }
+
+  .toc__panel {
+    max-height: min(60vh, 420px);
+    overflow-y: auto;
+    padding: 4px 14px 16px;
+    border-top: 1px solid var(--cream-28);
+    display: grid;
+    gap: 16px;
+  }
+
+  .toc__grouplabel {
+    margin: 12px 0 8px;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .toc__list {
+    display: grid;
+    gap: 2px;
+  }
+
+  .toc__link {
+    display: block;
+    padding: 8px 0;
+    color: var(--cream);
+    text-decoration: none;
+    font-size: var(--fs-note);
+    line-height: 1.3;
+    border-bottom: 1px solid rgba(255, 251, 245, 0.12);
+  }
+  .toc__link:hover,
+  .toc__link:focus-visible {
+    color: var(--gold);
+  }
+
+  /* Two columns of jump links once there's room. */
+  @media (min-width: 620px) {
+    .toc__list {
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 20px;
+    }
+  }
+</style>

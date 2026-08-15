@@ -1,0 +1,129 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WeatherIcon from './WeatherIcon.astro';
+import { tempRange } from '../lib/temps';
+
+/** One row of the September averages table, as a card. */
+interface Props {
+  row: CollectionEntry<'weatherRows'>['data'];
+}
+const { row } = Astro.props;
+const range = tempRange(row.high, row.low);
+---
+
+<article class={`weather-card weather-card--${row.tone}`}>
+  <header class="weather-card__head">
+    <h3 class="weather-card__stop">{row.stop}</h3>
+    <p class="weather-card__elev">{row.elevation}</p>
+  </header>
+
+  <div class="weather-card__temps">
+    <WeatherIcon icon={row.icon} size={22} />
+    <span class="weather-card__hi">{row.high}</span>
+    <span class="weather-card__lo">{row.low}</span>
+    <span class="weather-card__rain">{row.rain}</span>
+  </div>
+
+  {
+    range && (
+      <div class="weather-card__track" role="img" aria-label={`Day high ${row.high} Celsius, night low ${row.low} Celsius`}>
+        <span
+          class="weather-card__fill"
+          style={`clip-path:inset(0 ${(100 - range.left - range.width).toFixed(2)}% 0 ${range.left.toFixed(2)}%)`}
+        />
+      </div>
+    )
+  }
+
+  <p class="weather-card__story">{row.story}</p>
+</article>
+
+<style>
+  .weather-card {
+    border: 1px solid var(--rule);
+    border-top: 6px solid var(--pink);
+    padding: 14px 15px;
+  }
+  .weather-card--gold {
+    border-top-color: var(--gold);
+  }
+  .weather-card--ink {
+    border-top-color: var(--ink);
+  }
+
+  .weather-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .weather-card__stop {
+    font-family: var(--display);
+    font-size: var(--fs-stop);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .weather-card__elev {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    white-space: nowrap;
+  }
+
+  .weather-card__temps {
+    display: flex;
+    gap: 12px;
+    margin-top: 9px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .weather-card__hi {
+    font-family: var(--display);
+    font-size: var(--fs-temp);
+    line-height: 1;
+    color: var(--pink);
+  }
+
+  .weather-card__lo {
+    font-family: var(--display);
+    font-size: var(--fs-temp);
+    line-height: 1;
+    color: var(--ink-35);
+  }
+
+  .weather-card__rain {
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+  }
+
+  /* Same shared −5°→25° scale as the day chips. */
+  .weather-card__track {
+    position: relative;
+    height: 6px;
+    margin-top: 10px;
+    background: var(--ink-08);
+  }
+
+  .weather-card__fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--cold) 0%, var(--gold) 58%, var(--pink) 100%);
+  }
+
+  .weather-card__story {
+    margin: 8px 0 0;
+    font-size: var(--fs-note);
+    line-height: 1.45;
+  }
+</style>

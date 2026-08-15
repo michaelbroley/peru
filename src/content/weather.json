@@ -1,0 +1,50 @@
+[
+  {
+    "id": "lima",
+    "order": 1,
+    "stop": "Lima",
+    "elevation": "Sea level",
+    "high": "~20°",
+    "low": "~15°",
+    "rain": "Rain near-zero",
+    "story": "Grey, damp coastal fog (garúa); little sun.",
+    "icon": "fog",
+    "tone": "pink"
+  },
+  {
+    "id": "cusco",
+    "order": 2,
+    "stop": "Cusco",
+    "elevation": "3,400 m",
+    "high": "~21°",
+    "low": "~4°",
+    "rain": "Mostly dry",
+    "story": "Warm sun, extreme UV, cold nights.",
+    "icon": "sun",
+    "tone": "gold"
+  },
+  {
+    "id": "sacred-valley",
+    "order": 3,
+    "stop": "Sacred Valley / Machu Picchu",
+    "elevation": "2,000–2,900 m",
+    "high": "~17°",
+    "low": "~6°",
+    "rain": "Odd shower",
+    "story": "Milder days, cloud-forest humidity.",
+    "icon": "cloud-sun",
+    "tone": "pink"
+  },
+  {
+    "id": "puno",
+    "order": 4,
+    "stop": "Puno / Lake Titicaca",
+    "elevation": "3,800 m",
+    "high": "~16°",
+    "low": "~0 to −1°",
+    "rain": "Very dry",
+    "story": "Intense sun by day, freezing nights.",
+    "icon": "frost",
+    "tone": "ink"
+  }
+]

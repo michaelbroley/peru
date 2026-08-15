@@ -3,7 +3,8 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  # Astro 7 requires Node >=22.12, so this cannot go back to 20.
+  NODE_VERSION = "22"
 
 # Static site — no functions, no edge handlers, no adapter.
 

@@ -18,7 +18,7 @@ npm run dev        # http://localhost:4321
 | `npm run preview` | Serve the built `dist/` locally               |
 | `npm run check`   | `astro check` — TypeScript and content schemas |
 
-Node 20+ (the Netlify build pins 20).
+Node 22.12 or newer — Astro 7 requires it, and the Netlify build pins 22.
 
 ## Editing the content
 
@@ -92,10 +92,10 @@ Pin links reuse the place's address where the content has one (`src/lib/addressB
   command = "npm run build"
   publish = "dist"
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
 ```
 
-Static site — no functions, no edge handlers. Connect the repo in Netlify and it builds as-is; or `netlify deploy --prod --dir=dist` after a local build.
+Static site — no functions, no edge handlers. The Node pin matters: Astro 7 will not run on Node 20. Connect the repo in Netlify and it builds as-is; or `netlify deploy --prod --dir=dist` after a local build.
 
 The site is private: `noindex` meta, `X-Robots-Tag` header, and a `robots.txt` that disallows everything. There is no analytics.
 

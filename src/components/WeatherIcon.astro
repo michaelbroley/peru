@@ -1,0 +1,76 @@
+---
+/**
+ * Inline SVG, one per condition. No image requests, no icon font — these
+ * ship inside the HTML and cost nothing offline.
+ */
+interface Props {
+  icon: 'fog' | 'sun' | 'cloud-sun' | 'rain' | 'frost';
+  size?: number;
+  class?: string;
+}
+const { icon, size = 20, class: className = '' } = Astro.props;
+
+const label: Record<Props['icon'], string> = {
+  fog: 'Fog',
+  sun: 'Sunny',
+  'cloud-sun': 'Sun and cloud',
+  rain: 'Showers',
+  frost: 'Freezing nights',
+};
+---
+
+<svg
+  class={`wicon ${className}`}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="img"
+  aria-label={label[icon]}
+>
+  {
+    icon === 'sun' && (
+      <>
+        <circle cx="12" cy="12" r="4.2" />
+        <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" />
+      </>
+    )
+  }
+  {
+    icon === 'fog' && (
+      <>
+        <path d="M6.5 10.5a4 4 0 017.7-1.3A3.2 3.2 0 1118 15H7.2a3 3 0 01-.7-4.5z" />
+        <path d="M3.5 18.5h8M14.5 18.5h6M6 21.5h7M16 21.5h2.5" opacity=".75" />
+      </>
+    )
+  }
+  {
+    icon === 'cloud-sun' && (
+      <>
+        <circle cx="8" cy="7.5" r="3" />
+        <path d="M8 1.8v1.4M2.3 7.5h1.4M4 3.5l1 1M12.3 7.5h-1.4M12 3.5l-1 1" opacity=".8" />
+        <path d="M10 19.5a3.6 3.6 0 01.4-7.2 4.8 4.8 0 019.2 1.3 3 3 0 01-.6 5.9z" />
+      </>
+    )
+  }
+  {
+    icon === 'rain' && (
+      <>
+        <path d="M7.5 15.5a3.4 3.4 0 01.4-6.8 4.6 4.6 0 018.8 1.2 2.9 2.9 0 01-.6 5.6z" />
+        <path d="M8.5 18.2l-1 2.6M12.5 18.2l-1 2.6M16.5 18.2l-1 2.6" />
+      </>
+    )
+  }
+  {
+    icon === 'frost' && (
+      <>
+        <path d="M12 2.8v18.4M4 7.4l16 9.2M20 7.4L4 16.6" />
+        <path d="M12 6.6l-2-2M12 6.6l2-2M12 17.4l-2 2M12 17.4l2 2M7.4 9.4l-2.7.2M7.4 14.6l-2.7-.2M16.6 9.4l2.7.2M16.6 14.6l2.7-.2" opacity=".8" />
+      </>
+    )
+  }
+</svg>

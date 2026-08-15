@@ -1,0 +1,80 @@
+---
+import WeatherIcon from './WeatherIcon.astro';
+import { tempRange } from '../lib/temps';
+
+/**
+ * The compact day-header weather: condition icon, high → low, and a bar
+ * showing where that span sits on the trip's cold-to-warm scale.
+ */
+interface Props {
+  high: string;
+  low: string;
+  icon: 'fog' | 'sun' | 'cloud-sun' | 'rain' | 'frost';
+}
+const { high, low, icon } = Astro.props;
+const range = tempRange(high, low);
+---
+
+<div class="wchip">
+  <WeatherIcon icon={icon} size={16} />
+  <span class="wchip__temps">
+    <span class="wchip__hi">{high}</span>
+    <span class="wchip__sep" aria-hidden="true">/</span>
+    <span class="wchip__lo">{low}</span>
+  </span>
+  {
+    range && (
+      <span class="wchip__track" aria-hidden="true">
+        <span
+          class="wchip__fill"
+          style={`clip-path:inset(0 ${(100 - range.left - range.width).toFixed(2)}% 0 ${range.left.toFixed(2)}%)`}
+        />
+      </span>
+    )
+  }
+  <span class="sr-only">High {high} Celsius, low {low} Celsius</span>
+</div>
+
+<style>
+  .wchip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 8px;
+    background: var(--ink-07);
+    color: var(--ink);
+  }
+
+  .wchip__temps {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .wchip__sep,
+  .wchip__lo {
+    color: var(--ink-50);
+  }
+
+  /* The track is the trip's whole −5°→25° scale. The gradient is drawn across
+     all of it and then clipped to this day's span, so the same temperature
+     lands on the same colour on every card. */
+  .wchip__track {
+    position: relative;
+    flex: 0 0 44px;
+    height: 4px;
+    background: var(--ink-08);
+  }
+
+  .wchip__fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--cold) 0%, var(--gold) 58%, var(--pink) 100%);
+  }
+</style>

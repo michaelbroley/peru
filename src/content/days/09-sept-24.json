@@ -1,0 +1,41 @@
+{
+  "order": 9,
+  "slug": "thu-sept-24-tour-day-7-lake-titicaca-and-homestay",
+  "date": "Thu, Sept 24",
+  "dayNumber": "24",
+  "month": "Sept",
+  "weekday": "Thu",
+  "tourDay": "Tour day 7",
+  "title": "Lake Titicaca & homestay",
+  "pick": true,
+  "overnight": "Homestay, Lake Titicaca",
+  "weather": {
+    "high": "~16°",
+    "low": "−1°",
+    "icon": "frost",
+    "note": "Your coldest night — ~0 to −1°C, no heating (blankets provided). Bright & sunny on the water; thermals + fleece after dark."
+  },
+  "glance": "Motorboat across the world's highest navigable lake to the Uros floating reed islands, then a homestay with a local family — consistently a trip highlight.",
+  "logistics": ["Uros islands by motorboat", "tonight: family homestay", "facilities basic, drop toilets, no showers"],
+  "journey": [],
+  "reservations": [],
+  "picksLabel": "Make the most of it",
+  "picks": [
+    {
+      "name": "Uros Floating Islands",
+      "area": "Lake Titicaca",
+      "note": "Islands hand-built from totora reeds; one of the most surreal places on the trip.",
+      "pick": true,
+      "lens": "art"
+    },
+    {
+      "name": "Your homestay",
+      "area": "Lake Titicaca",
+      "note": "Lean in: help cook, try Quechua, join the soccer game. Bring small gifts (fruit from Puno market, school supplies).",
+      "pick": false,
+      "lens": "art"
+    }
+  ],
+  "notes": [],
+  "lbb": []
+}

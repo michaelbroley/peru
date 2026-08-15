@@ -1,0 +1,544 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TocNav from '../components/TocNav.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import SnapshotTable from '../components/SnapshotTable.astro';
+import ReservationBanner from '../components/ReservationBanner.astro';
+import WeatherCard from '../components/WeatherCard.astro';
+import DayCard from '../components/DayCard.astro';
+import PlaceCard from '../components/PlaceCard.astro';
+import PackingList from '../components/PackingList.astro';
+import VerifyList from '../components/VerifyList.astro';
+import { STAR } from '../lib/glyphs';
+
+const tripEntry = await getEntry('trip', 'snapshot');
+if (!tripEntry) throw new Error('Missing trip snapshot content');
+const trip = tripEntry.data;
+
+const days = (await getCollection('days')).sort((a, b) => a.data.order - b.data.order);
+const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
+const places = (await getCollection('places')).sort((a, b) => a.data.order - b.data.order);
+const weatherRows = (await getCollection('weatherRows')).sort((a, b) => a.data.order - b.data.order);
+const packing = (await getCollection('packing')).sort((a, b) => a.data.order - b.data.order);
+const checklist = (await getCollection('checklist')).sort((a, b) => a.data.order - b.data.order);
+
+const placeData = places.map((p) => p.data);
+
+// Anchors mirror the Quick Links TOC in Peru_Trip_Content.md.
+const sections = [
+  { href: '#trip-snapshot', label: 'Snapshot' },
+  { href: '#weather-september-50-year-averages', label: 'Weather' },
+  { href: '#day-by-day', label: 'Days' },
+  { href: '#recommendations-little-black-book-for-laura', label: 'Recommendations' },
+  {
+    href: '#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu',
+    label: 'Packing',
+  },
+  { href: '#book-ahead-verify', label: 'Book ahead' },
+];
+
+const dayLinks = days.map((d) => ({
+  href: `#${d.data.slug}`,
+  label: `${d.data.date} — ${d.data.title}`,
+}));
+
+const categoryLinks = categories.map((c) => ({
+  href: `#${c.data.slug}`,
+  label: c.data.title,
+}));
+
+const highestAltitude = trip.altitude.profile.reduce((max, p) => Math.max(max, p.metres), 0);
+
+const title = 'Peru Field Guide — Michael & Laura, Sept 2026';
+const description =
+  'Eleven days in Peru, Sept 16–26 2026: day-by-day plan, weather, the little black book of places to eat, drink and see, packing and what still needs booking.';
+---
+
+<Base title={title} description={description}>
+  <div class="page">
+    <div class="shell">
+      <!-- ── Masthead ─────────────────────────────────────────────────── -->
+      <header class="hero">
+        <p class="hero__dates">{trip.onTheGround}</p>
+        <h1 class="hero__title">Peru</h1>
+        <p class="hero__names">{trip.travellers}</p>
+        <p class="hero__intro" set:html={trip.intro} />
+
+        <dl class="hero__stats">
+          {
+            trip.stats.map((stat) => (
+              <div class="hero__stat">
+                <dt class="sr-only">{stat.label}</dt>
+                <dd class="hero__statvalue">{stat.value}</dd>
+                <p class="hero__statlabel" aria-hidden="true">
+                  {stat.label}
+                </p>
+              </div>
+            ))
+          }
+        </dl>
+      </header>
+
+      <TocNav sections={sections} days={dayLinks} categories={categoryLinks} />
+
+      <main id="main">
+        <!-- ── 01 Trip snapshot ───────────────────────────────────────── -->
+        <section class="section" id="trip-snapshot" data-section aria-labelledby="trip-snapshot-title">
+          <SectionHeader num="01" title="Trip snapshot" />
+          <h2 class="sr-only" id="trip-snapshot-title">Trip snapshot</h2>
+
+          <div class="stack">
+            <SnapshotTable rows={[...trip.flights, ...trip.snapshot]} />
+
+            <div class="altitude on-ink">
+              <p class="altitude__label">
+                <span class="altitude__dot" aria-hidden="true"></span>
+                Altitude
+              </p>
+              <p class="altitude__text" set:html={trip.altitude.text} />
+
+              <div class="altitude__chart" role="img" aria-label="Altitude profile: sea level in Lima, 3,450 m in Cusco, 3,800 m at Lake Titicaca, back to sea level">
+                {
+                  trip.altitude.profile.map((point) => (
+                    <span
+                      class={`altitude__bar altitude__bar--${point.tone}`}
+                      style={`height:${Math.max(6, Math.round((point.metres / highestAltitude) * 100))}%`}
+                      title={`${point.day}: ${point.metres.toLocaleString('en-CA')} m`}
+                    />
+                  ))
+                }
+              </div>
+              <div class="altitude__axis">
+                {trip.altitude.axis.map((tick) => <span>{tick}</span>)}
+              </div>
+            </div>
+
+            <div class="booked">
+              <p class="booked__label"><span aria-hidden="true">{STAR}</span> Booked reservations</p>
+              {
+                trip.reservations.map((res, i) => (
+                  <div class:list={['booked__item', { 'booked__item--divided': i > 0 }]}>
+                    <ReservationBanner {...res} showTimeInEyebrow={false} showEyebrow={false} headingLevel="h3" />
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- ── 02 Weather ─────────────────────────────────────────────── -->
+        <section
+          class="section"
+          id="weather-september-50-year-averages"
+          data-section
+          aria-labelledby="weather-title"
+        >
+          <SectionHeader
+            num="02"
+            title="Weather"
+            lead="September, ~50-year averages. Dry-season conditions, thinner crowds. Plan for the day/night swing more than rain — strong high-altitude sun burns even when cool, so sunscreen daily."
+          />
+          <h2 class="sr-only" id="weather-title">Weather</h2>
+
+          <div class="weather-grid">
+            {weatherRows.map((row) => <WeatherCard row={row.data} />)}
+          </div>
+        </section>
+
+        <!-- ── 03 Day by day ──────────────────────────────────────────── -->
+        <section class="section" id="day-by-day" data-section aria-labelledby="days-title">
+          <SectionHeader num="03" title="Day by day" />
+          <h2 class="sr-only" id="days-title">Day by day</h2>
+
+          <div class="day-controls">
+            <button class="btn btn--solid" type="button" data-days-expand>Expand all</button>
+            <button class="btn" type="button" data-days-collapse>Collapse all</button>
+          </div>
+
+          <div class="days" data-days>
+            {
+              days.map((day, i) => (
+                <DayCard
+                  day={day.data}
+                  categories={categories}
+                  places={placeData}
+                  open={i === 0}
+                  last={i === days.length - 1}
+                />
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- ── 04 Recommendations ─────────────────────────────────────── -->
+        <section
+          class="section"
+          id="recommendations-little-black-book-for-laura"
+          data-section
+          aria-labelledby="recs-title"
+        >
+          <SectionHeader
+            num="04"
+            title="Recommendations"
+            lead={`The little black book, for Laura. Every entry: name — area — note, with address and phone where known. ${STAR} = top pick.`}
+          />
+          <h2 class="sr-only" id="recs-title">Recommendations — Little Black Book</h2>
+
+          <div class="cats">
+            {
+              categories.map((category) => {
+                const catPlaces = placeData.filter((p) => p.category === category.id);
+                const emptyWhen = (['food', 'skate'] as const)
+                  .filter((lens) => !catPlaces.some((p) => p.lens === lens))
+                  .join(' ');
+                return (
+                  <section class="cat" id={category.data.slug} data-lens-empty-when={emptyWhen || undefined}>
+                    <h3 class="cat__title">{category.data.title}</h3>
+                    {category.data.aside && <p class="cat__aside">{category.data.aside}</p>}
+                    <div class="cat__grid">
+                      {catPlaces.map((place) => (
+                        <PlaceCard {...place} />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })
+            }
+          </div>
+        </section>
+
+        <!-- ── 05 Packing ─────────────────────────────────────────────── -->
+        <section
+          class="section"
+          id="packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu"
+          data-section
+          aria-labelledby="packing-title"
+        >
+          <SectionHeader
+            num="05"
+            title="Packing"
+            lead="Tuned to this trip: sea level to 3,800 m, cold nights, rustic homestay, early Machu Picchu."
+          />
+          <h2 class="sr-only" id="packing-title">Packing</h2>
+          <PackingList groups={packing.map((p) => p.data)} />
+        </section>
+
+        <!-- ── 06 Book ahead / verify ─────────────────────────────────── -->
+        <section class="section section--last" id="book-ahead-verify" data-section aria-labelledby="book-title">
+          <SectionHeader
+            num="06"
+            title="Book ahead / verify"
+            lead="Tap to tick off — saved on this device. Lady Bee & Maido are already booked."
+          />
+          <h2 class="sr-only" id="book-title">Book ahead and verify</h2>
+          <VerifyList items={checklist} />
+
+          <div class="farewell">
+            <h3 class="farewell__title">{trip.farewell.title}</h3>
+            <p class="farewell__text" set:html={trip.farewell.text} />
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Expand / collapse all — the only other interactive bit on the page.
+    const days = () => Array.from(document.querySelectorAll<HTMLDetailsElement>('[data-days] details'));
+    document
+      .querySelector('[data-days-expand]')
+      ?.addEventListener('click', () => days().forEach((d) => (d.open = true)));
+    document
+      .querySelector('[data-days-collapse]')
+      ?.addEventListener('click', () => days().forEach((d) => (d.open = false)));
+  </script>
+</Base>
+
+<style>
+  /* ── Masthead ──────────────────────────────────────────────────────── */
+  .hero {
+    background: var(--pink);
+    color: var(--cream);
+    padding: 34px var(--pad) 26px;
+  }
+
+  .hero__dates {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label);
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .hero__title {
+    margin: 14px 0 0;
+    font-family: var(--display);
+    font-size: var(--fs-hero);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .hero__names {
+    margin: 10px 0 0;
+    font-family: var(--display);
+    font-size: var(--fs-name);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .hero__intro {
+    margin: 16px 0 0;
+    max-width: 36ch;
+    font-size: var(--fs-note);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin: 22px 0 0;
+    background: var(--cream-30);
+    border: 1px solid var(--cream-30);
+  }
+
+  .hero__stat {
+    background: var(--pink);
+    padding: 11px 10px;
+  }
+
+  .hero__statvalue {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-stat);
+    line-height: 0.85;
+    color: var(--gold);
+  }
+
+  .hero__statlabel {
+    margin: 6px 0 0;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* ── Sections ──────────────────────────────────────────────────────── */
+  .section:first-of-type {
+    padding-top: 30px;
+  }
+  .section--last {
+    padding-bottom: 40px;
+  }
+
+  .stack {
+    display: grid;
+    gap: 18px;
+    margin-top: 18px;
+  }
+
+  /* ── Altitude profile ──────────────────────────────────────────────── */
+  .altitude {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 16px 16px 17px;
+  }
+
+  .altitude__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .altitude__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--pink);
+  }
+
+  .altitude__text {
+    margin: 9px 0 0;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .altitude__chart {
+    display: flex;
+    gap: 2px;
+    margin-top: 14px;
+    align-items: flex-end;
+    height: 44px;
+  }
+
+  .altitude__bar {
+    flex: 1;
+    background: var(--cream-25);
+  }
+  .altitude__bar--mid {
+    background: var(--pink);
+  }
+  .altitude__bar--high {
+    background: var(--gold);
+  }
+
+  .altitude__axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-weight: 600;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  /* ── Booked reservations ───────────────────────────────────────────── */
+  .booked {
+    border: 2px solid var(--pink);
+    padding: 16px;
+  }
+
+  .booked__label {
+    margin: 0 0 4px;
+    font-weight: 700;
+    font-size: var(--fs-label);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--pink);
+  }
+
+  /* Nested banners drop their own box — the wrapper already frames them. */
+  .booked__item :global(.reservation) {
+    border: 0;
+    padding: 12px 0 0;
+  }
+  .booked__item--divided {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── Weather ───────────────────────────────────────────────────────── */
+  .weather-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  /* ── Days ──────────────────────────────────────────────────────────── */
+  .day-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .btn {
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid rgba(18, 16, 15, 0.3);
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+  .btn:hover {
+    border-color: var(--pink);
+    color: var(--pink);
+  }
+
+  .btn--solid {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+  .btn--solid:hover {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: var(--cream);
+  }
+
+  .days {
+    margin-top: 8px;
+  }
+
+  /* ── Recommendations ───────────────────────────────────────────────── */
+  .cats {
+    display: grid;
+    gap: 26px;
+    margin-top: 20px;
+  }
+
+  .cat__title {
+    font-family: var(--display);
+    font-size: var(--fs-group);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+    border-top: 2px solid var(--ink);
+    padding-top: 12px;
+  }
+
+  .cat__aside {
+    margin: 3px 0 0;
+    font-size: var(--fs-micro);
+    line-height: 1.4;
+    color: var(--ink-60);
+  }
+
+  .cat__grid {
+    display: grid;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  /* Two columns once the column is wide enough to hold them comfortably. */
+  @media (min-width: 720px) {
+    .cat__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 22px;
+    }
+  }
+
+  /* ── Farewell ──────────────────────────────────────────────────────── */
+  .farewell {
+    margin-top: 28px;
+    background: var(--pink);
+    color: var(--cream);
+    padding: 20px;
+  }
+
+  .farewell__title {
+    font-family: var(--display);
+    font-size: var(--fs-cardtitle);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .farewell__text {
+    margin: 8px 0 0;
+    font-size: var(--fs-note);
+    line-height: 1.5;
+  }
+</style>

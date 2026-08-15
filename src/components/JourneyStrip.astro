@@ -1,0 +1,114 @@
+---
+/**
+ * The day's ordered stops. Parenthesised entries ("(train)", "(bus up)") are
+ * the mode of travel between places, so they're drawn as the connector rather
+ * than as a stop.
+ */
+interface Props {
+  stops: string[];
+}
+const { stops } = Astro.props;
+
+type Leg = { stop: string; via: string | null };
+
+// Fold "(train)" into the leg that follows it.
+const legs: Leg[] = [];
+let pendingVia: string | null = null;
+for (const raw of stops) {
+  const isMode = /^\(.*\)$/.test(raw);
+  if (isMode) {
+    pendingVia = raw.slice(1, -1);
+  } else {
+    legs.push({ stop: raw, via: pendingVia });
+    pendingVia = null;
+  }
+}
+---
+
+<div class="journey">
+  <p class="eyebrow journey__label" id="journey-label">Journey</p>
+  <ol class="journey__list" aria-labelledby="journey-label">
+    {
+      legs.map((leg, i) => (
+        <li class="journey__item">
+          {i > 0 && (
+            <span class="journey__connector" aria-hidden="true">
+              <span class="journey__line" />
+              {leg.via && <span class="journey__via">{leg.via}</span>}
+              <span class="journey__line" />
+            </span>
+          )}
+          {leg.via && <span class="sr-only">by {leg.via} to</span>}
+          <span class="journey__stop">
+            <span class="journey__dot" aria-hidden="true" />
+            {leg.stop}
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .journey__label {
+    margin: 0 0 8px;
+  }
+
+  .journey__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 0;
+  }
+
+  .journey__item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .journey__stop {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    background: var(--ink);
+    color: var(--cream);
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1.2;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .journey__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex: 0 0 auto;
+  }
+
+  .journey__connector {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 5px;
+  }
+
+  .journey__line {
+    width: 8px;
+    height: 1px;
+    background: var(--ink-35);
+  }
+
+  .journey__via {
+    font-weight: 600;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    white-space: nowrap;
+  }
+</style>

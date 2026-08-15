@@ -1,0 +1,24 @@
+{
+  "order": 11,
+  "slug": "sat-sept-26-tour-day-9-depart-lima",
+  "date": "Sat, Sept 26",
+  "dayNumber": "26",
+  "month": "Sept",
+  "weekday": "Sat",
+  "tourDay": "Tour day 9",
+  "title": "Depart Lima",
+  "pick": false,
+  "weather": {
+    "high": "~20°",
+    "low": "15°",
+    "icon": "fog",
+    "note": "One last grey Lima morning; an early travel day."
+  },
+  "glance": "Flight home departs 8:25 AM — really a travel morning. Arrange an airport transfer the night before.",
+  "logistics": ["Flight 8:25 AM", "arrive YUL 5:45 PM"],
+  "journey": [],
+  "reservations": [],
+  "picks": [],
+  "notes": [],
+  "lbb": []
+}

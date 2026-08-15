@@ -1,0 +1,80 @@
+---
+import PlaceCard from './PlaceCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * A Little Black Book category, surfaced inside the day it's useful on.
+ * Dark panel so it reads as a distinct "look this up" layer.
+ */
+interface Props {
+  category: CollectionEntry<'categories'>['data'];
+  places: CollectionEntry<'places'>['data'][];
+  /** Anchor back to the full entry in the Recommendations section. */
+  href: string;
+}
+const { category, places, href } = Astro.props;
+
+// If a lens would empty this panel, hide the panel too rather than leave a
+// heading with nothing under it.
+const lenses = ['food', 'skate'] as const;
+const emptyWhen = lenses.filter((lens) => !places.some((p) => p.lens === lens)).join(' ');
+---
+
+<section class="lbb on-ink" data-lens-empty-when={emptyWhen || undefined} aria-label={`Little black book: ${category.title}`}>
+  <p class="lbb__eyebrow">Little black book</p>
+  <h4 class="lbb__title">
+    <a class="lbb__titlelink" href={href}>{category.title}</a>
+  </h4>
+  {category.aside && <p class="lbb__aside">{category.aside}</p>}
+  <div class="lbb__list">
+    {places.map((place) => <PlaceCard {...place} surface="ink" />)}
+  </div>
+</section>
+
+<style>
+  .lbb {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 16px;
+  }
+
+  .lbb__eyebrow {
+    margin: 0 0 10px;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .lbb__title {
+    font-family: var(--display);
+    font-size: var(--fs-lbb);
+    line-height: 1.1;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .lbb__titlelink {
+    color: inherit;
+    text-decoration: none;
+  }
+  .lbb__titlelink:hover,
+  .lbb__titlelink:focus-visible {
+    color: var(--gold);
+  }
+
+  .lbb__aside {
+    margin: 3px 0 0;
+    font-size: var(--fs-micro);
+    line-height: 1.4;
+    color: var(--cream-55);
+  }
+
+  .lbb__list {
+    display: grid;
+    gap: 13px;
+    margin-top: 13px;
+  }
+</style>

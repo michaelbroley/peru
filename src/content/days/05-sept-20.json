@@ -1,0 +1,51 @@
+{
+  "order": 5,
+  "slug": "sun-sept-20-tour-day-3-sacred-valley-aguas-calientes",
+  "date": "Sun, Sept 20",
+  "dayNumber": "20",
+  "month": "Sept",
+  "weekday": "Sun",
+  "tourDay": "Tour day 3",
+  "title": "Sacred Valley → Aguas Calientes",
+  "pick": false,
+  "overnight": "Aguas Calientes (cloud forest)",
+  "weather": {
+    "high": "~18°",
+    "low": "6°",
+    "icon": "cloud-sun",
+    "note": "Milder valley day; dropping into cloud forest, humidity rises — keep a rain layer handy."
+  },
+  "glance": "Scenic run through the Sacred Valley with a community visit & lunch, then the train from Ollantaytambo to Aguas Calientes at the foot of Machu Picchu.",
+  "logistics": ["Travel ~3 hrs + train", "included community lunch", "sit on the left side of the train"],
+  "journey": ["Cusco", "Sacred Valley", "(train)", "Aguas Calientes"],
+  "reservations": [],
+  "picksLabel": "Along the way / that evening",
+  "picks": [
+    {
+      "name": "Maras Salt Mines",
+      "area": "Sacred Valley",
+      "note": "Thousands of terraced salt pools worked since pre-Inca times; very photogenic. Buy salt & salt-chocolate.",
+      "address": "Salineras de Maras",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Ollantaytambo",
+      "area": "Sacred Valley",
+      "note": "Living Inca town with a monumental fortress-temple and still-flowing Inca waterworks.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Indio Feliz",
+      "area": "Aguas Calientes",
+      "note": "The town's most-loved restaurant; quirky French-Peruvian; perfect post-arrival dinner.",
+      "pick": true,
+      "lens": "food"
+    }
+  ],
+  "notes": [
+    "Today is the annual Warachicuy Inca reenactment at Sacsayhuamán in Cusco — you'll be in the valley, so you'll miss it, but locals may mention it."
+  ],
+  "lbb": ["sacred-valley", "aguas-calientes"]
+}

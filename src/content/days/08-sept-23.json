@@ -1,0 +1,44 @@
+{
+  "order": 8,
+  "slug": "wed-sept-23-tour-day-6-drive-to-puno",
+  "date": "Wed, Sept 23",
+  "dayNumber": "23",
+  "month": "Sept",
+  "weekday": "Wed",
+  "tourDay": "Tour day 6",
+  "title": "Drive to Puno",
+  "pick": false,
+  "overnight": "Hotel, Puno (3,800 m)",
+  "regionStart": { "title": "Lake Titicaca", "meta": "Sept 23–24 · 3,800 m" },
+  "weather": {
+    "high": "~16°",
+    "low": "−1°",
+    "icon": "frost",
+    "note": "Higher & colder; sunny dry days, nights near/below freezing. Dry air makes the sun feel fierce and the cold bite hard."
+  },
+  "glance": "Long, scenic drive (~7.5 hrs) across the high Altiplano to Puno on Lake Titicaca. The landscape — endless plains, alpaca herds — is the attraction.",
+  "logistics": ["Drive ~7.5 hrs", "altitude 3,800 m", "try tonight: grilled trout (trucha)"],
+  "journey": ["Cusco", "(Altiplano drive)", "Puno"],
+  "reservations": [],
+  "picksLabel": "In Puno",
+  "picks": [
+    {
+      "name": "Jirón Lima",
+      "area": "Puno centre",
+      "note": "The pedestrian spine; alpaca-wool shops, cafés, trout restaurants; best stroll in town.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Kuntur Wasi / Condor Hill",
+      "area": "Puno",
+      "note": "Steep climb to a giant condor statue and the best view over the lake; sunset if you have energy.",
+      "pick": false,
+      "lens": "art"
+    }
+  ],
+  "notes": [
+    "Intrepid flags occasional political unrest around Puno — the leader will adjust transport if needed."
+  ],
+  "lbb": ["puno-titicaca"]
+}

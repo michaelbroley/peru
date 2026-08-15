@@ -1,0 +1,49 @@
+{
+  "order": 4,
+  "slug": "sat-sept-19-tour-day-2-fly-to-cusco",
+  "date": "Sat, Sept 19",
+  "dayNumber": "19",
+  "month": "Sept",
+  "weekday": "Sat",
+  "tourDay": "Tour day 2",
+  "title": "Fly to Cusco",
+  "pick": false,
+  "overnight": "Hotel, Cusco (3,450 m)",
+  "regionStart": { "title": "Cusco & the Sacred Valley", "meta": "Sept 19–22 · 3,450 m" },
+  "weather": {
+    "high": "~21°",
+    "low": "4°",
+    "icon": "sun",
+    "note": "The big swing begins — warm sunny afternoons, ~4°C nights. Extreme UV: hat + sunscreen by day, warm layer at night."
+  },
+  "glance": "Early flight to Cusco (5:30 AM hotel departure). Main job is acclimatising — go slow, coca tea, skip alcohol. Gentle orientation walk introduces the old town.",
+  "logistics": ["Depart hotel 5:30 AM", "flight ~1h 20m", "altitude 3,450 m", "take it SLOW"],
+  "journey": ["Lima", "(early flight)", "Cusco"],
+  "reservations": [],
+  "picksLabel": "Orientation-walk highlights",
+  "picks": [
+    {
+      "name": "Qorikancha",
+      "area": "Av. El Sol",
+      "note": "Inca Sun Temple with a Spanish church on top; finest stonework in Cusco.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "Plaza de Armas & San Blas",
+      "area": "Old Town",
+      "note": "Grand main square, then the steep artisan quarter with the best city views.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "name": "San Pedro Market",
+      "area": "Central Cusco",
+      "note": "Juices, cheeses, chocolate, caldo de gallina; the essential local market.",
+      "pick": false,
+      "lens": "food"
+    }
+  ],
+  "notes": [],
+  "lbb": ["cusco-eat", "cusco-art"]
+}

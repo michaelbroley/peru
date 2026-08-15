@@ -1,0 +1,86 @@
+---
+import { gmapsUrl, telUrl, placeQuery } from '../lib/links';
+import { STAR } from '../lib/glyphs';
+
+/** A booked table — Lady Bee and Maido. Pink-boxed, the design's loudest block. */
+interface Props {
+  name: string;
+  time: string;
+  address?: string | undefined;
+  phone?: string | undefined;
+  note: string;
+  /** Shown in the eyebrow: "★ Reservation · 8:00 PM". */
+  showTimeInEyebrow?: boolean;
+  /** Off inside the snapshot's "★ Booked reservations" box, which labels itself. */
+  showEyebrow?: boolean;
+  headingLevel?: 'h3' | 'h4';
+}
+const {
+  name,
+  time,
+  address,
+  phone,
+  note,
+  showTimeInEyebrow = true,
+  showEyebrow = true,
+  headingLevel = 'h4',
+} = Astro.props;
+
+const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
+const telHref = phone ? telUrl(phone) : null;
+// Addresses are stored with the venue name up front for a better maps hit;
+// the label drops it since the name is already the heading.
+const addressLabel = address?.startsWith(`${name}, `) ? address.slice(name.length + 2) : address;
+const Heading = headingLevel;
+---
+
+<aside class="reservation" aria-label={`Booked reservation: ${name}`}>
+  {showEyebrow && <p class="reservation__eyebrow"><span aria-hidden="true">{STAR}</span> Reservation{showTimeInEyebrow ? ` · ${time}` : ''}</p>}
+  <Heading class="reservation__name">{name}</Heading>
+  <!-- Each sentence fragment is one element with its own punctuation: Astro
+       preserves template whitespace literally, so a line break between a link
+       and its full stop would render as " ." -->
+  <p class="reservation__body">
+    {!showTimeInEyebrow && <span>{time}.</span>}
+    {mapHref && addressLabel && <span><a class="res__link" href={mapHref} target="_blank" rel="noopener noreferrer" aria-label={`Open ${name} in Google Maps — ${addressLabel}`}>{addressLabel}</a>.</span>}
+    {telHref && phone && <span>Phone <a class="res__link" href={telHref} aria-label={`Call ${name} on ${phone}`}>{phone}</a>.</span>}
+    <span>{note}</span>
+  </p>
+</aside>
+
+<style>
+  .reservation {
+    border: 2px solid var(--pink);
+    padding: 14px;
+  }
+
+  .reservation__eyebrow {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pink);
+  }
+
+  .reservation__name {
+    margin: 7px 0 0;
+    font-family: var(--display);
+    font-size: var(--fs-resname);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .reservation__body {
+    margin: 5px 0 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.5;
+  }
+
+  .res__link {
+    display: inline-block;
+    padding: 2px 0;
+  }
+</style>

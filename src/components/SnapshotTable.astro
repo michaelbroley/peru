@@ -1,0 +1,74 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { gmapsUrl } from '../lib/links';
+
+/** The label/value grid at the top of the guide: flights, meeting point, meals, luggage. */
+interface Props {
+  rows: (CollectionEntry<'trip'>['data']['flights'][number] & {
+    address?: string | undefined;
+    addressLabel?: string | undefined;
+  })[];
+}
+const { rows } = Astro.props;
+
+/**
+ * A couple of rows carry an `{address}` placeholder so the maps link can sit
+ * mid-sentence. Split on it and render the anchor in place.
+ */
+function splitRow(text: string): [string, string] {
+  const i = text.indexOf('{address}');
+  return i === -1 ? [text, ''] : [text.slice(0, i), text.slice(i + '{address}'.length)];
+}
+---
+
+<dl class="snapshot">
+  {
+    rows.map((row) => {
+      const [before, after] = splitRow(row.text);
+      return (
+        <div class="snapshot__row">
+          <dt class="snapshot__label">{row.label}</dt>
+          {/* Link and the text that follows it share one element so no stray
+              space lands before the sentence's full stop. */}
+          <dd class="snapshot__value"><Fragment set:html={before} />{row.address && row.addressLabel && <span><a href={gmapsUrl(row.address)} target="_blank" rel="noopener noreferrer" aria-label={`Open ${row.addressLabel} in Google Maps`} class="snapshot__link">{row.addressLabel}</a><Fragment set:html={after} /></span>}</dd>
+        </div>
+      );
+    })
+  }
+</dl>
+
+<style>
+  /* 1px gaps over a rule-coloured background give the design's hairline grid. */
+  .snapshot {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .snapshot__row {
+    background: var(--cream);
+    padding: 14px 15px;
+  }
+
+  .snapshot__label {
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-45);
+  }
+
+  .snapshot__value {
+    margin: 5px 0 0;
+    font-size: var(--fs-body);
+    line-height: 1.45;
+  }
+
+  .snapshot__link {
+    display: inline;
+    padding: 2px 0;
+  }
+</style>

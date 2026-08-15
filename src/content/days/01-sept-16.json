@@ -8,7 +8,10 @@
   "title": "Arrival + Lady Bee",
   "pick": false,
   "overnight": "Barranco or Miraflores, Lima",
-  "regionStart": { "title": "Lima", "meta": "Sept 16–18 · sea level" },
+  "regionStart": {
+    "title": "Lima",
+    "meta": "Sept 16–18 · sea level"
+  },
   "weather": {
     "high": "~20°",
     "low": "15°",
@@ -16,8 +19,13 @@
     "note": "Grey & mild; coastal fog, high humidity, little sun. Light jacket, not a raincoat."
   },
   "glance": "Land off the redeye at 6:55 AM — take it easy. Check in, nap, gentle wander, then 8 PM cocktails at Lady Bee.",
-  "logistics": ["Land 6:55 AM", "Airport→Miraflores 30–90 min", "Taxi: Green Taxi ~PEN 100"],
+  "logistics": [
+    "Land 6:55 AM",
+    "Airport→Miraflores 30–90 min",
+    "Taxi: Green Taxi ~PEN 100"
+  ],
   "journey": [],
+  "map": "lima",
   "reservations": [
     {
       "name": "Lady Bee",
@@ -51,5 +59,8 @@
     }
   ],
   "notes": [],
-  "lbb": ["lima-ceviche", "lima-street"]
+  "lbb": [
+    "lima-ceviche",
+    "lima-street"
+  ]
 }

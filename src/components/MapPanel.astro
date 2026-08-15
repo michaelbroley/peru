@@ -1,0 +1,256 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { gmapsUrl } from '../lib/links';
+import { getAddressBook, lookupAddress } from '../lib/addressBook';
+
+/**
+ * A pinned map. Leaflet is self-hosted and loaded only when a map is about to
+ * come into view, so the page costs nothing until you scroll to one — and the
+ * library itself is precached, so the only thing a map needs from the network
+ * is its tiles.
+ *
+ * Every pin opens a popup with a Google Maps link, and the same links are
+ * repeated in a visually-hidden list so they're reachable without wrestling
+ * with a map on a touchscreen.
+ */
+interface Props {
+  view: CollectionEntry<'maps'>['data'];
+  id: string;
+  /** Heading for the hidden pin list — screen readers announce this. */
+  label: string;
+}
+const { view, id, label } = Astro.props;
+
+/**
+ * A pin links to the same Google Maps search as the place's address elsewhere
+ * in the guide, so both routes land you in the same spot. Pins with no matching
+ * address — viewpoints, islands, a plaza — fall back to their coordinates,
+ * which is exact and needs no name matching at all.
+ */
+const addressBook = await getAddressBook();
+
+function hrefFor(point: (typeof view.points)[number]): string {
+  const address = lookupAddress(addressBook, point.name);
+  return gmapsUrl(address ?? `${point.lat},${point.lng}`);
+}
+
+const config = {
+  points: view.points.map((p) => ({ ...p, href: hrefFor(p) })),
+  route: view.route ?? null,
+  showLabels: view.showLabels,
+};
+---
+
+<figure class="mapbox">
+  <div
+    class="mapbox__canvas"
+    id={`map-${id}`}
+    style={`height:${view.height}px`}
+    data-map
+    data-map-config={JSON.stringify(config)}
+    aria-label={label}
+  >
+    <p class="mapbox__fallback" data-map-fallback>
+      <span class="mapbox__fallback-title">Map needs a signal</span>
+      <span class="mapbox__fallback-text">
+        Every place below links straight to Google Maps, which works from your phone's offline maps.
+      </span>
+    </p>
+  </div>
+
+  <figcaption class="mapbox__caption">{view.caption}</figcaption>
+
+  <!-- The pins as plain links: keyboard-reachable, and readable when the
+       tiles never arrive. -->
+  <details class="mapbox__list">
+    <summary class="mapbox__listtoggle">{label} — {view.points.length} places as a list</summary>
+    <ul class="mapbox__items">
+      {
+        config.points.map((point) => (
+          <li class="mapbox__item">
+            <a href={point.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${point.name} in Google Maps`}>
+              {point.pick ? `★︎ ${point.name}` : point.name}
+            </a>
+            <span class="mapbox__itemnote">{point.note}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</figure>
+
+<style>
+  .mapbox {
+    margin: 0;
+    border: 1px solid var(--rule);
+  }
+
+  .mapbox__canvas {
+    position: relative;
+    width: 100%;
+    background: #ede8e1;
+    display: grid;
+    place-items: center;
+  }
+
+  .mapbox__fallback {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 18px 20px;
+    max-width: 34ch;
+    text-align: center;
+  }
+
+  /* Once the map is live the fallback is removed from the flow entirely. */
+  .mapbox__canvas.is-ready .mapbox__fallback {
+    display: none;
+  }
+
+  .mapbox__fallback-title {
+    font-weight: 700;
+    font-size: var(--fs-label);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+  }
+
+  .mapbox__fallback-text {
+    font-size: var(--fs-micro);
+    line-height: 1.45;
+    color: var(--ink-50);
+  }
+
+  .mapbox__caption {
+    padding: 9px 12px;
+    border-top: 1px solid var(--rule);
+    font-weight: 500;
+    font-size: var(--fs-label);
+    line-height: 1.4;
+    color: rgba(18, 16, 15, 0.55);
+  }
+
+  .mapbox__list {
+    border-top: 1px solid var(--rule);
+  }
+
+  .mapbox__listtoggle {
+    padding: 9px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+  }
+  .mapbox__listtoggle:hover {
+    color: var(--pink);
+  }
+
+  .mapbox__items {
+    display: grid;
+    gap: 10px;
+    padding: 2px 12px 14px;
+  }
+
+  .mapbox__item {
+    display: grid;
+    gap: 1px;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+  }
+
+  .mapbox__itemnote {
+    color: var(--ink-60);
+  }
+</style>
+
+<!-- Leaflet's own stylesheet, scoped out of Astro's component scoping. -->
+<style is:global>
+  .leaflet-container {
+    background: #ede8e1;
+    font-family: var(--text);
+  }
+  /* Warm the basemap towards the guide's paper, as the comp did. */
+  .leaflet-tile-pane {
+    filter: sepia(0.18) saturate(0.9) contrast(1.03);
+  }
+
+  .peru-pin {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--pink);
+    border: 2.5px solid var(--cream);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  }
+  .peru-pin--pick {
+    background: var(--gold);
+    width: 16px;
+    height: 16px;
+  }
+
+  .peru-label {
+    font: 700 11px/1.1 var(--text) !important;
+    color: var(--ink);
+    background: var(--cream);
+    padding: 3px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+  .peru-label.leaflet-tooltip::before {
+    display: none;
+  }
+
+  .leaflet-popup-content {
+    font: 400 13px/1.35 var(--text);
+    margin: 10px 12px;
+  }
+  .leaflet-popup-content b {
+    font-weight: 700;
+  }
+  .leaflet-popup-content .peru-popup__link {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .leaflet-control-attribution {
+    font-size: 9px;
+  }
+
+  /* Tiles never arrived — say so at the top, clear of Leaflet's own
+     attribution bar in the bottom corner. */
+  .mapbox__canvas.is-tileless::after {
+    content: 'Map tiles need a signal';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 500;
+    padding: 6px 10px;
+    background: rgba(255, 251, 245, 0.94);
+    border: 1px solid var(--rule);
+    font: 600 10px/1 var(--text);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @media print {
+    .mapbox__canvas {
+      display: none !important;
+    }
+    .mapbox__list[open] .mapbox__items,
+    .mapbox__list .mapbox__items {
+      display: grid !important;
+    }
+    .mapbox__listtoggle {
+      display: none;
+    }
+  }
+</style>

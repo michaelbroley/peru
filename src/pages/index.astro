@@ -10,6 +10,8 @@ import DayCard from '../components/DayCard.astro';
 import PlaceCard from '../components/PlaceCard.astro';
 import PackingList from '../components/PackingList.astro';
 import VerifyList from '../components/VerifyList.astro';
+import MapPanel from '../components/MapPanel.astro';
+import MapLoader from '../components/MapLoader.astro';
 import { STAR } from '../lib/glyphs';
 
 const tripEntry = await getEntry('trip', 'snapshot');
@@ -22,6 +24,8 @@ const places = (await getCollection('places')).sort((a, b) => a.data.order - b.d
 const weatherRows = (await getCollection('weatherRows')).sort((a, b) => a.data.order - b.data.order);
 const packing = (await getCollection('packing')).sort((a, b) => a.data.order - b.data.order);
 const checklist = (await getCollection('checklist')).sort((a, b) => a.data.order - b.data.order);
+const maps = await getCollection('maps');
+const routeMap = maps.find((m) => m.id === 'peru');
 
 const placeData = places.map((p) => p.data);
 
@@ -124,6 +128,8 @@ const description =
                 ))
               }
             </div>
+
+            {routeMap && <MapPanel view={routeMap.data} id="route" label="Route map" />}
           </div>
         </section>
 
@@ -163,6 +169,7 @@ const description =
                   day={day.data}
                   categories={categories}
                   places={placeData}
+                  maps={maps}
                   open={i === 0}
                   last={i === days.length - 1}
                 />
@@ -243,9 +250,13 @@ const description =
     </div>
   </div>
 
+  <MapLoader />
+
   <script>
     // Expand / collapse all — the only other interactive bit on the page.
-    const days = () => Array.from(document.querySelectorAll<HTMLDetailsElement>('[data-days] details'));
+    // Scoped to [data-day] so it never touches the <details> a map uses for
+    // its list of pins.
+    const days = () => Array.from(document.querySelectorAll<HTMLDetailsElement>('[data-days] details[data-day]'));
     document
       .querySelector('[data-days-expand]')
       ?.addEventListener('click', () => days().forEach((d) => (d.open = true)));

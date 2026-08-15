@@ -56,6 +56,8 @@ const days = defineCollection({
     logistics: z.array(z.string()).default([]),
     /** Ordered stops: ["Cusco", "Sacred Valley", "(train)", "Aguas Calientes"]. */
     journey: z.array(z.string()).default([]),
+    /** id of a `maps` entry to show inside this day. */
+    map: z.string().optional(),
     reservations: z
       .array(
         z.object({
@@ -164,6 +166,36 @@ const packing = defineCollection({
   }),
 });
 
+/**
+ * Map views. Coordinates come from the design comp's own map page — they are
+ * not derived from the addresses, so a pin and its address are two independent
+ * records of the same place. Treat the address as authoritative if they ever
+ * disagree.
+ */
+const maps = defineCollection({
+  loader: file('./src/content/maps.json'),
+  schema: z.object({
+    order: z.number().int(),
+    caption: z.string(),
+    height: z.number().int(),
+    /** Permanent name labels — only readable on the wide route map. */
+    showLabels: z.boolean().default(false),
+    points: z.array(
+      z.object({
+        name: z.string(),
+        lat: z.number(),
+        lng: z.number(),
+        note: z.string(),
+        /** ★ — draws the gold pin. */
+        pick: z.boolean().default(false),
+        labelDir: z.enum(['left', 'right', 'top', 'bottom']).optional(),
+      }),
+    ),
+    /** Drawn as the dashed route line, in travel order. */
+    route: z.array(z.tuple([z.number(), z.number()])).optional(),
+  }),
+});
+
 const checklist = defineCollection({
   loader: file('./src/content/checklist.json'),
   schema: z.object({
@@ -172,4 +204,4 @@ const checklist = defineCollection({
   }),
 });
 
-export const collections = { days, places, categories, trip, weatherRows, packing, checklist };
+export const collections = { days, places, categories, trip, weatherRows, packing, checklist, maps };

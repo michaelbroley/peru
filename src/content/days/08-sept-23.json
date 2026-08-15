@@ -9,7 +9,10 @@
   "title": "Drive to Puno",
   "pick": false,
   "overnight": "Hotel, Puno (3,800 m)",
-  "regionStart": { "title": "Lake Titicaca", "meta": "Sept 23–24 · 3,800 m" },
+  "regionStart": {
+    "title": "Lake Titicaca",
+    "meta": "Sept 23–24 · 3,800 m"
+  },
   "weather": {
     "high": "~16°",
     "low": "−1°",
@@ -17,8 +20,17 @@
     "note": "Higher & colder; sunny dry days, nights near/below freezing. Dry air makes the sun feel fierce and the cold bite hard."
   },
   "glance": "Long, scenic drive (~7.5 hrs) across the high Altiplano to Puno on Lake Titicaca. The landscape — endless plains, alpaca herds — is the attraction.",
-  "logistics": ["Drive ~7.5 hrs", "altitude 3,800 m", "try tonight: grilled trout (trucha)"],
-  "journey": ["Cusco", "(Altiplano drive)", "Puno"],
+  "logistics": [
+    "Drive ~7.5 hrs",
+    "altitude 3,800 m",
+    "try tonight: grilled trout (trucha)"
+  ],
+  "journey": [
+    "Cusco",
+    "(Altiplano drive)",
+    "Puno"
+  ],
+  "map": "puno",
   "reservations": [],
   "picksLabel": "In Puno",
   "picks": [
@@ -40,5 +52,7 @@
   "notes": [
     "Intrepid flags occasional political unrest around Puno — the leader will adjust transport if needed."
   ],
-  "lbb": ["puno-titicaca"]
+  "lbb": [
+    "puno-titicaca"
+  ]
 }

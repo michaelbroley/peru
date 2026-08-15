@@ -16,8 +16,18 @@
     "note": "Milder valley day; dropping into cloud forest, humidity rises — keep a rain layer handy."
   },
   "glance": "Scenic run through the Sacred Valley with a community visit & lunch, then the train from Ollantaytambo to Aguas Calientes at the foot of Machu Picchu.",
-  "logistics": ["Travel ~3 hrs + train", "included community lunch", "sit on the left side of the train"],
-  "journey": ["Cusco", "Sacred Valley", "(train)", "Aguas Calientes"],
+  "logistics": [
+    "Travel ~3 hrs + train",
+    "included community lunch",
+    "sit on the left side of the train"
+  ],
+  "journey": [
+    "Cusco",
+    "Sacred Valley",
+    "(train)",
+    "Aguas Calientes"
+  ],
+  "map": "valley",
   "reservations": [],
   "picksLabel": "Along the way / that evening",
   "picks": [
@@ -47,5 +57,8 @@
   "notes": [
     "Today is the annual Warachicuy Inca reenactment at Sacsayhuamán in Cusco — you'll be in the valley, so you'll miss it, but locals may mention it."
   ],
-  "lbb": ["sacred-valley", "aguas-calientes"]
+  "lbb": [
+    "sacred-valley",
+    "aguas-calientes"
+  ]
 }

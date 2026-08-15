@@ -33,35 +33,51 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | `weather.json`              | The September averages table                                  |
 | `packing.json`              | Packing groups                                                |
 | `checklist.json`            | Book-ahead / verify list                                      |
+| `maps.json`                 | The five map views — route, Lima, Cusco, valley, Puno — and their pins |
 
 Two conventions worth knowing:
 
 - **`pick: true` is the ★** from the source markdown. It drives the gold treatment everywhere.
 - **`order`** on `places` and `weather` entries preserves source order — the content loader keys entries by `id`, so without it the list would render alphabetically.
+- **Map pins carry their own coordinates**, taken from the design comp's map page rather than derived from the addresses. A pin and its address are therefore two independent records of the same place; if they ever disagree, the address is the one to trust.
 
 Anchor `slug` values match the Quick Links TOC in `Peru_Trip_Content.md` exactly, so links written against the original document still resolve.
 
 ## How it's put together
 
 - **Astro 7**, static output, no adapter, no UI framework.
-- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), expand/collapse-all, checklist persistence, and service-worker registration — all vanilla, all inlined into the HTML by the build. `dist/` ships no separate JS file.
+- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), expand/collapse-all, checklist persistence, the map loader, and service-worker registration — all vanilla, all inlined into the HTML by the build. The only separate JS file is Leaflet, and it's only fetched if you scroll to a map.
 - **CSS custom properties** in `src/styles/global.css` hold every design token (colour, type scale, spacing, radii). Nothing hard-codes a hex.
 - **Self-hosted fonts** — Anton and Work Sans (variable, 400–700), subset to latin + latin-ext, in `public/fonts/`.
 - **Inlined stylesheet**, so the page has no render-blocking request.
 
-Total payload: ~29 KB gzipped HTML plus fonts.
+Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, but only once you reach a map.
 
 ### Components
 
-`TocNav` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `SnapshotTable` · `PackingList` · `VerifyList` · `SectionHeader`
+`TocNav` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList` · `SectionHeader`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
+### Maps
+
+Five pinned maps: the whole route in the snapshot, and one each inside the Lima, Cusco, Sacred Valley and Puno days. Gold pins are the ★ picks; tapping one opens a popup with a Google Maps link.
+
+Leaflet is **self-hosted** in `public/vendor/leaflet/` and **lazy-loaded** — nothing is fetched until a map is about to scroll into view, and a map inside a collapsed day waits until you open it. Because the library is precached, the only thing a map needs from the network is its tiles (CARTO's light basemap, OpenStreetMap data).
+
+Three things happen when the tiles can't load:
+
+- Tiles you've already looked at are served from a capped runtime cache, so a map you opened on hotel wifi still draws later with no signal.
+- Failing that, the map says "map tiles need a signal" rather than showing an empty rectangle.
+- Every pin is also listed as plain text under the map — name, note and the same Google Maps link. That list is keyboard-reachable, works with no tiles at all, and is what gets printed.
+
+Pin links reuse the place's address where the content has one (`src/lib/addressBook.ts` gathers them from places, days and the trip snapshot) and fall back to the pin's exact coordinates otherwise.
+
 ### Offline
 
-`public/sw.js` precaches the page, fonts and icons. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
+`public/sw.js` precaches the page, fonts, icons and Leaflet. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. Map tiles use a separate capped cache that survives content releases. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
 
-**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v1` → `v2`) so returning devices drop the old cache.
+**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v2` → `v3`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
 
 ### Icons
 
@@ -90,4 +106,4 @@ The layout follows the supplied Claude Design comp — palette (`#12100F` ink, `
 1. **Recommendations is its own section (04).** The comp folded the Little Black Book into the day cards. Both are here: each category still appears on the day it's useful, *and* all twelve get a full section with the TOC's anchor ids, as the brief requires. The in-day panels link through to it.
 2. **The column widens to 660 px above 900 px**, and the recommendations go to two columns above 720 px. The comp is a fixed 520 px phone frame; everything else about the composition is unchanged.
 
-The comp also embedded Leaflet route maps in iframes. Those are dropped: they need network for tiles, which defeats the offline goal, and they'd add far more JS than the rest of the page combined. Addresses link out to Google Maps instead, which opens the native app and works from a cached page.
+The comp embedded its maps as iframes pointing at a separate page. Here they're inline components instead, sharing the page's tokens and lazy-loading a self-hosted Leaflet — same maps, same pins, same coordinates, without the second document or the CDN dependency.

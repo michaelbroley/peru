@@ -5,17 +5,21 @@ import JourneyStrip from './JourneyStrip.astro';
 import ReservationBanner from './ReservationBanner.astro';
 import PlaceCard from './PlaceCard.astro';
 import LbbPanel from './LbbPanel.astro';
+import MapPanel from './MapPanel.astro';
 import { STAR } from '../lib/glyphs';
 
 interface Props {
   day: CollectionEntry<'days'>['data'];
   categories: CollectionEntry<'categories'>[];
   places: CollectionEntry<'places'>['data'][];
+  maps: CollectionEntry<'maps'>[];
   /** Sept 16 opens by default so the guide isn't a wall of closed rows. */
   open?: boolean;
   last?: boolean;
 }
-const { day, categories, places, open = false, last = false } = Astro.props;
+const { day, categories, places, maps, open = false, last = false } = Astro.props;
+
+const map = day.map ? maps.find((m) => m.id === day.map) : undefined;
 
 // The design stars a day that has a booked table, as well as one the source
 // marks with ★ directly.
@@ -124,6 +128,8 @@ const lbb = day.lbb.flatMap((categoryId) => {
         <LbbPanel category={category} places={catPlaces} href={`#${category.slug}`} />
       ))
     }
+
+    {map && <MapPanel view={map.data} id={`day-${day.slug}`} label={`${day.title} map`} />}
   </div>
 </details>
 

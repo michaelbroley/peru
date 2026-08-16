@@ -15,6 +15,7 @@ import ladyBee from '../images/lady-bee-peru.webp';
 import maido from '../images/maido-peru.webp';
 import maidoRoom from '../images/maido-dining-room.webp';
 import ladyBeeSign from '../images/lady-bee-sign.webp';
+import parqueDelAmor from '../images/parque-del-amor-lima-peru.webp';
 import limaCathedral from '../images/basilica-cathedral-lima-landmark-plaza-mayor-square-lima-peru-south-america.webp';
 import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
 
@@ -25,8 +26,7 @@ import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
  * Alt text describes what's actually in the frame — these are illustrative
  * rather than informational, so the descriptions stay short.
  *
- * Unused from the upload, kept for later: aerial-view-cityscape-against-sky,
- * parque-del-amor.
+ * Unused from the upload, kept for later: aerial-view-cityscape-against-sky.
  */
 export interface Cover {
   src: ImageMetadata;
@@ -105,6 +105,11 @@ export const covers = {
     src: ladyBeeSign,
     alt: 'The illuminated Lady Bee sign on a dark wall — a glowing white box lettered "Lady Bee, Lima, Perú"',
     focus: '45% 50%',
+  },
+  'parque-del-amor': {
+    src: parqueDelAmor,
+    alt: 'The Miraflores clifftop in Lima — a palm, a lamppost and bougainvillea above the Costa Verde and the Pacific',
+    focus: '55% 50%',
   },
   'lima-cathedral': {
     src: limaCathedral,

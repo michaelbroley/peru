@@ -37,7 +37,9 @@ export type IconName =
   | 'terrace'
   | 'market'
   | 'camera'
-  | 'bird';
+  | 'bird'
+  | 'speech'
+  | 'first-aid';
 
 interface Props {
   name: IconName;
@@ -299,6 +301,25 @@ const { name, size = 20, label, class: className = '' } = Astro.props;
         <rect x="2.8" y="6.6" width="18.4" height="13.4" rx="2.6" />
         <circle cx="12" cy="13.3" r="3.6" />
         <path d="M8.4 6.6l1.4-2.6h4.4l1.4 2.6" />
+      </>
+    )
+  }
+
+  {
+    name === 'speech' && (
+      <>
+        <path d="M20.4 13.4a2.6 2.6 0 01-2.6 2.6H9.2L4.6 19.6v-3.6H4.2a2.6 2.6 0 01-2.6-2.6V6.6A2.6 2.6 0 014.2 4h13.6a2.6 2.6 0 012.6 2.6z" />
+        <path d="M7 8.8h8M7 11.8h5" />
+      </>
+    )
+  }
+
+  {
+    name === 'first-aid' && (
+      <>
+        <rect x="3.2" y="6.4" width="17.6" height="13.4" rx="2.2" />
+        <path d="M9 6.4V5.2a1.4 1.4 0 011.4-1.4h3.2A1.4 1.4 0 0115 5.2v1.2" />
+        <path d="M12 10.2v5.6M9.2 13h5.6" />
       </>
     )
   }

@@ -223,6 +223,29 @@ const maps = defineCollection({
   }),
 });
 
+/**
+ * Phrasebook groups. `book` picks which section a group belongs to; a `hint`
+ * is the rough English-speaker pronunciation, which only the Quechua entries
+ * carry — Spanish reads close enough to how it's written.
+ */
+const phrases = defineCollection({
+  loader: file('./src/content/phrases.json'),
+  schema: z.object({
+    order: z.number().int(),
+    book: z.enum(['spanish', 'quechua']),
+    title: z.string(),
+    aside: z.string().optional(),
+    icon: z.string().optional(),
+    items: z.array(
+      z.object({
+        term: z.string(),
+        gloss: z.string(),
+        hint: z.string().optional(),
+      }),
+    ),
+  }),
+});
+
 const checklist = defineCollection({
   loader: file('./src/content/checklist.json'),
   schema: z.object({
@@ -231,4 +254,4 @@ const checklist = defineCollection({
   }),
 });
 
-export const collections = { days, places, categories, trip, weatherRows, packing, checklist, maps };
+export const collections = { days, places, categories, trip, weatherRows, packing, phrases, checklist, maps };

@@ -1,0 +1,244 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon, { type IconName } from './Icon.astro';
+
+/**
+ * A phrasebook group: a heading, and a list of phrases against what they mean.
+ *
+ * It's a <dl> rather than a table or a list of paragraphs, because that's what
+ * this is — a term and its definition. Screen readers announce the pairing;
+ * "Sulpayki, thank you" reads correctly without the punctuation between them
+ * having to do the work.
+ *
+ * The em dash sits in CSS rather than the markup so it can't be read aloud or
+ * copied into a phrase you're trying to show someone.
+ *
+ * Group titles are h3: they sit straight under the section's own h2. The
+ * recommendations use h4 for the equivalent because they have a chapter band
+ * in between — the tag follows the outline, not the look.
+ */
+interface Props {
+  groups: CollectionEntry<'phrases'>['data'][];
+}
+const { groups } = Astro.props;
+---
+
+<div class:list={['phrases', { 'phrases--single': groups.length === 1 }]}>
+  {
+    groups.map((group) => (
+      <section class="phrase-group">
+        <h3 class="phrase-group__title">
+          {group.icon && <Icon name={group.icon as IconName} size={20} class="phrase-group__icon" />}
+          <span class="phrase-group__titletext">{group.title}</span>
+          <span class="phrase-group__count">{group.items.length}</span>
+        </h3>
+        {group.aside && <p class="phrase-group__aside">{group.aside}</p>}
+
+        <dl class="phrase-group__list">
+          {group.items.map((item) => (
+            <div class="phrase">
+              <dt class="phrase__term" lang={group.book === 'quechua' ? 'qu' : 'es'}>
+                {item.term}
+              </dt>
+              <dd class="phrase__gloss">
+                <span class="phrase__english">{item.gloss}</span>
+                {item.hint && <span class="phrase__hint">{item.hint}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .phrases {
+    display: grid;
+    gap: 22px;
+    margin-top: 18px;
+  }
+
+  /* Same solid header the little black book's lists use, so a phrasebook
+     group reads as the same kind of thing. */
+  .phrase-group__title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--display);
+    font-size: var(--fs-group);
+    line-height: 1.05;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .phrase-group__title :global(.phrase-group__icon) {
+    flex: 0 0 auto;
+    color: var(--gold);
+  }
+
+  .phrase-group__titletext {
+    min-width: 0;
+  }
+
+  .phrase-group__count {
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-family: var(--text);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    letter-spacing: 0.14em;
+    color: var(--cream-55);
+  }
+
+  .phrase-group__aside {
+    margin: 8px 0 0;
+    font-size: var(--fs-micro);
+    line-height: 1.4;
+    color: var(--ink-60);
+  }
+
+  .phrase-group__list {
+    display: grid;
+    gap: 0;
+    margin: 12px 0 0;
+  }
+
+  .phrase {
+    display: grid;
+    gap: 1px 14px;
+    padding: 8px 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .phrase:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* The phrase itself is the thing you point at, so it carries the weight. */
+  .phrase__term {
+    font-weight: 700;
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+  }
+
+  .phrase__gloss {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+    color: var(--ink-72);
+  }
+
+  /* Rough pronunciation, one per line under the meaning on a phone. */
+  .phrase__hint {
+    display: block;
+    font-size: var(--fs-small);
+    letter-spacing: 0.04em;
+    color: var(--ink-50);
+  }
+
+  /* ── Wider ─────────────────────────────────────────────────────────────
+     Phrase left, meaning right, with the dash drawn in rather than written:
+     it's a separator, not something you'd want read out or copied. */
+  @media (min-width: 600px) {
+    .phrase {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      align-items: baseline;
+    }
+
+    .phrase__gloss::before {
+      content: '—';
+      margin-right: 8px;
+      color: var(--ink-35);
+    }
+
+    .phrase__hint {
+      display: inline;
+      margin-left: 8px;
+    }
+
+    .phrase__hint::before {
+      content: '(';
+    }
+    .phrase__hint::after {
+      content: ')';
+    }
+  }
+
+  /* Two columns, but balanced by the browser rather than by a grid: the groups
+     run 8 to 16 phrases, and a grid row would leave a hole under the short one
+     while the tall one carried on. Nothing here is positioned or scripted, so
+     multi-column is safe in a way it wouldn't be around a map. */
+  @media (min-width: 1080px) {
+    .phrases {
+      display: block;
+      columns: 2;
+      column-gap: 32px;
+      margin-top: 20px;
+    }
+
+    .phrase-group {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .phrase-group + .phrase-group {
+      margin-top: 26px;
+    }
+
+    /* One group has nothing to balance against, so the phrases themselves
+       take the two columns instead of leaving half the card empty. */
+    .phrases--single {
+      columns: 1;
+    }
+
+    /* `columns` is ignored on a grid container, so the list has to drop back
+       to block flow for the browser to split it. */
+    .phrases--single .phrase-group__list {
+      display: block;
+      columns: 2;
+      column-gap: 32px;
+    }
+
+    .phrases--single .phrase {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* A column break lands mid-list; the first row of the second column would
+       otherwise lose its rule and sit tight against the header. */
+    .phrases--single .phrase:first-child {
+      border-top: 1px solid var(--rule);
+      padding-top: 8px;
+    }
+  }
+
+  /* ── Print ─────────────────────────────────────────────────────────────
+     A phrasebook is the one part of this you might genuinely want on paper in
+     a pocket, so it keeps both columns and never splits a group across pages. */
+  @media print {
+    .phrases {
+      display: block;
+      columns: 2;
+      column-gap: 20px;
+    }
+
+    .phrase-group,
+    .phrase {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .phrase-group + .phrase-group {
+      margin-top: 14px;
+    }
+
+    .phrase {
+      padding: 3px 0;
+    }
+  }
+</style>

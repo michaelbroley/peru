@@ -8,13 +8,15 @@
  * It runs down the page, not across. Laid out horizontally these wrapped into
  * a scatter of small chips that read as tags, which is exactly why the travel
  * — the thing this trip is mostly made of — disappeared into the day.
+ *
+ * Colours come from the block it sits in, as custom properties, so the route
+ * doesn't need to know what it has been dropped onto: --route-stop,
+ * --route-end, --route-dot, --route-dot-end, --route-line, --route-via.
  */
 interface Props {
   stops: string[];
-  /** Rendered on the ink travel block, so the palette inverts. */
-  onInk?: boolean;
 }
-const { stops, onInk = false } = Astro.props;
+const { stops } = Astro.props;
 
 type Leg = { stop: string; via: string | null };
 
@@ -31,7 +33,7 @@ for (const raw of stops) {
 }
 ---
 
-<ol class:list={['route', { 'route--ink': onInk }]}>
+<ol class="route">
   {
     legs.map((leg, i) => (
       <li class="route__item">
@@ -56,6 +58,10 @@ for (const raw of stops) {
 </ol>
 
 <style>
+  /* The defaults are fallbacks at the point of use, never declarations on
+     .route itself: a custom property set on an element shadows the one it
+     would otherwise inherit, so defining them here would mean a block could
+     never colour the route it contains. */
   .route {
     display: grid;
     margin: 0;
@@ -78,7 +84,7 @@ for (const raw of stops) {
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: var(--gold);
+    background: var(--route-dot, var(--gold));
   }
 
   .route__name {
@@ -88,12 +94,16 @@ for (const raw of stops) {
     line-height: 1.15;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: var(--ink);
+    color: var(--route-stop, var(--ink));
   }
 
   /* Where you end the day, which is the one stop worth finding at a glance. */
   .route__name--end {
-    color: var(--pink);
+    color: var(--route-end, var(--pink));
+  }
+
+  .route__item:last-child .route__marker {
+    background: var(--route-dot-end, var(--gold));
   }
 
   /* The line between two stops, carrying how you get along it. */
@@ -116,7 +126,7 @@ for (const raw of stops) {
     top: -7px;
     bottom: -7px;
     width: 2px;
-    background: var(--ink-35);
+    background: var(--route-line, var(--ink-35));
   }
 
   .route__via {
@@ -127,39 +137,17 @@ for (const raw of stops) {
     line-height: 1.2;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ink-50);
-  }
-
-  /* --- on the ink block ---------------------------------------------------- */
-  .route--ink .route__name {
-    color: var(--cream);
-  }
-
-  .route--ink .route__name--end {
-    color: var(--gold);
-  }
-
-  .route--ink .route__leg::before {
-    background: var(--cream-30);
-  }
-
-  .route--ink .route__via {
-    color: var(--cream-55);
+    color: var(--route-via, var(--ink-50));
   }
 
   @media print {
-    .route--ink .route__name,
-    .route--ink .route__name--end {
-      color: #000;
-    }
-    .route--ink .route__via {
-      color: #333;
-    }
-    .route--ink .route__leg::before {
-      background: #999;
-    }
-    .route__marker {
-      background: #000;
+    .route {
+      --route-stop: #000;
+      --route-end: #000;
+      --route-via: #333;
+      --route-line: #999;
+      --route-dot: #000;
+      --route-dot-end: #000;
     }
   }
 </style>

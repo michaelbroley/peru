@@ -86,7 +86,11 @@ It used to be two things saying versions of the same route: a transit card near 
 
 **One block now.** Mode and clock across the top, the route itself as the body, the day's travel notes underneath. `TravelCallout` renders `JourneyStrip` inside it, and `travel.detail` — the prose version of the route — only appears where there are no stops to draw, so nothing is said twice.
 
-**The route runs down the page, not across.** Stops are gold dots on a line, the mode of travel labels the leg it applies to, and the last stop is set in gold because where you sleep is the one thing you look for. A connector is drawn between *every* pair of stops, not only the ones with a named mode — drawing it only where there was a `(train)` left the unlabelled hops stacked like a list instead of joined like a route.
+**Gold ground, ink type — the one combination nothing else uses.** It was ink-and-gold like every other panel, sitting directly beneath the day's status panel, which is also ink-and-gold: two dark blocks in a row, the second one losing. Inverting it is the cheapest way to tell them apart, and a gold ticket is the right shape for travel anyway. Ink on this gold is 11.8:1, so the small print is more legible than the cream-on-ink it replaced.
+
+**The route takes its colours from whatever block it sits in** — `--route-stop`, `--route-end`, `--route-dot`, `--route-dot-end`, `--route-line`, `--route-via`. Those defaults are fallbacks at the point of use (`var(--route-stop, var(--ink))`), never declarations on `.route` itself: a custom property set on an element shadows the one it would otherwise inherit, so declaring them there means an ancestor can never colour it. That bug shipped for one build — the destination stayed pink on gold, at about 3:1, until a screenshot caught it.
+
+**The route runs down the page, not across.** Stops are dots on a line and the mode of travel labels the leg it applies to. On the gold block the stops before the destination step back to 62% ink and the last one stays full strength with a pink dot — the same hierarchy pink gave on cream, without pink on gold. A connector is drawn between *every* pair of stops, not only the ones with a named mode — drawing it only where there was a `(train)` left the unlabelled hops stacked like a list instead of joined like a route.
 
 **It reads with the day shut too.** A `Cusco → Puno` chip sits in the summary beside the travel-day chip. Scanning eleven collapsed days, where each one takes you is the thing you're after, and it used to need a click.
 

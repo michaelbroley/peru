@@ -14,11 +14,14 @@ import {
  * She has no job. She stands in the corner, occasionally paces, waves, or
  * catches a hoof and falls over; poke her and she spits. On each day of the
  * trip she has something of her own to do — a cocktail on the 16th, the
- * terraces on the 21st, the sun disc on the way home.
+ * terraces on the 21st, the sun disc on the way home. Once in a blue moon she
+ * moonwalks.
  *
- * One 174 KB sheet holds all seventeen animations and is fetched after the
- * page has settled, so nothing here competes with the guide loading. The
- * whole thing is off in one click and remembers that.
+ * Turning her off doesn't delete her: she curls up in the left corner and
+ * sleeps, which is a nicer thing to have in the corner of a page than nothing.
+ *
+ * One 14 KB sheet holds all nineteen animations and is fetched after the page
+ * has settled, so nothing here competes with the guide loading.
  */
 const anims = JSON.stringify(LLAMA_ANIMATIONS);
 const days = JSON.stringify(LLAMA_DAYS);
@@ -75,6 +78,12 @@ const days = JSON.stringify(LLAMA_DAYS);
     cursor: pointer;
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Asleep she is scenery: nothing to click, nothing to tab to. */
+  .llama[data-asleep] .llama__hit {
+    pointer-events: none;
+    cursor: default;
   }
 
   .llama__hit:focus-visible {
@@ -138,6 +147,7 @@ const days = JSON.stringify(LLAMA_DAYS);
     row: number;
     frames: number;
     fps: number;
+    backwards?: boolean;
   }
   interface Config {
     sheet: string;
@@ -189,6 +199,21 @@ const days = JSON.stringify(LLAMA_DAYS);
     let x = 0;
     /** 1 is the way the art is drawn (facing right); -1 mirrors her. */
     let facing: 1 | -1 = 1;
+
+    /**
+     * Which way to point her for a given direction of travel. Everything is
+     * drawn facing right and walks the way it faces — except the moonwalk,
+     * which is drawn sliding away from the direction she's looking.
+     */
+    function faceFor(direction: number, anim: Anim): 1 | -1 {
+      const forward = direction > 0 ? 1 : -1;
+      return (anim.backwards ? -forward : forward) as 1 | -1;
+    }
+
+    function point(direction: number, anim: Anim): void {
+      facing = faceFor(direction, anim);
+      root!.dataset.facing = String(facing);
+    }
     let walking = 0; // px/second, 0 when standing still
     let raf = 0;
 
@@ -208,7 +233,7 @@ const days = JSON.stringify(LLAMA_DAYS);
 
     function draw(): void {
       const anim = override ?? current;
-      sprite.style.backgroundPosition = `-${frame * CELL}px -${anim.row * CELL}px`;
+      sprite!.style.backgroundPosition = `-${frame * CELL}px -${anim.row * CELL}px`;
       root!.style.transform = `translateX(${Math.round(x)}px)`;
     }
 
@@ -246,8 +271,7 @@ const days = JSON.stringify(LLAMA_DAYS);
         if (x <= minX() || x >= maxX()) {
           x = Math.max(minX(), Math.min(x, maxX()));
           walking = -walking;
-          facing = walking > 0 ? 1 : -1;
-          root!.dataset.facing = String(facing);
+          point(walking, override ?? current);
         }
       }
 
@@ -258,7 +282,25 @@ const days = JSON.stringify(LLAMA_DAYS);
     /* --- What she decides to do ------------------------------------------
        A queue of one-shots on timers. Nothing here is clever: she stands
        around, and every so often does something. */
-    let timer = 0;
+    /**
+     * Every pending piece of behaviour, so a state change can cancel all of it
+     * at once. A stray `stand()` landing after she's gone to sleep would stand
+     * her up asleep, which is exactly the kind of bug a mascot gets away with
+     * for months.
+     */
+    const pending = new Set<number>();
+    function later(fn: () => void, ms: number): void {
+      const id = window.setTimeout(() => {
+        pending.delete(id);
+        fn();
+      }, ms);
+      pending.add(id);
+    }
+    function clearPending(): void {
+      for (const id of pending) window.clearTimeout(id);
+      pending.clear();
+    }
+
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
     function stand(): void {
@@ -294,15 +336,18 @@ const days = JSON.stringify(LLAMA_DAYS);
       return cfg.days[iso];
     }
 
-    function pace(): number {
-      // Head for somewhere else on the floor and walk there.
+    /**
+     * Head for somewhere else on the floor and walk there. `anim` is normally
+     * the gallop; once in a while it's the moonwalk, which glides rather than
+     * runs and so travels slower.
+     */
+    function pace(anim: Anim = A.run!, speed = 42): number {
       const target = rand(minX(), maxX());
-      walking = target > x ? 42 : -42;
-      facing = walking > 0 ? 1 : -1;
-      root!.dataset.facing = String(facing);
-      play(A.run!);
-      const ms = (Math.abs(target - x) / 42) * 1000;
-      window.setTimeout(stand, ms);
+      walking = target > x ? speed : -speed;
+      point(walking, anim);
+      play(anim);
+      const ms = (Math.abs(target - x) / speed) * 1000;
+      later(stand, ms);
       return ms + 400;
     }
 
@@ -317,15 +362,19 @@ const days = JSON.stringify(LLAMA_DAYS);
       const roll = Math.random();
 
       let hold: number;
-      if (today && roll < 0.4) {
+      if (roll < 0.06) {
+        // Once in a blue moon. Deliberately the first branch so it can't be
+        // squeezed out on the days she has a turn of her own.
+        hold = pace(A.moonwalk!, 26);
+      } else if (today && roll < 0.44) {
         // Her party piece for the day gets the biggest share.
         hold = oneShot(A[today.anim] ?? A.idle!, 3);
         speak(today.say);
-      } else if (roll < 0.6) {
+      } else if (roll < 0.62) {
         hold = pace();
-      } else if (roll < 0.75) {
+      } else if (roll < 0.76) {
         hold = oneShot(A.wave!, 2);
-      } else if (roll < 0.85) {
+      } else if (roll < 0.86) {
         // Catches a hoof and goes over. Plays once — it's a pratfall, not a
         // habit.
         hold = oneShot(A.trip!, 1);
@@ -333,9 +382,9 @@ const days = JSON.stringify(LLAMA_DAYS);
         hold = oneShot(A.dance!, 2);
       }
 
-      timer = window.setTimeout(() => {
+      later(() => {
         stand();
-        timer = window.setTimeout(act, rand(14000, 38000));
+        later(act, rand(14000, 38000));
       }, hold);
     }
 
@@ -351,34 +400,64 @@ const days = JSON.stringify(LLAMA_DAYS);
 
     /* --- On / off --------------------------------------------------------- */
     function start(): void {
+      clearPending();
       root!.hidden = false;
+      delete root!.dataset.asleep;
+      hit!.setAttribute('aria-label', 'Chaska the llama — poke her');
       x = Math.max(x, minX());
+      root!.dataset.facing = '1';
+      facing = 1;
       stand();
       last = 0;
       if (!raf) raf = requestAnimationFrame(tick);
       const today = todaysAct();
       // Say hello on arrival, or show off if it's one of her days.
-      window.setTimeout(() => {
+      later(() => {
         if (today) {
           play(A[today.anim] ?? A.wave!);
           speak(today.say, 3000);
-          window.setTimeout(stand, 3200);
+          later(stand, 3200);
         } else {
           play(A.wave!);
-          window.setTimeout(stand, 1500);
+          later(stand, 1500);
         }
-        timer = window.setTimeout(act, rand(9000, 20000));
+        later(act, rand(9000, 20000));
       }, 900);
     }
 
-    function stop(): void {
-      // Removed, not frozen — a llama stopped mid-stride reads as a bug.
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-      window.clearTimeout(timer);
+    /**
+     * Off doesn't delete her: she curls up in the corner and sleeps. She stops
+     * wandering, stops being a button, and stops talking — a sleeping llama in
+     * the corner of a page is a nicer thing to have there than nothing.
+     *
+     * Frozen mid-stride would read as a bug, which is what the handoff warns
+     * against; asleep reads as asleep.
+     */
+    function goToSleep(): void {
+      clearPending();
+      window.clearTimeout(speakTimer);
       walking = 0;
-      root!.hidden = true;
+      override = null;
       say!.hidden = true;
+      root!.hidden = false;
+      root!.dataset.asleep = '';
+      root!.dataset.facing = '1';
+      facing = 1;
+      hit!.setAttribute('aria-label', 'Chaska the llama, asleep');
+      x = minX();
+      play(A.sleep!);
+
+      if (reduced) {
+        // Someone who asked for less motion gets a still llama, not a
+        // slow-breathing one. One frame, no loop.
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        frame = 0;
+        draw();
+        return;
+      }
+      last = 0;
+      if (!raf) raf = requestAnimationFrame(tick);
     }
 
     function setEnabled(on: boolean, remember = true): void {
@@ -396,7 +475,7 @@ const days = JSON.stringify(LLAMA_DAYS);
         if (label) label.textContent = on ? 'On' : 'Off';
       }
       if (on) start();
-      else stop();
+      else goToSleep();
     }
 
     for (const button of document.querySelectorAll<HTMLElement>('[data-llama-toggle]')) {
@@ -410,6 +489,18 @@ const days = JSON.stringify(LLAMA_DAYS);
       },
       { passive: true },
     );
+
+    /* This page gets left open. There's no reason to keep a llama animating in
+       a tab nobody is looking at. */
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+      } else if (!raf && !root!.hidden && !(reduced && root!.hasAttribute('data-asleep'))) {
+        last = 0;
+        raf = requestAnimationFrame(tick);
+      }
+    });
 
     /* --- Bring her in ----------------------------------------------------
        The sheet is 174 KB and she is not the point of the page, so she waits
@@ -433,12 +524,14 @@ const days = JSON.stringify(LLAMA_DAYS);
       if (label) label.textContent = enabled ? 'On' : 'Off';
     }
 
-    const idle = (fn: () => void) =>
-      'requestIdleCallback' in window
-        ? (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(fn)
-        : window.setTimeout(fn, 1200);
+    /** Safari has no requestIdleCallback; a short timer is close enough. */
+    function whenIdle(fn: () => void): void {
+      const ric = (window as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback;
+      if (typeof ric === 'function') ric(fn);
+      else window.setTimeout(fn, 1200);
+    }
 
-    if (document.readyState === 'complete') idle(summon);
-    else window.addEventListener('load', () => idle(summon), { once: true });
+    if (document.readyState === 'complete') whenIdle(summon);
+    else window.addEventListener('load', () => whenIdle(summon), { once: true });
   }
 </script>

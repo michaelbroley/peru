@@ -98,16 +98,23 @@ There is a llama at the bottom of the page. She has no job.
 
 She stands in the corner, and every fourteen-to-thirty-eight seconds does something: paces along the floor and turns at the edges, waves, catches a hoof and goes over, or dances. Poke her and she spits — an interrupt that plays over whatever she was doing and hands control back, so a second poke restarts it rather than queueing. On each of the eleven days of the trip she has a turn of her own and says so.
 
-The art is a handoff in `src/silly_virtual_llama/` — seventeen animations, 40 × 40 logical pixels each, exported at 4×. `src/lib/llama.ts` carries the sheet geometry and the day mapping; `Llama.astro` is the whole implementation.
+**Once in a blue moon she moonwalks.** 6% of her decisions, so roughly every seven minutes you have the page open. It's the first branch in `act()` so the days she has a turn of her own can't squeeze it out; the number is one line if it wants tuning.
+
+**Turning her off doesn't delete her — she curls up in the left corner and sleeps.** Zs and all. She stops wandering, stops talking, and stops being a button (`pointer-events: none`, and the label says she's asleep), so she can't take a tap meant for the guide. The handoff warns that a mascot frozen mid-stride reads as a bug; asleep reads as asleep.
+
+The art is a handoff in `src/silly_virtual_llama/` — seventeen animations at 40 × 40 logical pixels, exported at 4×, plus a moonwalk and a sleep that arrived afterwards as loose strips. `scripts/pack-llama.mjs` stacks the three sources into one nineteen-row sheet; `src/lib/llama.ts` carries the geometry and the day mapping; `Llama.astro` is the whole implementation.
 
 **The day mapping isn't the sheet's.** The sheet numbers its day animations 1–11, and taking them in order would put the Nazca lines on a Cusco rest day and a parrot on the flight home. Four land exactly — Lady Bee on the 16th, Maido on the 17th, the terraces on the 21st, the reed boat on the 24th — and the rest are matched to what we're actually doing, with reasons in the file.
 
-**What she costs:** 13 KB, once. The handoff's 174 KB PNG master re-encodes to lossless WebP at 13 KB with byte-identical pixels — `scripts/pack-llama.mjs` decodes both and compares the raw buffers before it will write. Nothing is resampled, recut or recoloured. The sheet is fetched on idle after `load`, so she never competes with the guide arriving, and she's precached for offline.
+**What she costs:** 14 KB, once. The handoff's 174 KB PNG master, plus the two later strips, re-encode to a single lossless WebP at 14 KB with byte-identical pixels — the pack script decodes every row back out of the packed sheet and compares it against its source before it will write anything. Nothing is resampled, recut or recoloured. The sheet is fetched on idle after `load`, so she never competes with the guide arriving, and she's precached for offline.
 
 **Behaviour worth knowing:**
 
 - Frames advance on accumulated milliseconds, not ticks, so she moves at the same speed on a 60 Hz laptop and a 120 Hz phone.
 - **The art faces right.** Head, muzzle and the spit all leave to the right, so it's walking *left* that takes the `scaleX(-1)` mirror. Shipping that backwards makes her moonwalk, which is exactly what happened the first time; `llama.mjs` now paces her with `Math.random` stubbed and fails if any step travels against her facing.
+- **The moonwalk inverts that**, and only the moonwalk: she's drawn facing right with the dust trailing off to her left, so on that row the mirror runs *against* the direction of travel. It's the `backwards` flag in `llama.ts`, and it has the same test in reverse.
+- Every pending piece of behaviour goes in one `Set` so a state change cancels all of it. A stray `stand()` landing after she's gone to sleep would stand her up asleep — the sort of thing a mascot gets away with for months.
+- The loop stops while the tab is hidden. This page gets left open.
 - Her floor is the `.shell` card, not the whole monitor. On a wide screen the card is centred with the ink field either side, and a llama straddling that edge reads as a mistake rather than a joke.
 - `pointer-events: none` on the container, `auto` on her 80 px hit box, `z-index: 900` — under the nav, over everything else, never in the way of a tap meant for the guide.
 - She's off in one click (the switch is in the menu, beside the lens filter) and remembers it. Under `prefers-reduced-motion` the default flips to off; an explicit choice always wins.

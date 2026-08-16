@@ -8,12 +8,18 @@
  * chosen for the best fit, and the leftovers go where they jar least.
  */
 
-/** One row of the master sheet. Row order is the manifest's, not the day's. */
+/** One row of the packed sheet. Row order is the manifest's, not the day's. */
 export interface LlamaAnimation {
   id: string;
   row: number;
   frames: number;
   fps: number;
+  /**
+   * Drawn facing the opposite way to travel. Only the moonwalk: she faces
+   * right with the dust trailing off to her left, so she has to be mirrored
+   * against her direction rather than with it. That inversion is the joke.
+   */
+  backwards?: boolean;
 }
 
 export const LLAMA_SHEET = '/llama/chaska-4x.webp';
@@ -21,7 +27,7 @@ export const LLAMA_SHEET = '/llama/chaska-4x.webp';
 /** Logical frame is 40×40 exported at 4×; we draw at 2×, so an 80px cell. */
 export const LLAMA_CELL = 80;
 export const LLAMA_SHEET_COLUMNS = 8;
-export const LLAMA_SHEET_ROWS = 17;
+export const LLAMA_SHEET_ROWS = 19;
 
 export const LLAMA_ANIMATIONS: Record<string, LlamaAnimation> = {
   ladybee: { id: 'ladybee', row: 0, frames: 8, fps: 8 },
@@ -41,6 +47,9 @@ export const LLAMA_ANIMATIONS: Record<string, LlamaAnimation> = {
   run: { id: 'run', row: 14, frames: 6, fps: 12 },
   trip: { id: 'trip', row: 15, frames: 8, fps: 10 },
   tap: { id: 'tap', row: 16, frames: 6, fps: 10 },
+  // Appended to the sheet after the handoff, by scripts/pack-llama.mjs.
+  moonwalk: { id: 'moonwalk', row: 17, frames: 8, fps: 10, backwards: true },
+  sleep: { id: 'sleep', row: 18, frames: 6, fps: 3 },
 };
 
 /**

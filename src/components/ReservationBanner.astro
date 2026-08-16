@@ -1,6 +1,6 @@
 ---
 import { gmapsUrl, telUrl, placeQuery } from '../lib/links';
-import { STAR } from '../lib/glyphs';
+import Icon from './Icon.astro';
 
 /** A booked table — Lady Bee and Maido. Pink-boxed, the design's loudest block. */
 interface Props {
@@ -35,17 +35,37 @@ const Heading = headingLevel;
 ---
 
 <aside class="reservation" aria-label={`Booked reservation: ${name}`}>
-  {showEyebrow && <p class="reservation__eyebrow"><span aria-hidden="true">{STAR}</span> Reservation{showTimeInEyebrow ? ` · ${time}` : ''}</p>}
+  {showEyebrow && <p class="reservation__eyebrow"><Icon name="ticket" size={15} /><span class="reservation__booked">Booked</span>{showTimeInEyebrow ? <span class="reservation__when">{time}</span> : ''}</p>}
   <Heading class="reservation__name">{name}</Heading>
-  <!-- Each sentence fragment is one element with its own punctuation: Astro
-       preserves template whitespace literally, so a line break between a link
-       and its full stop would render as " ." -->
-  <p class="reservation__body">
-    {!showTimeInEyebrow && <span>{time}.</span>}
-    {mapHref && addressLabel && <span><a class="res__link" href={mapHref} target="_blank" rel="noopener noreferrer" aria-label={`Open ${name} in Google Maps — ${addressLabel}`}>{addressLabel}</a>.</span>}
-    {telHref && phone && <span>Phone <a class="res__link" href={telHref} aria-label={`Call ${name} on ${phone}`}>{phone}</a>.</span>}
-    <span>{note}</span>
-  </p>
+  {!showTimeInEyebrow && <p class="reservation__when-line">{time}</p>}
+
+  <p class="reservation__body">{note}</p>
+
+  {/* Address and phone get their own row rather than being threaded through
+      the sentence — a long venue address wraps, and its full stop ends up
+      stranded at the start of the next line. */}
+  {
+    (mapHref || telHref) && (
+      <p class="reservation__links">
+        {mapHref && addressLabel && (
+          <a
+            class="res__link"
+            href={mapHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${name} in Google Maps — ${addressLabel}`}
+          >
+            {addressLabel}
+          </a>
+        )}
+        {telHref && phone && (
+          <a class="res__link" href={telHref} aria-label={`Call ${name} on ${phone}`}>
+            {phone}
+          </a>
+        )}
+      </p>
+    )
+  }
 </aside>
 
 <style>
@@ -55,13 +75,28 @@ const Heading = headingLevel;
   }
 
   .reservation__eyebrow {
-    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 2px;
     font-weight: 700;
     font-size: var(--fs-label-sm);
     line-height: 1;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--pink);
+  }
+
+  /* A booked table is the one thing on a day you cannot miss — say the word. */
+  .reservation__when {
+    min-width: 0;
+  }
+
+  .reservation__booked {
+    padding: 4px 7px;
+    background: var(--pink);
+    color: var(--cream);
+    letter-spacing: 0.18em;
   }
 
   .reservation__name {
@@ -73,14 +108,31 @@ const Heading = headingLevel;
     font-weight: 400;
   }
 
+  .reservation__when-line {
+    margin: 6px 0 0;
+    font-weight: 700;
+    font-size: var(--fs-small);
+    line-height: 1.3;
+    color: var(--pink);
+  }
+
   .reservation__body {
-    margin: 5px 0 0;
+    margin: 6px 0 0;
     font-size: var(--fs-body-sm);
     line-height: 1.5;
   }
 
+  .reservation__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 7px 0 0;
+    font-size: var(--fs-small);
+  }
+
   .res__link {
     display: inline-block;
-    padding: 2px 0;
+    padding: 3px 0;
+    min-height: 22px;
   }
 </style>

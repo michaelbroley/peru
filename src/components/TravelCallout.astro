@@ -1,0 +1,153 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+
+/**
+ * The transit block on a travel day. On a trip where five of the eleven days
+ * are mostly getting somewhere, "how long is today?" is the first thing you
+ * want off the page, so it's a block of its own rather than one bullet in
+ * a logistics list.
+ */
+interface Props {
+  mode: string;
+  /** "~7.5 hrs", "First bus 6:00 AM" — the headline number. */
+  duration: string;
+  /** "Cusco → Altiplano → Puno" */
+  detail?: string | undefined;
+  /** "Depart hotel 5:30 AM" and friends. */
+  notes?: string[];
+}
+const { mode, duration, detail, notes = [] } = Astro.props;
+
+const icons: Record<string, IconName> = {
+  plane: 'plane',
+  arrive: 'plane-arrive',
+  depart: 'plane-depart',
+  train: 'train',
+  bus: 'bus',
+  car: 'car',
+  boat: 'boat',
+  walk: 'walk',
+};
+
+const labels: Record<string, string> = {
+  plane: 'Flight',
+  arrive: 'Arrival',
+  depart: 'Departure',
+  train: 'Train',
+  bus: 'Bus',
+  car: 'Drive',
+  boat: 'Boat',
+  walk: 'On foot',
+};
+
+const icon = icons[mode] ?? 'car';
+const label = labels[mode] ?? 'Travel';
+---
+
+<aside class="travel" aria-label={`Travel today: ${label}, ${duration}`}>
+  <div class="travel__head">
+    <span class="travel__icon"><Icon name={icon} size={26} /></span>
+    <div class="travel__headings">
+      <p class="travel__label">{label}</p>
+      <p class="travel__duration">{duration}</p>
+    </div>
+  </div>
+
+  {detail && <p class="travel__detail">{detail}</p>}
+
+  {
+    notes.length > 0 && (
+      <ul class="travel__notes">
+        {notes.map((note) => (
+          <li>{note}</li>
+        ))}
+      </ul>
+    )
+  }
+</aside>
+
+<style>
+  .travel {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 15px 16px 16px;
+    border-left: 5px solid var(--gold);
+  }
+
+  .travel__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .travel__icon {
+    display: flex;
+    color: var(--gold);
+  }
+
+  .travel__headings {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .travel__label {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .travel__duration {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 26px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .travel__detail {
+    margin: 11px 0 0;
+    font-size: var(--fs-note);
+    line-height: 1.45;
+    color: rgba(255, 251, 245, 0.82);
+  }
+
+  .travel__notes {
+    display: grid;
+    gap: 3px;
+    margin: 9px 0 0;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--cream-55);
+  }
+  .travel__notes li {
+    display: flex;
+    gap: 8px;
+  }
+  .travel__notes li::before {
+    content: '·';
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  @media print {
+    .travel {
+      background: #fff;
+      color: #000;
+      border: 1px solid #999;
+      border-left: 4px solid #000;
+    }
+    .travel__label,
+    .travel__icon {
+      color: #000;
+    }
+    .travel__detail,
+    .travel__notes {
+      color: #333;
+    }
+  }
+</style>

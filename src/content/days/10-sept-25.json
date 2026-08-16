@@ -27,15 +27,21 @@
     "lng": -77.0428
   },
   "glance": "Bus to Juliaca, flight to Lima, free final evening. A great chance for one more special meal — keep it in Barranco.",
-  "logistics": [
-    "Travel ~half day",
-    "evening free"
-  ],
+  "logistics": [],
   "journey": [
     "Titicaca",
     "(Juliaca flight)",
     "Lima"
   ],
+  "travel": {
+    "mode": "plane",
+    "duration": "~half day",
+    "detail": "Titicaca → bus to Juliaca → flight to Lima",
+    "notes": [
+      "Evening free in Lima"
+    ]
+  },
+  "travelDay": true,
   "reservations": [],
   "picksLabel": "Farewell-dinner ideas (Barranco)",
   "picks": [

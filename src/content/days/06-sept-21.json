@@ -23,8 +23,6 @@
   },
   "glance": "Early bus up the switchbacks for a guided tour of one of the Seven Wonders of the World, then train & drive back to Cusco.",
   "logistics": [
-    "First bus 6:00 AM",
-    "bring passport (checked)",
     "also water, bug spray, rain layer"
   ],
   "journey": [
@@ -33,7 +31,22 @@
     "Machu Picchu",
     "Cusco"
   ],
-  "reservations": [],
+  "travel": {
+    "mode": "bus",
+    "duration": "First bus 6:00 AM",
+    "detail": "Aguas Calientes → Machu Picchu → train & drive back to Cusco",
+    "notes": [
+      "Bring your passport — checked at the gate"
+    ]
+  },
+  "reservations": [
+    {
+      "name": "Machu Picchu",
+      "time": "First bus 6:00 AM",
+      "address": "Machu Picchu Historic Sanctuary, Cusco Region, Peru",
+      "note": "Guided tour of the citadel — bring your passport, it's checked at the gate. The site opens after sunrise, and once the guided tour ends you have to exit."
+    }
+  ],
   "picksLabel": "Back in Cusco tonight",
   "picks": [
     {

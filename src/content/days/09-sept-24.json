@@ -23,11 +23,15 @@
   },
   "glance": "Motorboat across the world's highest navigable lake to the Uros floating reed islands, then a homestay with a local family — consistently a trip highlight.",
   "logistics": [
-    "Uros islands by motorboat",
     "tonight: family homestay",
     "facilities basic, drop toilets, no showers"
   ],
   "journey": [],
+  "travel": {
+    "mode": "boat",
+    "duration": "Motorboat",
+    "detail": "Puno → Uros floating islands → homestay"
+  },
   "reservations": [],
   "picksLabel": "Make the most of it",
   "picks": [

@@ -7,6 +7,8 @@ import PlaceCard from './PlaceCard.astro';
 import LbbPanel from './LbbPanel.astro';
 import MapPanel from './MapPanel.astro';
 import RegionBar from './RegionBar.astro';
+import TravelCallout from './TravelCallout.astro';
+import Icon from './Icon.astro';
 import { STAR } from '../lib/glyphs';
 
 interface Props {
@@ -69,6 +71,14 @@ const lbb = day.lbb.flatMap((categoryId) => {
       <p class="day__glance">{day.glance}</p>
 
       <div class="day__chips">
+        {
+          day.travelDay && (
+            <span class="day__chip day__chip--travel">
+              <Icon name="clock" size={13} />
+              Travel day{day.travel && <> · {day.travel.duration}</>}
+            </span>
+          )
+        }
         {day.overnight && <span class="day__chip">{day.overnight}</span>}
         <WeatherChip high={day.weather.high} low={day.weather.low} icon={day.weather.icon} />
       </div>
@@ -77,6 +87,8 @@ const lbb = day.lbb.flatMap((categoryId) => {
 
   <div class="day__body">
     <p class="day__weathernote">{day.weather.note}</p>
+
+    {day.travel && <TravelCallout {...day.travel} />}
 
     {
       day.logistics.length > 0 && (
@@ -236,6 +248,7 @@ const lbb = day.lbb.flatMap((categoryId) => {
   .day__chip {
     display: flex;
     align-items: center;
+    gap: 6px;
     padding: 5px 8px;
     background: var(--ink-07);
     font-weight: 600;
@@ -243,6 +256,13 @@ const lbb = day.lbb.flatMap((categoryId) => {
     line-height: 1;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+
+  /* Five of the eleven days are mostly getting somewhere — say so up front. */
+  .day__chip--travel {
+    background: var(--ink);
+    color: var(--gold);
+    font-weight: 700;
   }
 
   .day__body {

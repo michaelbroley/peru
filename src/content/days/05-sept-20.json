@@ -22,17 +22,23 @@
     "lng": -72.5254
   },
   "glance": "Scenic run through the Sacred Valley with a community visit & lunch, then the train from Ollantaytambo to Aguas Calientes at the foot of Machu Picchu.",
-  "logistics": [
-    "Travel ~3 hrs + train",
-    "included community lunch",
-    "sit on the left side of the train"
-  ],
+  "logistics": [],
   "journey": [
     "Cusco",
     "Sacred Valley",
     "(train)",
     "Aguas Calientes"
   ],
+  "travel": {
+    "mode": "train",
+    "duration": "~3 hrs + train",
+    "detail": "Cusco → Sacred Valley → Ollantaytambo → Aguas Calientes",
+    "notes": [
+      "Sit on the left side of the train",
+      "Community lunch included on the way"
+    ]
+  },
+  "travelDay": true,
   "map": "valley",
   "reservations": [],
   "picksLabel": "Along the way / that evening",

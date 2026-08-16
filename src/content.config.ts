@@ -65,6 +65,17 @@ const days = defineCollection({
     journey: z.array(z.string()).default([]),
     /** id of a `maps` entry to show inside this day. */
     map: z.string().optional(),
+    /** Transit on this day, drawn from its own logistics lines. */
+    travel: z
+      .object({
+        mode: z.enum(['plane', 'arrive', 'depart', 'train', 'bus', 'car', 'boat', 'walk']),
+        duration: z.string(),
+        detail: z.string().optional(),
+        notes: z.array(z.string()).default([]),
+      })
+      .optional(),
+    /** Mostly-transit days, badged as such in the day header. */
+    travelDay: z.boolean().default(false),
     reservations: z
       .array(
         z.object({
@@ -107,6 +118,7 @@ const categories = defineCollection({
     title: z.string(),
     /** The parenthetical aside in the source heading, where there is one. */
     aside: z.string().optional(),
+    icon: z.string().optional(),
     region: z.string(),
   }),
 });
@@ -118,13 +130,15 @@ const trip = defineCollection({
     onTheGround: z.string(),
     tour: z.string(),
     stats: z.array(z.object({ value: z.string(), label: z.string() })),
-    flights: z.array(z.object({ label: z.string(), text: z.string() })),
+    flights: z.array(z.object({ label: z.string(), text: z.string(), icon: z.string().optional() })),
     snapshot: z.array(
       z.object({
         label: z.string(),
         text: z.string(),
         address: z.string().optional(),
         addressLabel: z.string().optional(),
+        /** Icon name from Icon.astro. */
+        icon: z.string().optional(),
       }),
     ),
     altitude: z.object({
@@ -167,6 +181,7 @@ const packing = defineCollection({
     order: z.number().int(),
     title: z.string(),
     aside: z.string().optional(),
+    icon: z.string().optional(),
     accent: z.enum(['ink', 'pink']).default('ink'),
     items: z.array(z.string()),
   }),

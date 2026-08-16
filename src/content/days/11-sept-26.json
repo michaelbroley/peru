@@ -21,11 +21,17 @@
     "lng": -77.0428
   },
   "glance": "Flight home departs 8:25 AM — really a travel morning. Arrange an airport transfer the night before.",
-  "logistics": [
-    "Flight 8:25 AM",
-    "arrive YUL 5:45 PM"
-  ],
+  "logistics": [],
   "journey": [],
+  "travel": {
+    "mode": "depart",
+    "duration": "Flight 8:25 AM",
+    "detail": "Lima → Montreal, arrives 5:45 PM",
+    "notes": [
+      "Arrange the airport transfer the night before"
+    ]
+  },
+  "travelDay": true,
   "reservations": [],
   "picks": [],
   "notes": [],

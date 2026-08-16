@@ -28,8 +28,6 @@
   },
   "glance": "Long, scenic drive (~7.5 hrs) across the high Altiplano to Puno on Lake Titicaca. The landscape — endless plains, alpaca herds — is the attraction.",
   "logistics": [
-    "Drive ~7.5 hrs",
-    "altitude 3,800 m",
     "try tonight: grilled trout (trucha)"
   ],
   "journey": [
@@ -37,6 +35,16 @@
     "(Altiplano drive)",
     "Puno"
   ],
+  "travel": {
+    "mode": "car",
+    "duration": "~7.5 hrs",
+    "detail": "Cusco → the Altiplano → Puno",
+    "notes": [
+      "The longest drive of the trip",
+      "Climbs to 3,800 m"
+    ]
+  },
+  "travelDay": true,
   "map": "puno",
   "reservations": [],
   "picksLabel": "In Puno",

@@ -21,31 +21,37 @@
     "flights": [
       {
         "label": "Arrive",
-        "text": "Wed Sept 16, <strong>6:55 AM</strong> — Air Transat 150 from Montreal (YUL). Seats 26C &amp; 26H."
+        "text": "Wed Sept 16, <strong>6:55 AM</strong> — Air Transat 150 from Montreal (YUL). Seats 26C &amp; 26H.",
+        "icon": "plane-arrive"
       },
       {
         "label": "Depart",
-        "text": "Sat Sept 26, <strong>8:25 AM</strong> — Air Transat 151 to Montreal (arrives 5:45 PM). Seats 26H &amp; 26J."
+        "text": "Sat Sept 26, <strong>8:25 AM</strong> — Air Transat 151 to Montreal (arrives 5:45 PM). Seats 26H &amp; 26J.",
+        "icon": "plane-depart"
       }
     ],
     "snapshot": [
       {
         "label": "Free days",
-        "text": "Sept 16 &amp; 17 in Lima; free evening Sept 25."
+        "text": "Sept 16 &amp; 17 in Lima; free evening Sept 25.",
+        "icon": "calendar"
       },
       {
         "label": "Tour meeting point",
         "text": "Hotel El Señorial, {address}. Welcome meeting Day 1 (Sept 18) at 2:00 PM.",
         "address": "Hotel El Señorial, Calle José Gonzáles 567, Miraflores, Lima",
-        "addressLabel": "Calle José Gonzáles 567, Miraflores, Lima"
+        "addressLabel": "Calle José Gonzáles 567, Miraflores, Lima",
+        "icon": "pin"
       },
       {
         "label": "Included meals on tour",
-        "text": "8 breakfasts, 2 lunches, 1 dinner."
+        "text": "8 breakfasts, 2 lunches, 1 dinner.",
+        "icon": "fork"
       },
       {
         "label": "Luggage",
-        "text": "Main bags stay at hotels in Cusco and Puno — pack a daypack for Aguas Calientes (Sept 20–21) and the Lake Titicaca homestay (Sept 24)."
+        "text": "Main bags stay at hotels in Cusco and Puno — pack a daypack for Aguas Calientes (Sept 20–21) and the Lake Titicaca homestay (Sept 24).",
+        "icon": "bag"
       }
     ],
     "altitude": {
@@ -127,6 +133,12 @@
         "time": "Thu Sept 17, evening",
         "address": "Maido, Calle San Martín 399, Miraflores, Lima",
         "note": "Mitsuharu Tsumura's Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual."
+      },
+      {
+        "name": "Machu Picchu",
+        "time": "Mon Sept 21, first bus 6:00 AM",
+        "address": "Machu Picchu Historic Sanctuary, Cusco Region, Peru",
+        "note": "Guided tour of the citadel; passport checked at the gate."
       }
     ],
     "farewell": {

@@ -55,7 +55,7 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -72,6 +72,16 @@ Bands are sized to actually show the photograph: 285–420 px on a phone, 390–
 The hero image loads eagerly; of the ten section and leg covers, only the first does. A phone's initial load is ~134 KB including two images, and the rest arrive as you scroll. Print drops every photograph and returns the headings to the flow in black.
 
 Four images from the upload are unused and listed at the top of `covers.ts` if you want to swap any in.
+
+### Travel days and iconography
+
+Five of the eleven days are mostly getting somewhere, so transit has a block of its own rather than one line in a list. `TravelCallout` carries the mode icon, the headline duration, the route, and the day's transit notes; a gold **Travel day · ~7.5 hrs** badge sits in the day header so it's visible with the day collapsed.
+
+Those facts moved out of `logistics` and into `travel` on the day. Nothing was dropped — every logistics line the source carries still appears, once, in whichever block owns it. If you edit a callout, check you're not removing the only copy of something.
+
+`Icon.astro` holds the set: travel modes, the snapshot's row labels, the packing groups, and one per recommendation category. They're inline SVG on the same 24×24 grid as the weather glyphs, decorative by default (each labels text that already says the same thing) and `aria-hidden` unless given a `label`.
+
+Reservations now say **Booked** on a pink chip with a ticket mark, and put the address and phone on their own row rather than threading them through the sentence — a long venue address wraps, and its full stop ends up stranded at the start of the next line.
 
 ### The header panel
 

@@ -27,17 +27,22 @@
     "lng": -71.9675
   },
   "glance": "Early flight to Cusco (5:30 AM hotel departure). Main job is acclimatising — go slow, coca tea, skip alcohol. Gentle orientation walk introduces the old town.",
-  "logistics": [
-    "Depart hotel 5:30 AM",
-    "flight ~1h 20m",
-    "altitude 3,450 m",
-    "take it SLOW"
-  ],
+  "logistics": [],
   "journey": [
     "Lima",
     "(early flight)",
     "Cusco"
   ],
+  "travel": {
+    "mode": "plane",
+    "duration": "~1h 20m",
+    "detail": "Lima → Cusco",
+    "notes": [
+      "Depart hotel 5:30 AM",
+      "Lands at 3,450 m — take it SLOW"
+    ]
+  },
+  "travelDay": true,
   "map": "cusco",
   "reservations": [],
   "picksLabel": "Orientation-walk highlights",

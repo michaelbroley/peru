@@ -10,7 +10,8 @@
       "Waterproof / windproof shell",
       "Broken-in walking shoes",
       "Warm hat, gloves, buff; sun hat & sunglasses"
-    ]
+    ],
+    "icon": "shirt"
   },
   {
     "id": "altitude",
@@ -22,7 +23,8 @@
       "Reusable water bottle",
       "High-SPF sunscreen & lip balm",
       "Insect repellent (Machu Picchu)"
-    ]
+    ],
+    "icon": "sunhat"
   },
   {
     "id": "daypack",
@@ -35,7 +37,8 @@
       "2 nights of clothes + toiletries + quick-dry towel",
       "Headlamp; extra layers for the cold homestay",
       "Small gifts for the homestay family"
-    ]
+    ],
+    "icon": "backpack"
   },
   {
     "id": "dont-forget",
@@ -47,6 +50,7 @@
       "Printed tour & flight confirmations",
       "Cash in soles (PEN)",
       "Power bank & plug adapter (type A/C)"
-    ]
+    ],
+    "icon": "passport"
   }
 ]

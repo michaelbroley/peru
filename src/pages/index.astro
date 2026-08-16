@@ -17,6 +17,7 @@ import TodayLoader from '../components/TodayLoader.astro';
 import { STAR } from '../lib/glyphs';
 import { Image } from 'astro:assets';
 import { covers } from '../lib/covers';
+import Icon, { type IconName } from '../components/Icon.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
@@ -231,7 +232,10 @@ const description =
                   .join(' ');
                 return (
                   <section class="cat" id={category.data.slug} data-lens-empty-when={emptyWhen || undefined}>
-                    <h3 class="cat__title">{category.data.title}</h3>
+                    <h3 class="cat__title">
+                      {category.data.icon && <Icon name={category.data.icon as IconName} size={22} class="cat__icon" />}
+                      {category.data.title}
+                    </h3>
                     {category.data.aside && <p class="cat__aside">{category.data.aside}</p>}
                     <div class="cat__grid">
                       {catPlaces.map((place) => (
@@ -649,6 +653,9 @@ const description =
   }
 
   .cat__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-family: var(--display);
     font-size: var(--fs-group);
     line-height: 1.05;
@@ -656,6 +663,10 @@ const description =
     font-weight: 400;
     border-top: 2px solid var(--ink);
     padding-top: 12px;
+  }
+
+  .cat__title :global(.cat__icon) {
+    color: var(--pink);
   }
 
   .cat__aside {

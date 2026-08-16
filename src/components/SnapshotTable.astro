@@ -1,12 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { gmapsUrl } from '../lib/links';
+import Icon, { type IconName } from './Icon.astro';
 
 /** The label/value grid at the top of the guide: flights, meeting point, meals, luggage. */
 interface Props {
   rows: (CollectionEntry<'trip'>['data']['flights'][number] & {
     address?: string | undefined;
     addressLabel?: string | undefined;
+    icon?: string | undefined;
   })[];
 }
 const { rows } = Astro.props;
@@ -27,7 +29,10 @@ function splitRow(text: string): [string, string] {
       const [before, after] = splitRow(row.text);
       return (
         <div class="snapshot__row">
-          <dt class="snapshot__label">{row.label}</dt>
+          <dt class="snapshot__label">
+            {row.icon && <Icon name={row.icon as IconName} size={15} />}
+            {row.label}
+          </dt>
           {/* Link and the text that follows it share one element so no stray
               space lands before the sentence's full stop. */}
           <dd class="snapshot__value"><Fragment set:html={before} />{row.address && row.addressLabel && <span><a href={gmapsUrl(row.address)} target="_blank" rel="noopener noreferrer" aria-label={`Open ${row.addressLabel} in Google Maps`} class="snapshot__link">{row.addressLabel}</a><Fragment set:html={after} /></span>}</dd>
@@ -53,6 +58,9 @@ function splitRow(text: string): [string, string] {
   }
 
   .snapshot__label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     font-weight: 700;
     font-size: var(--fs-label-sm);
     line-height: 1;

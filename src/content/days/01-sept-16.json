@@ -26,12 +26,17 @@
     "lng": -77.0428
   },
   "glance": "Land off the redeye at 6:55 AM — take it easy. Check in, nap, gentle wander, then 8 PM cocktails at Lady Bee.",
-  "logistics": [
-    "Land 6:55 AM",
-    "Airport→Miraflores 30–90 min",
-    "Taxi: Green Taxi ~PEN 100"
-  ],
+  "logistics": [],
   "journey": [],
+  "travel": {
+    "mode": "arrive",
+    "duration": "Lands 6:55 AM",
+    "detail": "Airport → Miraflores, 30–90 min",
+    "notes": [
+      "Air Transat 150 from Montreal",
+      "Taxi: Green Taxi ~PEN 100"
+    ]
+  },
   "map": "lima",
   "reservations": [
     {

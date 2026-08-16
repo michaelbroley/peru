@@ -10,6 +10,7 @@ import trekker from '../images/trekker-palccoyo-rainbow-mountains-cusco-peru-col
 import puno from '../images/view-puno-from-lake-titicaca-peru.webp';
 import terraces from '../images/scenic-view-mountains.webp';
 import urosIsland from '../images/totora-boat-titicaca-lake-near-puno-peru-1.webp';
+import alpaca from '../images/funny-alpaca-lama-pacos-near-vinicunca-mountain-famous-destination-andes-peru.webp';
 
 /**
  * Photographs used as section and leg headers, keyed so the content can
@@ -19,8 +20,7 @@ import urosIsland from '../images/totora-boat-titicaca-lake-near-puno-peru-1.web
  * rather than informational, so the descriptions stay short.
  *
  * Unused from the upload, kept for later: aerial-view-cityscape-against-sky,
- * basilica-cathedral-lima, funny-alpaca-lama-pacos, parque-del-amor,
- * totora-boat-titicaca-lake-near-puno-peru.
+ * basilica-cathedral-lima, parque-del-amor, totora-boat-titicaca-lake-near-puno-peru.
  */
 export interface Cover {
   src: ImageMetadata;
@@ -74,6 +74,11 @@ export const covers = {
     src: terraces,
     alt: 'Curved Inca agricultural terraces cut into a green valley under a wide Andean sky',
     focus: '50% 50%',
+  },
+  alpaca: {
+    src: alpaca,
+    alt: 'An alpaca standing on a ridge above the striped hills near Vinicunca in the Andes',
+    focus: '62% 45%',
   },
   uros: {
     src: urosIsland,

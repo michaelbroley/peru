@@ -65,9 +65,13 @@ The section heads (01–06) and the four leg dividers in the day list are full-b
 
 The originals were 3–24 MB camera JPEGs, several with GPS EXIF. `node scripts/optimise-images.mjs --replace` converts them to WebP masters — EXIF orientation applied then all metadata stripped, long edge capped at 2400 px — which took the set from 154 MB to 8 MB. Astro generates the responsive sizes from those masters at build time.
 
-Only the first cover loads eagerly; the other nine are lazy. A phone's initial load is ~105 KB including one 44 KB image, and the rest arrive as you scroll. Print drops the photographs and returns the headings to the flow in black.
+The masthead has the alpaca shot behind it, under a pink wash that runs 70–97% across the block — densest under the wordmark, thinnest where there's no type — so it stays the comp's pink hero with the photograph reading as texture. That image is served at quality 45, since nothing under a wash that heavy is visible anyway, and the flat pink shows through unchanged if it never loads.
 
-Five images from the upload are unused and listed at the top of `covers.ts` if you want to swap any in.
+Bands are sized to actually show the photograph: 285–420 px on a phone, 390–570 px on a desktop, with the leg dividers about two-thirds of that.
+
+The hero image loads eagerly; of the ten section and leg covers, only the first does. A phone's initial load is ~134 KB including two images, and the rest arrive as you scroll. Print drops every photograph and returns the headings to the flow in black.
+
+Four images from the upload are unused and listed at the top of `covers.ts` if you want to swap any in.
 
 ### The header panel
 

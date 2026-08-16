@@ -70,6 +70,7 @@
   /* Chrome's "Save as PDF" turns background graphics off by default, which
      empties any bar drawn as a background. Drop them rather than print gaps —
      every one of these is decorative and the numbers beside it carry the fact. */
+  .hero__bg,
   .altitude__chart,
   .weather-card__track,
   .wchip__track,

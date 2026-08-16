@@ -493,36 +493,6 @@ const days = JSON.stringify(LLAMA_DAYS);
       { passive: true },
     );
 
-    /* --- Walking into the penguin -----------------------------------------
-       The referee in the footer owns the collision; she just gets off the
-       stage when told, and comes back on where it puts her. */
-    document.addEventListener('peru:crash', (event) => {
-      const detail = (event as CustomEvent<{
-        phase: 'start' | 'end';
-        llama?: { centre: number; dir: 1 | -1 };
-      }>).detail;
-
-      if (detail.phase === 'start') {
-        clearPending();
-        walking = 0;
-        say!.hidden = true;
-        root!.hidden = true;
-        return;
-      }
-
-      root!.hidden = false;
-      if (detail.llama) {
-        // The referee works in centres; her own x is the left of an 80px cell.
-        x = Math.max(minX(), Math.min(detail.llama.centre - CELL / 2, maxX()));
-        walking = detail.llama.dir * 42;
-        point(walking, A.run!);
-        play(A.run!);
-        // A few strides to clear the dust, then back to her usual business.
-        later(stand, 1100);
-        later(act, rand(2600, 6000));
-      }
-    });
-
     /* This page gets left open. There's no reason to keep a llama animating in
        a tab nobody is looking at. */
     document.addEventListener('visibilitychange', () => {

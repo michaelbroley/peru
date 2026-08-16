@@ -110,7 +110,9 @@ The three bookings — Lady Bee, Maido, the Machu Picchu tour — carry a photog
 
 The picture takes 38% of the banner rather than a fixed width: the banner runs the full width of an open day, and 300 px of photograph across 1,100 is a strip, not a picture. A `min-height` stops a short booking flattening it. Below 700 px the photo goes on top. It's lazy and inside a `<details>`, so a shut day costs nothing — the initial payload is unchanged.
 
-The covers are per-reservation in the day JSON (`"cover": "lady-bee"`), so swapping in a different shot is one string. Print drops the photographs and keeps the booking.
+The covers are per-reservation in the day JSON (`"cover": "lady-bee-sign"`), so swapping in a different shot is one string. The two venues deliberately use a *different* photograph in the day than on the snapshot card — the room and the sign in the day list, the dish and the cocktail on the cards — so the same shot never appears twice on one page. Print drops the photographs and keeps the booking.
+
+The Lady Bee sign is only 711 px wide, which is the largest copy there is; it's sharp on a phone and slightly soft on a 2× desktop. Astro won't upscale past the source.
 
 ### Folding a section away
 

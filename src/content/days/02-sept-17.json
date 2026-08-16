@@ -30,10 +30,10 @@
   "reservations": [
     {
       "name": "Maido",
-      "time": "evening",
+      "time": "7:00 PM",
       "address": "Maido, Calle San Martín 399, Miraflores, Lima",
-      "note": "Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual, arrive hungry.",
-      "cover": "maido"
+      "note": "Experience Maido: a 12-step Nikkei tasting menu, with the Maridaje Tokujou pairing — Old World wines and sake — at S/ 2,525 per person. Reconfirm the day before, flag dietary needs, smart-casual, arrive hungry.",
+      "cover": "maido-room"
     }
   ],
   "picksLabel": "Do this by day",

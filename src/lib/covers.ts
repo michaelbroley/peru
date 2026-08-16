@@ -13,6 +13,8 @@ import urosIsland from '../images/totora-boat-titicaca-lake-near-puno-peru-1.web
 import alpaca from '../images/funny-alpaca-lama-pacos-near-vinicunca-mountain-famous-destination-andes-peru.webp';
 import ladyBee from '../images/lady-bee-peru.webp';
 import maido from '../images/maido-peru.webp';
+import maidoRoom from '../images/maido-dining-room.webp';
+import ladyBeeSign from '../images/lady-bee-sign.webp';
 import limaCathedral from '../images/basilica-cathedral-lima-landmark-plaza-mayor-square-lima-peru-south-america.webp';
 import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
 
@@ -93,6 +95,16 @@ export const covers = {
     src: maido,
     alt: 'A Nikkei course at Maido — a dark bowl of small plated bites with herbs, on a wooden table',
     focus: '50% 50%',
+  },
+  'maido-room': {
+    src: maidoRoom,
+    alt: "Maido's dining room — thousands of gold and red ropes hanging from the ceiling above wooden tables and green velvet chairs",
+    focus: '50% 45%',
+  },
+  'lady-bee-sign': {
+    src: ladyBeeSign,
+    alt: 'The illuminated Lady Bee sign on a dark wall — a glowing white box lettered "Lady Bee, Lima, Perú"',
+    focus: '45% 50%',
   },
   'lima-cathedral': {
     src: limaCathedral,

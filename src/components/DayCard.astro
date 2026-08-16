@@ -166,9 +166,18 @@ const lbb = day.lbb.flatMap((categoryId) => {
     align-items: start;
   }
 
-  /* The status panel needs the room beside the summary, which only exists on
-     a wide screen; on a phone the elevation chip carries the same fact. */
+  /* The panel runs under the day's text on a phone and beside it once there's
+     room. It's inside the <summary> either way, so it reads with the day shut
+     — which is the whole point of it for anyone following along. */
   .day__summary > :global(.dstatus) {
+    grid-column: 1 / -1;
+    margin-top: 13px;
+  }
+
+  /* Both chips duplicate what the panel now says properly, at every size.
+     Scoped through .day__chips to outrank .day__chip's own display below. */
+  .day__chips > .day__chip--elev,
+  .day__chips > :global(.wchip) {
     display: none;
   }
 
@@ -354,15 +363,11 @@ const lbb = day.lbb.flatMap((categoryId) => {
       gap: 0 32px;
     }
 
+    /* Out of the flow and into its own track, level with the day's text. */
     .day__summary > :global(.dstatus) {
-      display: grid;
+      grid-column: auto;
+      margin-top: 0;
       align-self: stretch;
-    }
-
-    /* Both chips duplicate what the panel now shows properly. */
-    .day__chip--elev,
-    .day__chips > :global(.wchip) {
-      display: none;
     }
 
     /* The body starts past the date gutter so an open day hangs off its own

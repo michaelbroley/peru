@@ -84,7 +84,11 @@ The locator is inline SVG with no network at all. `src/lib/geo.ts` holds a real 
 
 The panel is laid out wide rather than tall — an 84 px locator beside the facts — so a collapsed day and its panel are the same height and the row has no hole in it. It lives inside the `<summary>`, so it reads with the day collapsed and clicking it still toggles the day.
 
-It needs width that only exists above 1080 px; below that the elevation and weather ride in the day's chip row instead (above it, those two chips are hidden, since the panel says the same thing properly). Every track inside the panel has an explicit zero minimum and the fact rows are flex-wrap: at 1080 the panel is only 264 px, and label/value pairs that can't shrink will otherwise push the whole card past the viewport.
+It's on every screen size. Above 1080 px it takes its own track beside the day's text; below that it runs full width under the text, with a smaller locator and the two facts side by side rather than stacked — about 107 px on a phone. Under 360 px the columns are too narrow to hold "~20° / 15°" together, so those fall back to the wide panel's label-left/value-right rows. The elevation and weather chips are gone from the day header at every size now, since the panel says both properly.
+
+Every track inside the panel has an explicit zero minimum and the fact rows are flex-wrap: at 1080 px the panel is only 264 px, and label/value pairs that can't shrink will otherwise push the whole card past the viewport.
+
+In print the locator and the gauge go, the block turns white, and the panel becomes the only place the elevation and weather appear. Its grid drops to one track there — with the locator hidden the facts would otherwise fall into the `auto` column and shrink to their own text.
 
 Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather table's `2,000–2,900 m` band for the cloud-forest days); the `metres` value only scales the gauge.
 

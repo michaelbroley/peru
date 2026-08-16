@@ -107,6 +107,7 @@ The art is a handoff in `src/silly_virtual_llama/` — seventeen animations, 40 
 **Behaviour worth knowing:**
 
 - Frames advance on accumulated milliseconds, not ticks, so she moves at the same speed on a 60 Hz laptop and a 120 Hz phone.
+- **The art faces right.** Head, muzzle and the spit all leave to the right, so it's walking *left* that takes the `scaleX(-1)` mirror. Shipping that backwards makes her moonwalk, which is exactly what happened the first time; `llama.mjs` now paces her with `Math.random` stubbed and fails if any step travels against her facing.
 - Her floor is the `.shell` card, not the whole monitor. On a wide screen the card is centred with the ink field either side, and a llama straddling that edge reads as a mistake rather than a joke.
 - `pointer-events: none` on the container, `auto` on her 80 px hit box, `z-index: 900` — under the nav, over everything else, never in the way of a tap meant for the guide.
 - She's off in one click (the switch is in the menu, beside the lens filter) and remembers it. Under `prefers-reduced-motion` the default flips to off; an explicit choice always wins.

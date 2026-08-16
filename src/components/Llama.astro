@@ -95,8 +95,9 @@ const days = JSON.stringify(LLAMA_DAYS);
     filter: drop-shadow(0 3px 0 rgba(18, 16, 15, 0.18));
   }
 
-  /* Set by the script when she's walking the other way. */
-  .llama[data-facing='1'] .llama__sprite {
+  /* The art faces right — head, muzzle and the spit all leave to the right —
+     so it's walking left that needs the mirror, not walking right. */
+  .llama[data-facing='-1'] .llama__sprite {
     transform: scaleX(-1);
   }
 
@@ -186,7 +187,8 @@ const days = JSON.stringify(LLAMA_DAYS);
 
     /** Where she is, in px from the left edge, and which way she's pointing. */
     let x = 0;
-    let facing: 1 | -1 = -1;
+    /** 1 is the way the art is drawn (facing right); -1 mirrors her. */
+    let facing: 1 | -1 = 1;
     let walking = 0; // px/second, 0 when standing still
     let raf = 0;
 

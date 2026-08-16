@@ -58,7 +58,7 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `CurrencyConverter` · `TipCalculator` / `TipList` · `Habitat` / `Penguin` · `Llama`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `CurrencyConverter` · `TipCalculator` / `TipList` · `ScrollEdge` · `Habitat` / `Penguin` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -77,6 +77,20 @@ The hero image loads eagerly; of the ten section and leg covers, only the first 
 A second upload added eight more photographs; the Urubamba market is section 10's cover and the other seven are spare. Anything unused is listed at the top of `covers.ts` if you want to swap one in.
 
 `optimise-images.mjs` skips `backdrop*.png`. Those are the habitat's pixel art and `pack-habitat.mjs` reads them as its source — a quality-82 resample would soften every edge, and `--replace` would then delete the only copy. Lossless is what pixel art wants, and that's the packer's job, not the optimiser's.
+
+### The scrolling edges
+
+While you're scrolling, the top and bottom of the viewport go soft, so a very long page reads as passing through a window rather than jumping in a box. At rest it fades out completely and is pulled from the tree — nothing is ever permanently veiled, and there are no backdrop filters left running behind a page nobody is scrolling.
+
+**Three stacked layers per edge, not one.** A single masked blur fades the blurred copy out against the sharp original underneath, which reads as a ghosted double image. Stacking blurs that each cover less of the band means every layer filters the one below it, so the strength ramps instead of cross-fading.
+
+**The fade lives on the layers, never on their parent.** An ancestor with `opacity` becomes a *backdrop root*, and every `backdrop-filter` inside it then filters an empty backdrop — no blur at all, and no error to tell you. Same trap with `filter` or `mix-blend-mode` on a wrapper.
+
+It sits at `z-index: 800`: over the guide, under the llama at 900 and the nav at 1200. The mascot is pixel art and the bar is the thing you navigate by; neither should ever go soft. For the same reason the bottom edge stands down entirely once the habitat is on screen, so she is never sharp on a blurred floor.
+
+The top band starts at `var(--nav-h)` rather than 0. The nav bar is opaque ink, so a band starting at the top would spend two thirds of itself invisible behind it and then begin abruptly at its lower edge.
+
+Off under `prefers-reduced-motion`, off on paper, and off where `backdrop-filter` isn't supported — the script checks before it does anything. Scrolling a phone viewport at 4× CPU throttle measured 60 fps with no dropped frames either way, so it costs nothing where it matters.
 
 ### The day status panel
 

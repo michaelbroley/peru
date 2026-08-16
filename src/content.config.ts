@@ -161,7 +161,6 @@ const trip = defineCollection({
         cover: z.string().optional(),
       }),
     ),
-    farewell: z.object({ title: z.string(), text: z.string() }),
   }),
 });
 

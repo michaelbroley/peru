@@ -41,7 +41,6 @@
   .hero,
   .lbb,
   .altitude,
-  .farewell,
   .cat__title,
   .region-bar {
     background: #fff !important;
@@ -56,7 +55,6 @@
   .region-bar *,
   .altitude *,
   .lbb *,
-  .farewell *,
   .cat__title *,
   .on-ink * {
     color: #000 !important;

@@ -104,9 +104,7 @@ The two columns are `columns: 2` rather than a grid. The Spanish groups run 8 to
 
 Print keeps both columns and won't split a group across a page. This is the one part of the guide you might genuinely want folded in a pocket.
 
-The two prose bits that aren't phrases — the Aymara caveat and the gift tip — use the guide's existing idioms: the gold `!` flag the recommendations use for anything unconfirmed, and the grey note box the days use.
-
-**The sign-off follows the last section**, wherever that is. It now closes the Aymara book. If another section is ever appended, move it again — a farewell stranded mid-document reads as a mistake.
+The two prose bits that aren't phrases — the Aymara caveat and the gift tip — use the guide's existing idioms: the gold `!` flag the recommendations use for anything unconfirmed, and the grey note box the days use. If another section is ever appended, move it again — a farewell stranded mid-document reads as a mistake.
 
 ### The habitat
 

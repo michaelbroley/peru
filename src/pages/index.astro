@@ -415,13 +415,6 @@ const description =
               When in doubt, “Kamisaraki” (hello) and “Yuspagara” (thank you) are the two to remember — pair
               them with a small gift for the host family and you're golden.
             </p>
-
-            {/* The sign-off closes the guide, so it follows the last section
-                rather than staying behind in Book ahead. */}
-            <div class="farewell">
-              <h3 class="farewell__title">{trip.farewell.title}</h3>
-              <p class="farewell__text" set:html={trip.farewell.text} />
-            </div>
           </SectionFold>
         </section>
       </main>
@@ -942,28 +935,5 @@ const description =
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--pink);
-  }
-
-  /* ── Farewell ──────────────────────────────────────────────────────── */
-  .farewell {
-    margin-top: 28px;
-    background: var(--pink);
-    color: var(--cream);
-    padding: 20px;
-  }
-
-  .farewell__title {
-    font-family: var(--display);
-    font-size: var(--fs-cardtitle);
-    line-height: 1.05;
-    text-transform: uppercase;
-    font-weight: 400;
-  }
-
-  .farewell__text {
-    margin: 8px 0 0;
-    max-width: var(--measure);
-    font-size: var(--fs-note);
-    line-height: 1.5;
   }
 </style>

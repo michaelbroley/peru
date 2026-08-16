@@ -13,6 +13,8 @@ import urosIsland from '../images/totora-boat-titicaca-lake-near-puno-peru-1.web
 import alpaca from '../images/funny-alpaca-lama-pacos-near-vinicunca-mountain-famous-destination-andes-peru.webp';
 import ladyBee from '../images/lady-bee-peru.webp';
 import maido from '../images/maido-peru.webp';
+import limaCathedral from '../images/basilica-cathedral-lima-landmark-plaza-mayor-square-lima-peru-south-america.webp';
+import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
 
 /**
  * Photographs used as section and leg headers, keyed so the content can
@@ -22,7 +24,7 @@ import maido from '../images/maido-peru.webp';
  * rather than informational, so the descriptions stay short.
  *
  * Unused from the upload, kept for later: aerial-view-cityscape-against-sky,
- * basilica-cathedral-lima, parque-del-amor, totora-boat-titicaca-lake-near-puno-peru.
+ * parque-del-amor.
  */
 export interface Cover {
   src: ImageMetadata;
@@ -91,6 +93,16 @@ export const covers = {
     src: maido,
     alt: 'A Nikkei course at Maido — a dark bowl of small plated bites with herbs, on a wooden table',
     focus: '50% 50%',
+  },
+  'lima-cathedral': {
+    src: limaCathedral,
+    alt: "The cathedral on Lima's Plaza Mayor, palms and flowerbeds across the square in front of it",
+    focus: '50% 45%',
+  },
+  'uros-boat': {
+    src: urosBoat,
+    alt: 'A painted totora reed boat moored at a floating island on Lake Titicaca under a big cloudy sky',
+    focus: '50% 55%',
   },
   uros: {
     src: urosIsland,

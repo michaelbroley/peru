@@ -19,6 +19,7 @@ import { STAR } from '../lib/glyphs';
 import { Image } from 'astro:assets';
 import { covers } from '../lib/covers';
 import Icon, { type IconName } from '../components/Icon.astro';
+import RegionBar from '../components/RegionBar.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
@@ -59,10 +60,53 @@ const dayLinks = days.map((d) => ({
   label: d.data.title,
 }));
 
-const categoryLinks = categories.map((c) => ({
-  href: `#${c.data.slug}`,
-  label: c.data.title,
-}));
+/**
+ * The little black book is thirteen lists in a row, which reads as one long
+ * wall of type. Grouping them into chapters — each with a photograph and its
+ * counts — gives it landmarks to scroll between and somewhere to aim for.
+ *
+ * The order is the content's own; these only say where the breaks fall.
+ */
+const RECOMMENDATION_CHAPTERS = [
+  { title: 'Lima', regions: ['Lima'], cover: 'lima-cathedral' },
+  { title: 'Across Peru', regions: ['Peru'], cover: 'alpaca' },
+  {
+    title: 'Cusco & the Sacred Valley',
+    regions: ['Cusco', 'Sacred Valley', 'Aguas Calientes'],
+    cover: 'terraces',
+  },
+  { title: 'Puno & Lake Titicaca', regions: ['Puno'], cover: 'uros-boat' },
+] as const;
+
+const chapters = RECOMMENDATION_CHAPTERS.map((chapter) => {
+  const lists = categories.filter((c) => (chapter.regions as readonly string[]).includes(c.data.region));
+  const count = lists.reduce((n, c) => n + placeData.filter((p) => p.category === c.id).length, 0);
+  return { title: chapter.title, cover: chapter.cover, lists, count };
+});
+
+// A region nobody claimed would otherwise vanish off the page — put it at the
+// end rather than lose it.
+const claimed = new Set(chapters.flatMap((c) => c.lists.map((l) => l.id)));
+const orphans = categories.filter((c) => !claimed.has(c.id));
+if (orphans.length > 0) {
+  chapters.push({
+    title: 'Elsewhere',
+    cover: undefined as unknown as (typeof RECOMMENDATION_CHAPTERS)[number]['cover'],
+    lists: orphans,
+    count: orphans.reduce((n, c) => n + placeData.filter((p) => p.category === c.id).length, 0),
+  });
+}
+
+const categoryLinks = chapters.flatMap((chapter) =>
+  chapter.lists.map((c, i) => ({
+    href: `#${c.data.slug}`,
+    // The chapter heading already says "Lima"; the row doesn't need to.
+    label: c.data.title.startsWith(`${chapter.title} — `)
+      ? c.data.title.slice(chapter.title.length + 3)
+      : c.data.title,
+    group: i === 0 ? chapter.title : undefined,
+  })),
+);
 
 const highestAltitude = trip.altitude.profile.reduce((max, p) => Math.max(max, p.metres), 0);
 
@@ -236,30 +280,48 @@ const description =
             fold="recommendations-little-black-book-for-laura"
             lead={`The little black book, for Laura. Every entry: name — area — note, with address and phone where known. ${STAR} = top pick.`}
           >
-          <div class="cats">
-            {
-              categories.map((category) => {
-                const catPlaces = placeData.filter((p) => p.category === category.id);
-                const emptyWhen = (['food', 'skate'] as const)
-                  .filter((lens) => !catPlaces.some((p) => p.lens === lens))
-                  .join(' ');
-                return (
-                  <section class="cat" id={category.data.slug} data-lens-empty-when={emptyWhen || undefined}>
-                    <h3 class="cat__title">
-                      {category.data.icon && <Icon name={category.data.icon as IconName} size={22} class="cat__icon" />}
-                      {category.data.title}
-                    </h3>
-                    {category.data.aside && <p class="cat__aside">{category.data.aside}</p>}
-                    <div class="cat__grid">
-                      {catPlaces.map((place) => (
-                        <PlaceCard {...place} />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })
-            }
-          </div>
+          {
+            chapters.map((chapter) => (
+              <div class="chapter">
+                <RegionBar
+                  title={chapter.title}
+                  meta={`${chapter.lists.length} list${chapter.lists.length === 1 ? '' : 's'} · ${chapter.count} places`}
+                  cover={chapter.cover}
+                  compact
+                />
+
+                <div class="cats">
+                  {chapter.lists.map((category) => {
+                    const catPlaces = placeData.filter((p) => p.category === category.id);
+                    const picks = catPlaces.filter((p) => p.pick).length;
+                    const emptyWhen = (['food', 'skate'] as const)
+                      .filter((lens) => !catPlaces.some((p) => p.lens === lens))
+                      .join(' ');
+                    return (
+                      <section class="cat" id={category.data.slug} data-lens-empty-when={emptyWhen || undefined}>
+                        <h4 class="cat__title">
+                          {category.data.icon && (
+                            <Icon name={category.data.icon as IconName} size={20} class="cat__icon" />
+                          )}
+                          <span class="cat__titletext">{category.data.title}</span>
+                          <span class="cat__count">
+                            <span>{catPlaces.length}</span>
+                            {picks > 0 && <span class="cat__countpick">{`${STAR}${picks}`}</span>}
+                          </span>
+                        </h4>
+                        {category.data.aside && <p class="cat__aside">{category.data.aside}</p>}
+                        <div class="cat__grid">
+                          {catPlaces.map((place) => (
+                            <PlaceCard {...place} level={5} />
+                          ))}
+                        </div>
+                      </section>
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          }
           </SectionFold>
         </section>
 
@@ -672,32 +734,64 @@ const description =
      what's capped to a readable measure (see DayCard), so the extra room
      goes to the maps and little-black-book panels instead of being empty. */
 
-  /* ── Recommendations ───────────────────────────────────────────────── */
+  /* ── Recommendations ───────────────────────────────────────────────────
+     Thirteen lists on cream, one after another, was a wall you couldn't get
+     a purchase on. Now: photographic chapter bands to scroll between, and
+     each list under a solid header carrying its icon and its counts. */
+  .chapter + .chapter {
+    margin-top: 8px;
+  }
+
   .cats {
     display: grid;
     gap: 26px;
-    margin-top: 20px;
+    margin-top: 18px;
   }
 
   .cat__title {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--cream);
     font-family: var(--display);
     font-size: var(--fs-group);
     line-height: 1.05;
     text-transform: uppercase;
     font-weight: 400;
-    border-top: 2px solid var(--ink);
-    padding-top: 12px;
   }
 
   .cat__title :global(.cat__icon) {
-    color: var(--pink);
+    flex: 0 0 auto;
+    color: var(--gold);
+  }
+
+  .cat__titletext {
+    min-width: 0;
+  }
+
+  /* How much is in here, and how much of it we'd actually go out of our way
+     for — enough to decide whether to read the list at all. */
+  .cat__count {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-family: var(--text);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    letter-spacing: 0.14em;
+    color: var(--cream-55);
+  }
+
+  .cat__countpick {
+    color: var(--gold);
   }
 
   .cat__aside {
-    margin: 3px 0 0;
+    margin: 8px 0 0;
     font-size: var(--fs-micro);
     line-height: 1.4;
     color: var(--ink-60);
@@ -706,7 +800,15 @@ const description =
   .cat__grid {
     display: grid;
     gap: 14px;
-    margin-top: 12px;
+    margin-top: 14px;
+  }
+
+  /* A top pick becomes a card rather than a line with a rule beside it, so
+     the ones worth a detour surface out of the grid. Days keep the quieter
+     treatment — there are only ever two or three in front of you there. */
+  .cat__grid :global(.place--pick) {
+    padding: 11px 13px;
+    background: rgba(255, 195, 0, 0.12);
   }
 
   /* Two columns once the column is wide enough to hold them comfortably,

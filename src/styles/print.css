@@ -43,6 +43,7 @@
   .lbb,
   .altitude,
   .farewell,
+  .cat__title,
   .region-bar {
     background: #fff !important;
     color: #000 !important;
@@ -57,8 +58,21 @@
   .altitude *,
   .lbb *,
   .farewell *,
+  .cat__title *,
   .on-ink * {
     color: #000 !important;
+  }
+
+  /* A list header is a heading, not a box — a rule under it reads the same
+     and costs nothing. */
+  .cat__title {
+    border: 0 !important;
+    border-bottom: 2px solid #000 !important;
+    padding: 0 0 6px !important;
+  }
+
+  .cat__count {
+    color: #444 !important;
   }
 
   .hero__title,

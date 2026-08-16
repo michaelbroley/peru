@@ -17,19 +17,36 @@ interface Props {
   lens?: 'food' | 'art' | 'skate';
   verify?: string | undefined;
   surface?: 'cream' | 'ink';
+  /**
+   * Recommendations nest a level deeper than a day does — chapter, list,
+   * place — so the entry heading has to follow rather than skip a level.
+   */
+  level?: 4 | 5;
 }
-const { name, area, note, address, phone, pick = false, lens = 'food', verify, surface = 'cream' } = Astro.props;
+const {
+  name,
+  area,
+  note,
+  address,
+  phone,
+  pick = false,
+  lens = 'food',
+  verify,
+  surface = 'cream',
+  level = 4,
+} = Astro.props;
+const Name = `h${level}` as 'h4' | 'h5';
 
 const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
 const telHref = phone ? telUrl(phone) : null;
 ---
 
 <article class:list={['place', { 'place--pick': pick, 'place--ink': surface === 'ink' }]} data-lens={lens}>
-  <h4 class="place__name">
+  <Name class="place__name">
     {pick && <span class="place__star" aria-label="Top pick">{STAR}</span>}
     <span class="place__nametext">{name}</span>
     {area && <span class="place__area">· {area}</span>}
-  </h4>
+  </Name>
 
   <p class="place__note">{note}</p>
 

@@ -92,6 +92,18 @@ In print the locator and the gauge go, the block turns white, and the panel beco
 
 Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather table's `2,000–2,900 m` band for the cloud-forest days); the `metres` value only scales the gauge.
 
+### The little black book
+
+Thirteen lists one after another, all set the same way on cream, was a wall you couldn't get a purchase on. Three things break it up:
+
+**Chapters.** The lists group into four — Lima, Across Peru, Cusco & the Sacred Valley, Puno & Lake Titicaca — each introduced by a photographic band carrying its counts ("7 lists · 30 places"). It's the same `RegionBar` the day list uses for the legs of the trip, at a `compact` height so a chapter marker inside a section doesn't compete with the section head. Two new covers came off the unused half of the upload for this. The grouping lives in `RECOMMENDATION_CHAPTERS` in `index.astro` and only says where the breaks fall — the order is still the content's. A region no chapter claims lands in an "Elsewhere" chapter at the end rather than dropping off the page.
+
+**List headers.** Each list sits under a solid ink bar with its icon in gold and its counts on the right — how many entries, and how many of those we'd go out of our way for. Enough to decide whether to read it.
+
+**Top picks as cards.** A ★ entry gets a warm gold wash and padding here, so the ones worth a detour surface out of the grid. Days keep the quieter rule-only treatment — there are only ever two or three in front of you there.
+
+That nests a level deeper than a day does (chapter → list → entry), so `PlaceCard` takes a `level` prop and the recommendations pass `5`. The section costs about 35% more height than the undifferentiated wall did, which is the trade: it's longer, but you can find your way down it — and the whole section folds away now.
+
 ### Folding a section away
 
 Every numbered section shuts to its cover photograph. It's a `<details>` — the cover band is the `<summary>` — so it works with no JavaScript, takes the keyboard for free, and Chrome opens it to show a find-in-page hit. A **Hide / Show** pill sits in the top corner of the band as the affordance; the whole band is the click target.
@@ -146,7 +158,7 @@ Day dates live in each day file as `iso` (`2026-09-21`), which is what the panel
 
 A slim sticky bar and a mega panel, the same at every width. The bar carries only what's useful while reading — the section you're currently in, a jump to today, and the menu trigger — and is about 50 px tall.
 
-The panel opens as one view of the whole guide: the six sections, all eleven days, all thirteen recommendation categories, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
+The panel opens as one view of the whole guide: the six sections, all eleven days, all thirteen recommendation lists grouped under the same four chapters the section itself uses, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
 
 The panel is `position: fixed` rather than part of the sticky flow. That's deliberate: locking body scroll with `overflow: hidden` — the usual way to hold the page still behind a menu — removes the scrollport the sticky bar depends on, and the bar drops out of position the moment the menu opens.
 

@@ -10,6 +10,10 @@
  * It behaves like a menu rather than a table of contents: one trigger, one
  * surface, closes on selection, Escape or a click outside, and keeps focus
  * inside while it's open.
+ *
+ * The recommendations column is grouped by the same chapters the section is,
+ * with the chapter's name dropped off each row — "Lima — Ceviche & seafood"
+ * under a "Lima" heading says it twice.
  */
 interface TocItem {
   href: string;
@@ -18,6 +22,8 @@ interface TocItem {
   num?: string;
   /** Day date, shown as the lead-in on a day row. */
   meta?: string;
+  /** Chapter heading to print above this row, on the first row of a chapter. */
+  group?: string;
 }
 interface Props {
   sections: TocItem[];
@@ -88,11 +94,14 @@ const { sections, days, categories } = Astro.props;
         <ul class="nav__list">
           {
             categories.map((item) => (
-              <li>
-                <a class="nav__link" href={item.href} data-nav-link>
-                  {item.label}
-                </a>
-              </li>
+              <Fragment>
+                {item.group && <li class="nav__group">{item.group}</li>}
+                <li>
+                  <a class="nav__link" href={item.href} data-nav-link>
+                    {item.label}
+                  </a>
+                </li>
+              </Fragment>
             ))
           }
         </ul>
@@ -455,6 +464,26 @@ const { sections, days, categories } = Astro.props;
 
   .nav__list {
     display: grid;
+  }
+
+  /* Chapter headings inside the recommendations column, matching the bands
+     the section itself is now divided by. */
+  .nav__group {
+    margin: 12px 0 3px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cream-25);
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream-55);
+  }
+
+  .nav__group:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
   }
 
   .nav__link {

@@ -11,14 +11,19 @@ interface Props {
   title: string;
   meta: string;
   cover?: string | undefined;
+  /**
+   * A chapter marker inside a section rather than a leg of the trip: same
+   * treatment, shorter band, so it divides without taking over.
+   */
+  compact?: boolean;
 }
-const { title, meta, cover } = Astro.props;
+const { title, meta, cover, compact = false } = Astro.props;
 const image = getCover(cover);
 
 const sizes = '(min-width: 1440px) 1080px, (min-width: 1080px) 880px, (min-width: 860px) 820px, 100vw';
 ---
 
-<div class:list={['region', { 'region--photo': !!image }]}>
+<div class:list={['region', { 'region--photo': !!image, 'region--compact': compact }]}>
   {
     image && (
       <div class="region__media">
@@ -76,6 +81,10 @@ const sizes = '(min-width: 1440px) 1080px, (min-width: 1080px) 880px, (min-width
     display: block;
   }
 
+  .region--compact .region__media {
+    height: clamp(148px, 30vw, 200px);
+  }
+
   .region__scrim {
     position: absolute;
     inset: 0;
@@ -125,9 +134,16 @@ const sizes = '(min-width: 1440px) 1080px, (min-width: 1080px) 880px, (min-width
     .region__media {
       height: clamp(270px, 27vw, 360px);
     }
+    .region--compact .region__media {
+      height: clamp(180px, 18vw, 250px);
+    }
     .region--photo .region__text {
       bottom: 16px;
     }
+  }
+
+  .region--compact .region__title {
+    font-size: clamp(26px, 6.5vw, 38px);
   }
 
   @media print {

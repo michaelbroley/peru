@@ -33,6 +33,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | `weather.json`              | The September averages table                                  |
 | `packing.json`              | Packing groups                                                |
 | `checklist.json`            | Book-ahead / verify list                                      |
+| `currency.json`             | The soles/dollars reference rate, and Peru's coins and notes   |
 | `maps.json`                 | The five map views — route, Lima, Cusco, valley, Puno — and their pins |
 
 Two conventions worth knowing:
@@ -56,13 +57,13 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `Habitat` / `Penguin` · `Llama`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `CurrencyConverter` · `Habitat` / `Penguin` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
 ### Photography
 
-The section heads (01–06) and the four leg dividers in the day list are full-bleed photographs with the number and title set over a scrim. `src/lib/covers.ts` is the manifest: it imports each photo, gives it alt text and an `object-position`, and exposes it under a short key. Sections take that key as a prop; a day's `regionStart.cover` carries it as data.
+The section heads (01–09) and the four leg dividers in the day list are full-bleed photographs with the number and title set over a scrim. `src/lib/covers.ts` is the manifest: it imports each photo, gives it alt text and an `object-position`, and exposes it under a short key. Sections take that key as a prop; a day's `regionStart.cover` carries it as data.
 
 The originals were 3–24 MB camera JPEGs, several with GPS EXIF. `node scripts/optimise-images.mjs --replace` converts them to WebP masters — EXIF orientation applied then all metadata stripped, long edge capped at 2400 px — which took the set from 154 MB to 8 MB. Astro generates the responsive sizes from those masters at build time.
 
@@ -94,7 +95,7 @@ Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather
 
 ### The phrasebooks
 
-Sections 06, 07 and 08 are a Spanish phrasebook (43 phrases in four groups), a short Quechua one for the Titicaca homestay (14), and an Aymara one for the same homestay if the family greets you that way instead (13). They close the guide, at `#common-spanish-phrases`, `#key-quechua-phrases-for-the-homestay` and `#key-aymara-phrases-just-in-case` — the same slug-the-whole-heading style as every other anchor. The Quechua book's Aymara caveat links through to the Aymara one, since there is now somewhere to send you.
+Sections 06, 07 and 08 are a Spanish phrasebook (43 phrases in four groups), a short Quechua one for the Titicaca homestay (14), and an Aymara one for the same homestay if the family greets you that way instead (13). They sit together at `#common-spanish-phrases`, `#key-quechua-phrases-for-the-homestay` and `#key-aymara-phrases-just-in-case` — the same slug-the-whole-heading style as every other anchor. The Quechua book's Aymara caveat links through to the Aymara one, since there is now somewhere to send you.
 
 `PhraseList` renders a `<dl>`, because that's what a phrasebook is: a term and its definition. A screen reader announces the pairing, so "Sulpayki, thank you" reads correctly without the punctuation between them having to carry it. The em dash is drawn in CSS rather than written into the markup, so it can't be read aloud or swept up when you copy a phrase to show someone. Terms carry `lang="es"` / `lang="qu"`.
 
@@ -105,6 +106,20 @@ The two columns are `columns: 2` rather than a grid. The Spanish groups run 8 to
 Print keeps both columns and won't split a group across a page. This is the one part of the guide you might genuinely want folded in a pocket.
 
 The two prose bits that aren't phrases — the Aymara caveat and the gift tip — use the guide's existing idioms: the gold `!` flag the recommendations use for anything unconfirmed, and the grey note box the days use. If another section is ever appended, move it again — a farewell stranded mid-document reads as a mistake.
+
+### Currency
+
+Section 09, at `#currency-soles-to-canadian-dollars`: soles to Canadian dollars. Three parts, in the order you need them — the rate, a table of money, and a calculator.
+
+**The table is the section; the calculator is the extra.** It lists every Peruvian coin and note — S/ 1, 2, 5 and S/ 10 through 200 — against what each is worth, so a price tag converts by looking rather than typing. It's rendered on the server from the baked rate, which means it works with no script and no signal, and it prints. The calculator ships `hidden` and script reveals it, so a no-JS reader gets a table rather than two dead boxes.
+
+**The rate is baked into content and refreshed at runtime.** `src/content/currency.json` holds a hand-checked figure and the date it was checked — that's what a plane or a homestay with no bars gets. Anywhere online, the page fetches a live rate, repaints everything from it, and caches it for a week, exactly as `TodayLoader` does for the weather. Same failure posture too: no signal or a dead service and the baked figure simply stays.
+
+**A live rate has to be believable before it's taken.** Anything beyond a third of the baked rate either way is a broken response, not a currency crisis — the sol has traded in a narrow band for twenty years. A wrong number here is worse than a stale one, so an implausible reading is dropped and the stamp keeps saying "checked", not "live".
+
+Both inputs are two-way and parse leniently: a comma means a decimal point to half the world and a thousands separator to the other half, and either way the person typing means a number. Writing to one input fires the other's `input` event, so an `echo` flag stops a rounded value bouncing between them as you type.
+
+Updating the rate by hand is one number and one date in `currency.json`. Nothing else needs to change.
 
 ### The habitat
 

@@ -245,4 +245,33 @@ const phrases = defineCollection({
   }),
 });
 
-export const collections = { days, places, categories, trip, weatherRows, packing, phrases, maps };
+/**
+ * The soles/dollars reference rate.
+ *
+ * Baked in rather than fetched at build time, because the guide has to work
+ * with no signal — a rate you can read on a plane or in a homestay is the
+ * point. Anywhere online the page refreshes it and remembers the new one, so
+ * this is the floor, not the ceiling: keep it roughly current and it's never
+ * embarrassing offline.
+ *
+ * `money` is Peru's actual coins and notes, so the table reads as "what the
+ * thing in your hand is worth" rather than a list of round numbers.
+ */
+const currency = defineCollection({
+  loader: file('./src/content/currency.json'),
+  schema: z.object({
+    /** Soles to one Canadian dollar. */
+    penPerCad: z.number().positive(),
+    /** ISO date this rate was last checked by hand. */
+    updated: z.string(),
+    note: z.string(),
+    money: z.array(
+      z.object({
+        amount: z.number().positive(),
+        kind: z.enum(['coin', 'note']),
+      }),
+    ),
+  }),
+});
+
+export const collections = { days, places, categories, trip, weatherRows, packing, phrases, maps, currency };

@@ -1,0 +1,464 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * Soles to Canadian dollars, and back.
+ *
+ * Three things, in the order you actually need them: what the rate is, a
+ * table of every coin and note so a price tag converts at a glance, and a
+ * calculator for the numbers the table doesn't cover.
+ *
+ * The table is rendered on the server from the baked rate, so it's useful with
+ * no JavaScript and no signal — which is the case this guide is built for. The
+ * calculator and the live rate are the enhancement on top.
+ */
+interface Props {
+  rate: CollectionEntry<'currency'>['data'];
+}
+const { rate } = Astro.props;
+
+const cadPerPen = 1 / rate.penPerCad;
+
+/** "$7.30" — the amount most people want back from a sol price. */
+const cad = (soles: number) =>
+  new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(soles * cadPerPen);
+
+const checked = new Date(`${rate.updated}T12:00:00Z`).toLocaleDateString('en-CA', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+const config = { penPerCad: rate.penPerCad, updated: rate.updated };
+---
+
+<div class="fx" data-fx>
+  <!-- The rate itself, both ways round, because you think in whichever
+       currency you're holding. -->
+  <div class="fx__rate">
+    <p class="fx__pair">
+      <span class="fx__from">$1 CAD</span>
+      <span class="fx__eq" aria-hidden="true">=</span>
+      <span class="fx__to" data-fx-headline>S/ {rate.penPerCad.toFixed(2)}</span>
+    </p>
+    <p class="fx__inverse">S/ 1 = <span data-fx-inverse>{cad(1)}</span></p>
+    <p class="fx__stamp" data-fx-stamp>Checked {checked}</p>
+  </div>
+
+  <!-- Enhancement: without script this stays hidden and the table carries the
+       section on its own. -->
+  <form class="fx__calc" data-fx-calc hidden>
+    <div class="fx__field">
+      <label class="fx__label" for="fx-pen">Peruvian soles</label>
+      <div class="fx__input">
+        <span class="fx__symbol" aria-hidden="true">S/</span>
+        <input
+          id="fx-pen"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="0.00"
+          data-fx-pen
+        />
+      </div>
+    </div>
+
+    <span class="fx__swap" aria-hidden="true">=</span>
+
+    <div class="fx__field">
+      <label class="fx__label" for="fx-cad">Canadian dollars</label>
+      <div class="fx__input">
+        <span class="fx__symbol" aria-hidden="true">$</span>
+        <input
+          id="fx-cad"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="0.00"
+          data-fx-cad
+        />
+      </div>
+    </div>
+  </form>
+
+  <!-- Peru's actual money, so a price tag converts without arithmetic. -->
+  <table class="fx__money">
+    <caption class="fx__caption">Every coin and note, in dollars</caption>
+    <thead>
+      <tr>
+        <th scope="col">Peruvian</th>
+        <th scope="col">Canadian</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rate.money.map((m) => (
+          <tr>
+            <th scope="row" class="fx__denom">
+              S/ {m.amount}
+              <span class="fx__kind">{m.kind}</span>
+            </th>
+            <td class="fx__value" data-fx-amount={m.amount}>
+              {cad(m.amount)}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <p class="fx__note">{rate.note}</p>
+</div>
+
+<script is:inline type="application/json" data-fx-config set:html={JSON.stringify(config)} />
+
+<style>
+  .fx {
+    display: grid;
+    gap: 18px;
+  }
+
+  /* --- the rate ---------------------------------------------------------- */
+  .fx__rate {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 20px 22px;
+    text-align: center;
+  }
+
+  .fx__pair {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-stat);
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  .fx__eq {
+    color: var(--cream-50);
+  }
+
+  .fx__to {
+    color: var(--gold);
+  }
+
+  .fx__inverse {
+    margin: 6px 0 0;
+    font-size: var(--fs-body-sm);
+    color: var(--cream-55);
+  }
+
+  .fx__stamp {
+    margin: 10px 0 0;
+    font-size: var(--fs-note);
+    color: var(--cream-50);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* --- the calculator ---------------------------------------------------- */
+  .fx__calc {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 12px;
+  }
+
+  .fx__calc[hidden] {
+    display: none;
+  }
+
+  .fx__field {
+    /* Without this the inputs refuse to shrink and the row overflows. */
+    min-width: 0;
+  }
+
+  .fx__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--fs-note);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-62);
+  }
+
+  .fx__input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--rule-strong);
+    background: var(--cream);
+    padding: 0 12px;
+  }
+
+  .fx__input:focus-within {
+    outline: 2px solid var(--pink);
+    outline-offset: -1px;
+  }
+
+  .fx__symbol {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--ink-45);
+  }
+
+  .fx__input input {
+    /* The browser default is a fixed size attribute, not a fluid box. */
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: none;
+    padding: 12px 0;
+    font-family: var(--display);
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+
+  .fx__input input:focus {
+    outline: none;
+  }
+
+  .fx__swap {
+    padding-bottom: 14px;
+    font-family: var(--display);
+    font-size: 22px;
+    color: var(--ink-35);
+  }
+
+  /* --- the money table --------------------------------------------------- */
+  .fx__money {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .fx__caption {
+    margin-bottom: 8px;
+    font-size: var(--fs-note);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-62);
+    text-align: left;
+  }
+
+  .fx__money th,
+  .fx__money td {
+    border-bottom: 1px solid var(--rule);
+    padding: 9px 0;
+  }
+
+  .fx__money thead th {
+    font-size: var(--fs-note);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-50);
+  }
+
+  .fx__denom {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .fx__kind {
+    margin-left: 8px;
+    font-family: var(--text);
+    font-size: var(--fs-note);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+  }
+
+  .fx__value {
+    font-family: var(--display);
+    font-size: 20px;
+    color: var(--pink);
+    text-align: right;
+  }
+
+  .fx__money thead th:last-child {
+    text-align: right;
+  }
+
+  .fx__note {
+    margin: 0;
+    font-size: var(--fs-note);
+    line-height: 1.5;
+    color: var(--ink-62);
+  }
+
+  /* A three-column calculator is too tight for a phone. */
+  @media (max-width: 520px) {
+    .fx__calc {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .fx__swap {
+      display: none;
+    }
+  }
+
+  @media print {
+    .fx__rate {
+      background: none;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 12px;
+    }
+
+    .fx__eq,
+    .fx__inverse,
+    .fx__stamp {
+      color: var(--ink);
+    }
+
+    .fx__to,
+    .fx__value {
+      color: var(--ink);
+    }
+
+    /* Empty boxes are no use on paper. */
+    .fx__calc {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  interface Config {
+    penPerCad: number;
+    updated: string;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-fx]');
+  const configEl = document.querySelector('[data-fx-config]');
+
+  if (root && configEl) {
+    const cfg = JSON.parse(configEl.textContent ?? '{}') as Config;
+    const calc = root.querySelector<HTMLFormElement>('[data-fx-calc]');
+    const pen = root.querySelector<HTMLInputElement>('[data-fx-pen]');
+    const cadInput = root.querySelector<HTMLInputElement>('[data-fx-cad]');
+    const headline = root.querySelector<HTMLElement>('[data-fx-headline]');
+    const inverse = root.querySelector<HTMLElement>('[data-fx-inverse]');
+    const stamp = root.querySelector<HTMLElement>('[data-fx-stamp]');
+    const cells = Array.from(root.querySelectorAll<HTMLElement>('[data-fx-amount]'));
+
+    let penPerCad = cfg.penPerCad;
+
+    const money = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' });
+    const soles = new Intl.NumberFormat('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    /**
+     * Lenient on the way in: a comma is a decimal point in half the world and
+     * a thousands separator in the other half, and either way the person
+     * typing means a number.
+     */
+    function parse(raw: string): number | null {
+      const cleaned = raw.replace(/[\s,]/g, (m) => (m === ',' ? '.' : ''));
+      if (cleaned === '' || !/^\d*\.?\d*$/.test(cleaned)) return null;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    /** The rate everywhere it appears, after a refresh. */
+    function paint(): void {
+      if (headline) headline.textContent = `S/ ${penPerCad.toFixed(2)}`;
+      if (inverse) inverse.textContent = money.format(1 / penPerCad);
+      for (const cell of cells) {
+        const amount = Number(cell.dataset.fxAmount);
+        if (Number.isFinite(amount)) cell.textContent = money.format(amount / penPerCad);
+      }
+    }
+
+    /* --- the calculator --------------------------------------------------- */
+    if (calc && pen && cadInput) {
+      calc.hidden = false;
+      // Nothing to submit — it converts as you type.
+      calc.addEventListener('submit', (event) => event.preventDefault());
+
+      let echo = false;
+      const bind = (from: HTMLInputElement, to: HTMLInputElement, convert: (n: number) => string) => {
+        from.addEventListener('input', () => {
+          // Writing to the other input fires its own `input`; without this
+          // they'd bounce a rounded value back and forth as you type.
+          if (echo) return;
+          const value = parse(from.value);
+          echo = true;
+          to.value = value === null ? '' : convert(value);
+          echo = false;
+        });
+      };
+
+      bind(pen, cadInput, (n) => soles.format(n / penPerCad));
+      bind(cadInput, pen, (n) => soles.format(n * penPerCad));
+    }
+
+    /* --- a live rate where there's signal ---------------------------------- */
+    const CACHE_KEY = 'peru-fx-rate';
+    type Cached = { rate: number; at: number };
+
+    function show(rate: number, at: number): void {
+      penPerCad = rate;
+      paint();
+      if (stamp) {
+        stamp.textContent = `Live rate · ${new Date(at).toLocaleDateString('en-CA', {
+          day: 'numeric',
+          month: 'long',
+        })}`;
+      }
+      // Whatever is in the boxes is now converted at the old rate.
+      if (pen && cadInput && pen.value !== '') pen.dispatchEvent(new Event('input'));
+    }
+
+    let cached: Cached | null = null;
+    try {
+      cached = JSON.parse(localStorage.getItem(CACHE_KEY) ?? 'null') as Cached | null;
+    } catch {
+      cached = null;
+    }
+    // Yesterday's real rate beats a figure typed into a JSON file months ago.
+    if (cached && typeof cached.rate === 'number' && Date.now() - cached.at < 7 * 24 * 3600_000) {
+      show(cached.rate, cached.at);
+    }
+
+    /**
+     * A rate this far from the baked one is a broken response, not a currency
+     * crisis — the sol has traded in a narrow band for twenty years. Taking a
+     * wrong number is worse than keeping a stale one.
+     */
+    const believable = (rate: number) => rate > cfg.penPerCad / 3 && rate < cfg.penPerCad * 3;
+
+    if (navigator.onLine !== false) {
+      fetch('https://open.er-api.com/v6/latest/CAD')
+        .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+        .then((data: { rates?: Record<string, number> }) => {
+          const rate = data.rates?.PEN;
+          if (typeof rate !== 'number' || !believable(rate)) return;
+          const at = Date.now();
+          show(rate, at);
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ rate, at }));
+          } catch {
+            /* storage full or blocked — the rate still showed */
+          }
+        })
+        .catch(() => {
+          /* no signal, or the service is down: the baked rate stays put */
+        });
+    }
+  }
+</script>

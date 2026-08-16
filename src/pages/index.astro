@@ -21,11 +21,16 @@ import Icon, { type IconName } from '../components/Icon.astro';
 import RegionBar from '../components/RegionBar.astro';
 import Llama from '../components/Llama.astro';
 import PhraseList from '../components/PhraseList.astro';
+import CurrencyConverter from '../components/CurrencyConverter.astro';
 import Habitat from '../components/Habitat.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
 const trip = tripEntry.data;
+
+const rateEntry = await getEntry('currency', 'rate');
+if (!rateEntry) throw new Error('Missing currency rate content');
+const rate = rateEntry.data;
 
 const days = (await getCollection('days')).sort((a, b) => a.data.order - b.data.order);
 const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
@@ -59,6 +64,7 @@ const sections = [
   { num: '06', href: '#common-spanish-phrases', label: 'Spanish phrases' },
   { num: '07', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
   { num: '08', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
+  { num: '09', href: '#currency-soles-to-canadian-dollars', label: 'Currency' },
 ];
 
 const dayLinks = days.map((d) => ({
@@ -415,6 +421,25 @@ const description =
               When in doubt, “Kamisaraki” (hello) and “Yuspagara” (thank you) are the two to remember — pair
               them with a small gift for the host family and you're golden.
             </p>
+          </SectionFold>
+        </section>
+
+        <!-- ── 09 Currency ────────────────────────────────────────────── -->
+        <section
+          class="section"
+          id="currency-soles-to-canadian-dollars"
+          data-section
+          aria-labelledby="currency-title"
+        >
+          <h2 class="sr-only" id="currency-title">Currency, soles to Canadian dollars</h2>
+          <SectionFold
+            num="09"
+            title="Currency"
+            cover="lima-plaza"
+            fold="currency-soles-to-canadian-dollars"
+            lead="Peru runs on soles (S/), and almost nowhere quotes a price in dollars. The rate below refreshes itself anywhere you have a signal, and the table works with none."
+          >
+            <CurrencyConverter rate={rate} />
           </SectionFold>
         </section>
       </main>

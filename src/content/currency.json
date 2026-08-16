@@ -1,0 +1,18 @@
+[
+  {
+    "id": "rate",
+    "penPerCad": 2.74,
+    "updated": "2026-08-16",
+    "note": "A reference mid-market rate. Banks, ATMs and casas de cambio all take a cut, so treat this as the ceiling rather than what you'll actually get. Anywhere with a signal, the page refreshes it on its own.",
+    "money": [
+      { "amount": 1, "kind": "coin" },
+      { "amount": 2, "kind": "coin" },
+      { "amount": 5, "kind": "coin" },
+      { "amount": 10, "kind": "note" },
+      { "amount": 20, "kind": "note" },
+      { "amount": 50, "kind": "note" },
+      { "amount": 100, "kind": "note" },
+      { "amount": 200, "kind": "note" }
+    ]
+  }
+]

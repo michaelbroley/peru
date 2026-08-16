@@ -1,0 +1,171 @@
+---
+/**
+ * Drives the header's today panel: works out where in the trip we are from
+ * the device clock, then tops it up with live conditions when there's signal.
+ */
+---
+
+<script>
+  interface Day {
+    iso: string;
+    slug: string;
+    date: string;
+    title: string;
+    weekday: string;
+    point: { label: string; lat: number; lng: number };
+    weather: { high: string; low: string; icon: string };
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-today]');
+  if (root?.dataset.schedule) {
+    const days = JSON.parse(root.dataset.schedule) as Day[];
+    const first = days[0]!;
+    const last = days.at(-1)!;
+
+    const el = {
+      eyebrow: root.querySelector<HTMLElement>('[data-today-eyebrow]'),
+      headline: root.querySelector<HTMLElement>('[data-today-headline]'),
+      sub: root.querySelector<HTMLElement>('[data-today-sub]'),
+      jump: root.querySelector<HTMLAnchorElement>('[data-today-jump]'),
+      jumpLabel: root.querySelector<HTMLElement>('[data-today-jumplabel]'),
+      weather: root.querySelector<HTMLElement>('[data-today-weather]'),
+      wicon: root.querySelector<HTMLElement>('[data-today-wicon]'),
+      wtemp: root.querySelector<HTMLElement>('[data-today-wtemp]'),
+      wplace: root.querySelector<HTMLElement>('[data-today-wplace]'),
+    };
+
+    /** Local calendar date as YYYY-MM-DD — no UTC shifting across midnight. */
+    function localIso(date: Date): string {
+      const pad = (n: number) => String(n).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function daysBetween(fromIso: string, toIso: string): number {
+      const [fy, fm, fd] = fromIso.split('-').map(Number) as [number, number, number];
+      const [ty, tm, td] = toIso.split('-').map(Number) as [number, number, number];
+      return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86400000);
+    }
+
+    const todayIso = localIso(new Date());
+    const current = days.find((d) => d.iso === todayIso);
+    const untilStart = daysBetween(todayIso, first.iso);
+    const sinceEnd = daysBetween(last.iso, todayIso);
+
+    /** The day whose weather is worth showing: today's, or the first one. */
+    let focus: Day = first;
+
+    if (current) {
+      const index = days.indexOf(current) + 1;
+      focus = current;
+      if (el.eyebrow) el.eyebrow.textContent = 'Today';
+      if (el.headline) el.headline.textContent = `Day ${index} of ${days.length}`;
+      if (el.sub) el.sub.textContent = `${current.date} — ${current.title}`;
+      if (el.jumpLabel) el.jumpLabel.textContent = 'Jump to today';
+      if (el.jump) el.jump.href = `#${current.slug}`;
+    } else if (untilStart > 0) {
+      if (el.eyebrow) el.eyebrow.textContent = untilStart === 1 ? 'Tomorrow' : 'Countdown';
+      if (el.headline) {
+        el.headline.textContent = untilStart === 1 ? 'One day to go' : `${untilStart} days to go`;
+      }
+      if (el.sub) el.sub.textContent = `Wheels up ${first.date}. ${first.title} first.`;
+      if (el.jumpLabel) el.jumpLabel.textContent = 'Start at Day 1';
+      if (el.jump) el.jump.href = `#${first.slug}`;
+    } else {
+      // Past the last day — the guide becomes a record of the trip.
+      focus = last;
+      if (el.eyebrow) el.eyebrow.textContent = 'That was Peru';
+      if (el.headline) el.headline.textContent = sinceEnd === 1 ? 'Home yesterday' : `${sinceEnd} days ago`;
+      if (el.sub) el.sub.textContent = `${first.date} to ${last.date}, 2026.`;
+      if (el.jumpLabel) el.jumpLabel.textContent = 'Back to Day 1';
+      if (el.jump) el.jump.href = `#${first.slug}`;
+    }
+
+    // Opening the target day is the whole point of the button.
+    el.jump?.addEventListener('click', () => {
+      const target = document.querySelector(el.jump!.getAttribute('href') ?? '');
+      if (target instanceof HTMLDetailsElement) target.open = true;
+    });
+
+    /* --- Weather ---------------------------------------------------------
+       The seasonal average from the content shows straight away, so there's
+       something useful with no network and no layout shift. A live reading
+       replaces it if one arrives. */
+    function showAverage(day: Day): void {
+      if (!el.weather || !el.wtemp || !el.wplace) return;
+      el.weather.hidden = false;
+      el.weather.dataset.live = 'false';
+      el.wtemp.textContent = `${day.weather.high} / ${day.weather.low}`;
+      el.wplace.textContent = `${day.point.label} average`;
+      setIcon(day.weather.icon);
+    }
+
+    function setIcon(name: string): void {
+      const svg = el.wicon?.querySelector('svg');
+      const source = document.querySelector(`.wicon[data-icon="${name}"]`);
+      if (svg && source) svg.innerHTML = source.innerHTML;
+      if (svg && source) svg.setAttribute('aria-label', source.getAttribute('aria-label') ?? '');
+    }
+
+    /** WMO weather codes → the five icons the guide draws. */
+    function iconForCode(code: number): string {
+      if (code === 0 || code === 1) return 'sun';
+      if (code === 2) return 'cloud-sun';
+      if (code === 3) return 'fog';
+      if (code >= 45 && code <= 48) return 'fog';
+      if (code >= 71 && code <= 77) return 'frost';
+      if (code >= 85 && code <= 86) return 'frost';
+      return 'rain';
+    }
+
+    const CACHE_KEY = 'peru-live-weather';
+
+    function showLive(temp: number, code: number, label: string, at: number): void {
+      if (!el.weather || !el.wtemp || !el.wplace) return;
+      el.weather.hidden = false;
+      el.weather.dataset.live = 'true';
+      el.wtemp.textContent = `${Math.round(temp)}° now`;
+      const age = Date.now() - at;
+      // An hour-old reading is still worth showing; say when it's stale.
+      el.wplace.textContent = age > 3 * 3600_000 ? `${label} · earlier` : label;
+      setIcon(iconForCode(code));
+    }
+
+    showAverage(focus);
+
+    type Cached = { temp: number; code: number; label: string; at: number };
+    let cached: Cached | null = null;
+    try {
+      cached = JSON.parse(localStorage.getItem(CACHE_KEY) ?? 'null') as Cached | null;
+    } catch {
+      cached = null;
+    }
+    // A cached reading for the same place beats a seasonal average.
+    if (cached && cached.label === focus.point.label && Date.now() - cached.at < 24 * 3600_000) {
+      showLive(cached.temp, cached.code, cached.label, cached.at);
+    }
+
+    if (navigator.onLine !== false) {
+      const url =
+        `https://api.open-meteo.com/v1/forecast?latitude=${focus.point.lat}&longitude=${focus.point.lng}` +
+        `&current=temperature_2m,weather_code&timezone=auto`;
+
+      fetch(url)
+        .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+        .then((data: { current?: { temperature_2m?: number; weather_code?: number } }) => {
+          const temp = data.current?.temperature_2m;
+          const code = data.current?.weather_code;
+          if (typeof temp !== 'number' || typeof code !== 'number') return;
+          const at = Date.now();
+          showLive(temp, code, focus.point.label, at);
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ temp, code, label: focus.point.label, at }));
+          } catch {
+            /* storage full or blocked — the reading still showed */
+          }
+        })
+        .catch(() => {
+          /* no signal, or the service is down: the average stays put */
+        });
+    }
+  }
+</script>

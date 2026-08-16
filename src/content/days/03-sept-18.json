@@ -2,6 +2,7 @@
   "order": 3,
   "slug": "fri-sept-18-tour-day-1-lima-tour-begins",
   "date": "Fri, Sept 18",
+  "iso": "2026-09-18",
   "dayNumber": "18",
   "month": "Sept",
   "weekday": "Fri",
@@ -15,9 +16,22 @@
     "icon": "fog",
     "note": "Mild & grey; easy walking weather."
   },
+  "point": {
+    "label": "Lima",
+    "lat": -12.0464,
+    "lng": -77.0428
+  },
   "glance": "Tour starts with a 2 PM welcome meeting and an easy leader-led walk downtown. You've already seen Lima well — today is about meeting the group.",
-  "logistics": ["Welcome meeting 2:00 PM", "at Hotel El Señorial", "bring insurance + emergency contacts"],
-  "journey": ["Miraflores", "(leader-led walk)", "Downtown Lima"],
+  "logistics": [
+    "Welcome meeting 2:00 PM",
+    "at Hotel El Señorial",
+    "bring insurance + emergency contacts"
+  ],
+  "journey": [
+    "Miraflores",
+    "(leader-led walk)",
+    "Downtown Lima"
+  ],
   "reservations": [],
   "picksLabel": "If you have the afternoon",
   "picks": [
@@ -38,5 +52,8 @@
   "notes": [
     "Don't miss the 2 PM meeting — it's where insurance & emergency details are collected. Late? Tell reception."
   ],
-  "lbb": ["lima-skate", "lima-drink"]
+  "lbb": [
+    "lima-skate",
+    "lima-drink"
+  ]
 }

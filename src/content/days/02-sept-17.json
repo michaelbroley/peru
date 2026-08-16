@@ -2,6 +2,7 @@
   "order": 2,
   "slug": "thu-sept-17-lima-culture-maido",
   "date": "Thu, Sept 17",
+  "iso": "2026-09-17",
   "dayNumber": "17",
   "month": "Sept",
   "weekday": "Thu",
@@ -13,6 +14,11 @@
     "low": "15°",
     "icon": "fog",
     "note": "Same soft, overcast day; comfortable for walking and museums; light layer for the evening."
+  },
+  "point": {
+    "label": "Lima",
+    "lat": -12.0464,
+    "lng": -77.0428
   },
   "glance": "A full Lima day now you've recovered. Keep lunch light — tonight is Maido. Culture-heavy by day so you arrive hungry.",
   "logistics": [],
@@ -50,5 +56,8 @@
     }
   ],
   "notes": [],
-  "lbb": ["lima-art", "lima-history"]
+  "lbb": [
+    "lima-art",
+    "lima-history"
+  ]
 }

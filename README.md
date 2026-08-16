@@ -26,7 +26,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 
 | File                        | Holds                                                        |
 | --------------------------- | ------------------------------------------------------------ |
-| `days/01-sept-16.json` … ×11 | One file per day: weather, glance, logistics, journey, reservations, picks |
+| `days/01-sept-16.json` … ×11 | One file per day: date, location point, weather, glance, logistics, journey, reservations, picks |
 | `places.json`               | The Little Black Book — 45 entries, each tagged with a category |
 | `categories.json`           | The 12 recommendation categories and their anchor slugs       |
 | `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables |
@@ -55,9 +55,27 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 ### Components
 
-`TocNav` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList` · `SectionHeader`
+`TocNav` · `TodayPanel` / `TodayLoader` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList` · `SectionHeader`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
+
+### The header panel
+
+Where the standing blurb used to be, the masthead carries a live panel that reads the device clock and shows one of three states:
+
+| When | Shows | Button |
+| --- | --- | --- |
+| Before | "31 days to go" + departure day | Start at Day 1 |
+| During | "Day 6 of 11" + today's date and title | **Jump to today** — scrolls to today's card and opens it |
+| After | "That was Peru" + how long ago | Back to Day 1 |
+
+Underneath sits the weather for the day it's pointing at. The seasonal average from the content renders immediately — no network, no layout shift — and a live reading from [Open-Meteo](https://open-meteo.com) (no key, no account) replaces it when there's signal, with the condition icon switching to match the WMO code. The last reading is cached for a day, so an offline load still shows real conditions rather than falling back to the average; anything over three hours old is labelled "earlier".
+
+The lookup uses the coordinates of *the trip's* locations, which come from the map pins. Nothing asks for the reader's location, and the panel is left out of print.
+
+Without JavaScript the panel renders the trip dates and a plain link to Day 1, so the header is never empty.
+
+Day dates live in each day file as `iso` (`2026-09-21`), which is what the panel matches against; `point` is the day's location for the weather lookup.
 
 ### Responsive layout
 
@@ -67,7 +85,7 @@ Mobile is the comp, unchanged. Above that the card grows in steps and the extra 
 | ------- | --------------------------------------------------------------------------------------------- |
 | 600 px  | Card widens a little                                                                            |
 | 700 px  | Recommendations, weather, packing and the snapshot table go two-up                              |
-| 860 px  | Masthead splits (wordmark left, blurb right); snapshot blocks pair; checklist goes two-up       |
+| 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair; checklist goes two-up       |
 | 1080 px | **Nav becomes a sticky rail down the left**, always showing every day and category; snapshot table goes three-up; day gutters widen |
 | 1200 px | Recommendations go three-up; packing four-up; a day's Little Black Book panels pair side by side |
 | 1440 px | Card reaches 1320 px; weather goes four-up                                                       |
@@ -92,7 +110,7 @@ Pin links reuse the place's address where the content has one (`src/lib/addressB
 
 `public/sw.js` precaches the page, fonts, icons and Leaflet. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. Map tiles use a separate capped cache that survives content releases. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
 
-**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v2` → `v3`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
+**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v3` → `v4`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
 
 ### Icons
 

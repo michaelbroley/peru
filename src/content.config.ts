@@ -40,6 +40,8 @@ const days = defineCollection({
     /** Anchor id — matches the Quick Links TOC in the source markdown. */
     slug: z.string(),
     date: z.string(),
+    /** YYYY-MM-DD — lets the header work out which day is today. */
+    iso: z.string(),
     dayNumber: z.string(),
     month: z.string(),
     weekday: z.string(),
@@ -52,6 +54,9 @@ const days = defineCollection({
     /** Present on the first day of each leg — renders the region divider bar. */
     regionStart: z.object({ title: z.string(), meta: z.string() }).optional(),
     weather,
+    /** Where you actually are that day — used for the live conditions lookup.
+        Coordinates are the map pins', not new ones. */
+    point: z.object({ label: z.string(), lat: z.number(), lng: z.number() }),
     glance: z.string(),
     logistics: z.array(z.string()).default([]),
     /** Ordered stops: ["Cusco", "Sacred Valley", "(train)", "Aguas Calientes"]. */
@@ -110,7 +115,6 @@ const trip = defineCollection({
     travellers: z.string(),
     onTheGround: z.string(),
     tour: z.string(),
-    intro: z.string(),
     stats: z.array(z.object({ value: z.string(), label: z.string() })),
     flights: z.array(z.object({ label: z.string(), text: z.string() })),
     snapshot: z.array(

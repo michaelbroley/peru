@@ -2,6 +2,7 @@
   "order": 5,
   "slug": "sun-sept-20-tour-day-3-sacred-valley-aguas-calientes",
   "date": "Sun, Sept 20",
+  "iso": "2026-09-20",
   "dayNumber": "20",
   "month": "Sept",
   "weekday": "Sun",
@@ -14,6 +15,11 @@
     "low": "6°",
     "icon": "cloud-sun",
     "note": "Milder valley day; dropping into cloud forest, humidity rises — keep a rain layer handy."
+  },
+  "point": {
+    "label": "Aguas Calientes",
+    "lat": -13.1547,
+    "lng": -72.5254
   },
   "glance": "Scenic run through the Sacred Valley with a community visit & lunch, then the train from Ollantaytambo to Aguas Calientes at the foot of Machu Picchu.",
   "logistics": [

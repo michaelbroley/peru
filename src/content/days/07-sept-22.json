@@ -2,6 +2,7 @@
   "order": 7,
   "slug": "tue-sept-22-tour-day-5-free-day-in-cusco",
   "date": "Tue, Sept 22",
+  "iso": "2026-09-22",
   "dayNumber": "22",
   "month": "Sept",
   "weekday": "Tue",
@@ -14,6 +15,11 @@
     "low": "4°",
     "icon": "sun",
     "note": "Classic Cusco; bright sunny ~21°C, cold once the sun dips. Great for a high hike — start early, layer up."
+  },
+  "point": {
+    "label": "Cusco",
+    "lat": -13.532,
+    "lng": -71.9675
   },
   "glance": "Your one truly flexible day. Big-adventure option (Rainbow Mountain, Humantay) or a relaxed art-market-and-café crawl through San Blas — a lighter day here is smart before Titicaca.",
   "logistics": [],

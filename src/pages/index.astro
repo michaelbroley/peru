@@ -12,6 +12,8 @@ import PackingList from '../components/PackingList.astro';
 import VerifyList from '../components/VerifyList.astro';
 import MapPanel from '../components/MapPanel.astro';
 import MapLoader from '../components/MapLoader.astro';
+import TodayPanel from '../components/TodayPanel.astro';
+import TodayLoader from '../components/TodayLoader.astro';
 import { STAR } from '../lib/glyphs';
 
 const tripEntry = await getEntry('trip', 'snapshot');
@@ -67,7 +69,8 @@ const description =
         <p class="hero__dates">{trip.onTheGround}</p>
         <h1 class="hero__title">Peru</h1>
         <p class="hero__names">{trip.travellers}</p>
-        <p class="hero__intro" set:html={trip.intro} />
+
+        <TodayPanel days={days} />
 
         <dl class="hero__stats">
           {
@@ -253,6 +256,7 @@ const description =
   </div>
 
   <MapLoader />
+  <TodayLoader />
 
   <script>
     // Expand / collapse all — the only other interactive bit on the page.
@@ -305,14 +309,6 @@ const description =
     color: var(--ink);
   }
 
-  .hero__intro {
-    margin: 16px 0 0;
-    max-width: 36ch;
-    font-size: var(--fs-note);
-    line-height: 1.5;
-    text-wrap: pretty;
-  }
-
   .hero__stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -338,12 +334,11 @@ const description =
     .hero__names {
       grid-column: 1;
     }
-    .hero__intro {
+    .hero > :global(.today) {
       grid-column: 2;
-      grid-row: 2 / 4;
+      grid-row: 1 / 4;
       align-self: center;
       margin-top: 0;
-      font-size: var(--fs-body);
     }
     .hero__stats {
       grid-column: 1 / -1;

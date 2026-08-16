@@ -2,6 +2,7 @@
   "order": 9,
   "slug": "thu-sept-24-tour-day-7-lake-titicaca-and-homestay",
   "date": "Thu, Sept 24",
+  "iso": "2026-09-24",
   "dayNumber": "24",
   "month": "Sept",
   "weekday": "Thu",
@@ -15,8 +16,17 @@
     "icon": "frost",
     "note": "Your coldest night — ~0 to −1°C, no heating (blankets provided). Bright & sunny on the water; thermals + fleece after dark."
   },
+  "point": {
+    "label": "Lake Titicaca",
+    "lat": -15.8,
+    "lng": -69.97
+  },
   "glance": "Motorboat across the world's highest navigable lake to the Uros floating reed islands, then a homestay with a local family — consistently a trip highlight.",
-  "logistics": ["Uros islands by motorboat", "tonight: family homestay", "facilities basic, drop toilets, no showers"],
+  "logistics": [
+    "Uros islands by motorboat",
+    "tonight: family homestay",
+    "facilities basic, drop toilets, no showers"
+  ],
   "journey": [],
   "reservations": [],
   "picksLabel": "Make the most of it",

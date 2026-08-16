@@ -2,6 +2,7 @@
   "order": 1,
   "slug": "wed-sept-16-arrival-lady-bee",
   "date": "Wed, Sept 16",
+  "iso": "2026-09-16",
   "dayNumber": "16",
   "month": "Sept",
   "weekday": "Wed",
@@ -17,6 +18,11 @@
     "low": "15°",
     "icon": "fog",
     "note": "Grey & mild; coastal fog, high humidity, little sun. Light jacket, not a raincoat."
+  },
+  "point": {
+    "label": "Lima",
+    "lat": -12.0464,
+    "lng": -77.0428
   },
   "glance": "Land off the redeye at 6:55 AM — take it easy. Check in, nap, gentle wander, then 8 PM cocktails at Lady Bee.",
   "logistics": [

@@ -2,6 +2,7 @@
   "order": 11,
   "slug": "sat-sept-26-tour-day-9-depart-lima",
   "date": "Sat, Sept 26",
+  "iso": "2026-09-26",
   "dayNumber": "26",
   "month": "Sept",
   "weekday": "Sat",
@@ -14,8 +15,16 @@
     "icon": "fog",
     "note": "One last grey Lima morning; an early travel day."
   },
+  "point": {
+    "label": "Lima",
+    "lat": -12.0464,
+    "lng": -77.0428
+  },
   "glance": "Flight home departs 8:25 AM — really a travel morning. Arrange an airport transfer the night before.",
-  "logistics": ["Flight 8:25 AM", "arrive YUL 5:45 PM"],
+  "logistics": [
+    "Flight 8:25 AM",
+    "arrive YUL 5:45 PM"
+  ],
   "journey": [],
   "reservations": [],
   "picks": [],

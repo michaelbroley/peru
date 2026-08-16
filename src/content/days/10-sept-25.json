@@ -2,6 +2,7 @@
   "order": 10,
   "slug": "fri-sept-25-tour-day-8-fly-back-to-lima",
   "date": "Fri, Sept 25",
+  "iso": "2026-09-25",
   "dayNumber": "25",
   "month": "Sept",
   "weekday": "Fri",
@@ -9,16 +10,31 @@
   "title": "Fly back to Lima",
   "pick": false,
   "overnight": "Hotel, Lima (free evening)",
-  "regionStart": { "title": "Back to Lima", "meta": "Sept 25–26 · sea level" },
+  "regionStart": {
+    "title": "Back to Lima",
+    "meta": "Sept 25–26 · sea level"
+  },
   "weather": {
     "high": "~20°",
     "low": "15°",
     "icon": "fog",
     "note": "Back to mild & grey in Lima; perfect for a last easy evening in Miraflores or Barranco."
   },
+  "point": {
+    "label": "Lima",
+    "lat": -12.0464,
+    "lng": -77.0428
+  },
   "glance": "Bus to Juliaca, flight to Lima, free final evening. A great chance for one more special meal — keep it in Barranco.",
-  "logistics": ["Travel ~half day", "evening free"],
-  "journey": ["Titicaca", "(Juliaca flight)", "Lima"],
+  "logistics": [
+    "Travel ~half day",
+    "evening free"
+  ],
+  "journey": [
+    "Titicaca",
+    "(Juliaca flight)",
+    "Lima"
+  ],
   "reservations": [],
   "picksLabel": "Farewell-dinner ideas (Barranco)",
   "picks": [
@@ -40,5 +56,7 @@
     }
   ],
   "notes": [],
-  "lbb": ["lima-special"]
+  "lbb": [
+    "lima-special"
+  ]
 }

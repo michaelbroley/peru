@@ -1,0 +1,193 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WeatherIcon from './WeatherIcon.astro';
+
+/**
+ * The header's live panel, in place of the old standing blurb.
+ *
+ * Three states, worked out from the device clock:
+ *   before  — "31 days to go", jumps to Day 1
+ *   during  — "Day 4 of 11", jumps to today's card and opens it
+ *   after   — "That was Peru", jumps back to the start
+ *
+ * Server-rendered in its no-JS form (the trip dates and a plain link to
+ * Day 1), then upgraded on the client. Live conditions are a further
+ * enhancement on top of that: the seasonal average from the content shows
+ * immediately and stays if the network never answers.
+ */
+interface Props {
+  days: CollectionEntry<'days'>[];
+}
+const { days } = Astro.props;
+
+const first = days[0]!;
+const last = days.at(-1)!;
+
+// Everything the client needs; no second request, and it works offline.
+const schedule = days.map((d) => ({
+  iso: d.data.iso,
+  slug: d.data.slug,
+  date: d.data.date,
+  title: d.data.title,
+  weekday: d.data.weekday,
+  point: d.data.point,
+  weather: { high: d.data.weather.high, low: d.data.weather.low, icon: d.data.weather.icon },
+}));
+---
+
+<div class="today" data-today data-schedule={JSON.stringify(schedule)}>
+  <p class="today__eyebrow" data-today-eyebrow>The trip</p>
+
+  <p class="today__headline" data-today-headline>
+    {first.data.date.replace(/^\w+, /, '')} – {last.data.date.replace(/^\w+, /, '')}
+  </p>
+
+  <p class="today__sub" data-today-sub>Eleven days, Lima to Lake Titicaca and back.</p>
+
+  <div class="today__row">
+    <a class="today__jump" href={`#${first.data.slug}`} data-today-jump>
+      <span data-today-jumplabel>Start at Day 1</span>
+      <span aria-hidden="true">→</span>
+    </a>
+
+    <p class="today__weather" data-today-weather hidden>
+      <span class="today__wicon" data-today-wicon>
+        <WeatherIcon icon={first.data.weather.icon} size={16} />
+      </span>
+      <span class="today__wtemp" data-today-wtemp></span>
+      <span class="today__wplace" data-today-wplace></span>
+    </p>
+  </div>
+
+  <!-- Every condition icon, so the panel can swap to whatever the live
+       reading reports without another request. -->
+  <div class="today__sprite" aria-hidden="true">
+    <WeatherIcon icon="sun" size={16} />
+    <WeatherIcon icon="cloud-sun" size={16} />
+    <WeatherIcon icon="fog" size={16} />
+    <WeatherIcon icon="rain" size={16} />
+    <WeatherIcon icon="frost" size={16} />
+  </div>
+</div>
+
+<style>
+  .today {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+    margin: 18px 0 0;
+    padding: 14px 15px 15px;
+    border: 1px solid var(--cream-30);
+  }
+
+  .today__eyebrow {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label-xs);
+    line-height: 1;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .today__headline {
+    margin: 2px 0 0;
+    font-family: var(--display);
+    font-size: 30px;
+    line-height: 0.92;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .today__sub {
+    margin: 0;
+    max-width: 34ch;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .today__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .today__jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: var(--ink);
+    color: var(--cream);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .today__jump:hover,
+  .today__jump:focus-visible {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  .today__weather {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    padding: 7px 10px;
+    background: rgba(18, 16, 15, 0.22);
+    font-weight: 600;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .today__wicon {
+    display: flex;
+    color: var(--gold);
+  }
+
+  .today__wplace {
+    opacity: 0.75;
+  }
+
+  .today__sprite {
+    display: none;
+  }
+
+  /* Live reading rather than the seasonal average. */
+  .today__weather[data-live='true'] {
+    background: var(--ink);
+  }
+  .today__weather[data-live='true'] .today__wicon {
+    color: var(--gold);
+  }
+
+  @media (min-width: 860px) {
+    .today {
+      justify-self: start;
+      width: 100%;
+      max-width: 420px;
+      padding: 18px 20px 20px;
+    }
+    .today__headline {
+      font-size: 38px;
+    }
+  }
+
+  /* The panel is live state, not trip content — it has no place in a PDF. */
+  @media print {
+    .today {
+      display: none;
+    }
+  }
+</style>

@@ -2,6 +2,7 @@
   "order": 6,
   "slug": "mon-sept-21-tour-day-4-machu-picchu-back-to-cusco",
   "date": "Mon, Sept 21",
+  "iso": "2026-09-21",
   "dayNumber": "21",
   "month": "Sept",
   "weekday": "Mon",
@@ -15,9 +16,23 @@
     "icon": "rain",
     "note": "Cloud forest; highest shower chance of the trip; misty mornings often clear. Layers + rain shell."
   },
+  "point": {
+    "label": "Machu Picchu",
+    "lat": -13.1631,
+    "lng": -72.545
+  },
   "glance": "Early bus up the switchbacks for a guided tour of one of the Seven Wonders of the World, then train & drive back to Cusco.",
-  "logistics": ["First bus 6:00 AM", "bring passport (checked)", "also water, bug spray, rain layer"],
-  "journey": ["Aguas Calientes", "(bus up)", "Machu Picchu", "Cusco"],
+  "logistics": [
+    "First bus 6:00 AM",
+    "bring passport (checked)",
+    "also water, bug spray, rain layer"
+  ],
+  "journey": [
+    "Aguas Calientes",
+    "(bus up)",
+    "Machu Picchu",
+    "Cusco"
+  ],
   "reservations": [],
   "picksLabel": "Back in Cusco tonight",
   "picks": [

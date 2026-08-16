@@ -2,6 +2,7 @@
   "order": 4,
   "slug": "sat-sept-19-tour-day-2-fly-to-cusco",
   "date": "Sat, Sept 19",
+  "iso": "2026-09-19",
   "dayNumber": "19",
   "month": "Sept",
   "weekday": "Sat",
@@ -18,6 +19,11 @@
     "low": "4°",
     "icon": "sun",
     "note": "The big swing begins — warm sunny afternoons, ~4°C nights. Extreme UV: hat + sunscreen by day, warm layer at night."
+  },
+  "point": {
+    "label": "Cusco",
+    "lat": -13.532,
+    "lng": -71.9675
   },
   "glance": "Early flight to Cusco (5:30 AM hotel departure). Main job is acclimatising — go slow, coca tea, skip alcohol. Gentle orientation walk introduces the old town.",
   "logistics": [

@@ -21,6 +21,7 @@ import Icon, { type IconName } from '../components/Icon.astro';
 import RegionBar from '../components/RegionBar.astro';
 import Llama from '../components/Llama.astro';
 import PhraseList from '../components/PhraseList.astro';
+import Habitat from '../components/Habitat.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
@@ -424,6 +425,8 @@ const description =
           </SectionFold>
         </section>
       </main>
+
+      <Habitat />
 
       {/* Inline and in the body on purpose: it runs while the parser is still
           here, so a section you left shut is never painted open first. */}

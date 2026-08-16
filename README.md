@@ -56,7 +56,7 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `VerifyList` · `Llama`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `Habitat` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -107,6 +107,18 @@ Print keeps both columns and won't split a group across a page. This is the one 
 The two prose bits that aren't phrases — the Aymara caveat and the gift tip — use the guide's existing idioms: the gold `!` flag the recommendations use for anything unconfirmed, and the grey note box the days use.
 
 **The sign-off follows the last section**, wherever that is. It now closes the Aymara book. If another section is ever appended, move it again — a farewell stranded mid-document reads as a mistake.
+
+### The habitat
+
+The page ends in 500 px of ground for the llama to stand in. `Habitat.astro`, straight off `.shell` after `</main>`.
+
+**She needs no code to get there.** She's fixed to the bottom of the viewport, and at full scroll the bottom of the viewport *is* this band — so scrolling to the end walks her out of the guide and into her habitat, with nothing watching for it. `.page`'s bottom padding had to go, though: a strip of ink under the card would have left her hovering off the end of her own ground.
+
+No negative margin on the band either. The section covers bleed out of the padding their `<section>` carries; this hangs straight off `.shell`, which has none, so it's already the full width of the card. Giving it the usual `calc(var(--pad) * -1)` pushed it 40 px past the card on each side.
+
+**The artwork isn't in yet.** Until it lands the band draws its own horizon, which is deliberate rather than broken. Pass `cover` a key from `covers.ts` and the picture layers straight over it; if the art's ground line sits above the bottom edge, pass `floor` the distance up to it and she'll stand on that instead of on the very bottom.
+
+**The penguin** is still to come — behaviours are walk, belly-slide, and eat a fish on tap. Nothing of it is built: it needs the sheet first, since the frame counts and row order have to match whatever arrives.
 
 ### Chaska
 

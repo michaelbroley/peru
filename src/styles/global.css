@@ -225,10 +225,13 @@ summary::-webkit-details-marker {
   background: var(--cream);
 }
 
+/* No padding under the card: the habitat is the bottom of the page, and the
+   llama stands on the bottom of the viewport — a strip of ink below it would
+   leave her hovering off the end of her own ground. */
 .page {
   background: var(--ink);
   min-height: 100vh;
-  padding: 0 0 60px;
+  padding: 0;
 }
 
 /* All the vertical room sits below a section rather than being split above

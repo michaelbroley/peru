@@ -52,7 +52,9 @@ const days = defineCollection({
     pick: z.boolean().default(false),
     overnight: z.string().optional(),
     /** Present on the first day of each leg — renders the region divider bar. */
-    regionStart: z.object({ title: z.string(), meta: z.string() }).optional(),
+    regionStart: z
+      .object({ title: z.string(), meta: z.string(), /** key in src/lib/covers.ts */ cover: z.string().optional() })
+      .optional(),
     weather,
     /** Where you actually are that day — used for the live conditions lookup.
         Coordinates are the map pins', not new ones. */

@@ -1,0 +1,149 @@
+---
+import { Image } from 'astro:assets';
+import { getCover } from '../lib/covers';
+
+/**
+ * The divider between legs of the trip — "Lima · Sept 16–18 · sea level".
+ * Same treatment as a section head, at a shorter height, so the day list
+ * reads as four chapters rather than eleven undifferentiated rows.
+ */
+interface Props {
+  title: string;
+  meta: string;
+  cover?: string | undefined;
+}
+const { title, meta, cover } = Astro.props;
+const image = getCover(cover);
+
+const sizes = '(min-width: 1440px) 1080px, (min-width: 1080px) 880px, (min-width: 860px) 820px, 100vw';
+---
+
+<div class:list={['region', { 'region--photo': !!image }]}>
+  {
+    image && (
+      <div class="region__media">
+        <Image
+          class="region__img"
+          src={image.src}
+          alt={image.alt}
+          widths={[480, 800, 1200, 1600]}
+          sizes={sizes}
+          loading="lazy"
+          decoding="async"
+          style={image.focus ? `object-position:${image.focus}` : undefined}
+        />
+        <span class="region__scrim" aria-hidden="true" />
+      </div>
+    )
+  }
+
+  <div class="region__text">
+    <h3 class="region__title">{title}</h3>
+    <p class="region__meta">{meta}</p>
+  </div>
+</div>
+
+<style>
+  .region {
+    position: relative;
+    margin-top: 26px;
+  }
+
+  /* Without a photograph it stays the solid ink bar it always was. */
+  .region:not(.region--photo) .region__text {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 15px 16px;
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .region__media {
+    position: relative;
+    margin: 0 calc(var(--pad) * -1);
+    height: clamp(140px, 30vw, 190px);
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .region__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .region__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(18, 16, 15, 0.92) 0%,
+      rgba(18, 16, 15, 0.7) 30%,
+      rgba(18, 16, 15, 0.28) 68%,
+      rgba(18, 16, 15, 0.1) 100%
+    );
+  }
+
+  .region--photo .region__text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+  }
+
+  .region__title {
+    font-family: var(--display);
+    font-size: clamp(30px, 8vw, 46px);
+    line-height: 0.94;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .region--photo .region__title {
+    color: var(--cream);
+    text-shadow: 0 1px 16px rgba(18, 16, 15, 0.5);
+  }
+
+  .region__meta {
+    margin: 4px 0 0;
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .region:not(.region--photo) .region__meta {
+    margin: 0;
+  }
+
+  @media (min-width: 860px) {
+    .region__media {
+      height: clamp(180px, 18vw, 240px);
+    }
+    .region--photo .region__text {
+      bottom: 16px;
+    }
+  }
+
+  @media print {
+    .region__media {
+      display: none;
+    }
+    .region--photo .region__text {
+      position: static;
+      padding: 10px 0 0;
+      border-top: 2px solid #000;
+    }
+    .region--photo .region__title {
+      color: #000;
+      text-shadow: none;
+    }
+    .region__meta {
+      color: #444 !important;
+    }
+  }
+</style>

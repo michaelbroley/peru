@@ -12,7 +12,8 @@
   "overnight": "Hotel, Lima (free evening)",
   "regionStart": {
     "title": "Back to Lima",
-    "meta": "Sept 25–26 · sea level"
+    "meta": "Sept 25–26 · sea level",
+    "cover": "lima-plaza"
   },
   "weather": {
     "high": "~20°",

@@ -11,7 +11,8 @@
   "overnight": "Barranco or Miraflores, Lima",
   "regionStart": {
     "title": "Lima",
-    "meta": "Sept 16–18 · sea level"
+    "meta": "Sept 16–18 · sea level",
+    "cover": "lima-clifftop"
   },
   "weather": {
     "high": "~20°",

@@ -55,9 +55,19 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 ### Components
 
-`TocNav` · `TodayPanel` / `TodayLoader` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList` · `SectionHeader`
+`TocNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
+
+### Photography
+
+The section heads (01–06) and the four leg dividers in the day list are full-bleed photographs with the number and title set over a scrim. `src/lib/covers.ts` is the manifest: it imports each photo, gives it alt text and an `object-position`, and exposes it under a short key. Sections take that key as a prop; a day's `regionStart.cover` carries it as data.
+
+The originals were 3–24 MB camera JPEGs, several with GPS EXIF. `node scripts/optimise-images.mjs --replace` converts them to WebP masters — EXIF orientation applied then all metadata stripped, long edge capped at 2400 px — which took the set from 154 MB to 8 MB. Astro generates the responsive sizes from those masters at build time.
+
+Only the first cover loads eagerly; the other nine are lazy. A phone's initial load is ~105 KB including one 44 KB image, and the rest arrive as you scroll. Print drops the photographs and returns the headings to the flow in black.
+
+Five images from the upload are unused and listed at the top of `covers.ts` if you want to swap any in.
 
 ### The header panel
 
@@ -110,7 +120,7 @@ Pin links reuse the place's address where the content has one (`src/lib/addressB
 
 `public/sw.js` precaches the page, fonts, icons and Leaflet. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. Map tiles use a separate capped cache that survives content releases. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
 
-**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v3` → `v4`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
+**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v4` → `v5`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
 
 ### Icons
 

@@ -1,52 +1,181 @@
 ---
-/** The design's numbered section head: outlined "01" over an Anton title. */
+import { Image } from 'astro:assets';
+import { getCover } from '../lib/covers';
+
+/**
+ * The numbered section head. A full-bleed photograph with the number and
+ * title set over it, then the lead paragraph back on the cream.
+ *
+ * The text is a sibling of the image rather than a child, so print can drop
+ * the photograph and keep the heading in the flow.
+ */
 interface Props {
   num: string;
   title: string;
   lead?: string | undefined;
-  id?: string | undefined;
+  cover?: string | undefined;
+  /** The first section is close enough to the fold to be worth loading eagerly. */
+  eager?: boolean;
 }
-const { num, title, lead } = Astro.props;
+const { num, title, lead, cover, eager = false } = Astro.props;
+const image = getCover(cover);
+
+// The band spans the content column: roughly the card width minus the nav rail.
+const sizes = '(min-width: 1440px) 1080px, (min-width: 1080px) 880px, (min-width: 860px) 820px, 100vw';
 ---
 
-<header class="sechead">
-  <p class="section__num" aria-hidden="true">{num}</p>
-  <h2 class="sechead__title">{title}</h2>
+<header class:list={['sechead', { 'sechead--photo': !!image }]}>
+  {/* The band is the positioning context, so the overlaid title is anchored
+      to the photograph rather than to the header including its lead. */}
+  <div class="sechead__band">
+    {
+      image && (
+        <div class="sechead__media">
+          <Image
+            class="sechead__img"
+            src={image.src}
+            alt={image.alt}
+            widths={[480, 800, 1200, 1600, 2000]}
+            sizes={sizes}
+            loading={eager ? 'eager' : 'lazy'}
+            decoding={eager ? 'auto' : 'async'}
+            style={image.focus ? `object-position:${image.focus}` : undefined}
+          />
+          <span class="sechead__scrim" aria-hidden="true" />
+        </div>
+      )
+    }
+
+    <div class="sechead__text">
+      <p class="section__num" aria-hidden="true">{num}</p>
+      <h2 class="sechead__title">{title}</h2>
+    </div>
+  </div>
+
   {lead && <p class="sechead__lead">{lead}</p>}
 </header>
 
 <style>
+  .sechead__band {
+    position: relative;
+  }
+
+  /* Full-bleed out of the section's padding. */
+  .sechead__media {
+    position: relative;
+    margin: 0 calc(var(--pad) * -1);
+    height: clamp(190px, 44vw, 280px);
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .sechead__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Dark at the bottom where the type sits, clear at the top. */
+  .sechead__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(18, 16, 15, 0.94) 0%,
+      rgba(18, 16, 15, 0.78) 26%,
+      rgba(18, 16, 15, 0.34) 62%,
+      rgba(18, 16, 15, 0.12) 100%
+    );
+  }
+
   .section__num {
     margin: 0;
     font-family: var(--display);
-    font-size: var(--fs-secnum);
-    line-height: 0.78;
+    font-size: clamp(48px, 12vw, 76px);
+    line-height: 0.72;
     color: transparent;
-    -webkit-text-stroke: 1.5px var(--pink);
+    -webkit-text-stroke: 2px var(--pink);
   }
 
-  /* Safari/Firefox without -webkit-text-stroke would render nothing. */
   @supports not (-webkit-text-stroke: 1px black) {
     .section__num {
       color: var(--pink);
-      opacity: 0.35;
+      opacity: 0.4;
     }
   }
 
   .sechead__title {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     font-family: var(--display);
-    font-size: var(--fs-section);
-    line-height: 1;
+    font-size: clamp(38px, 10vw, 78px);
+    line-height: 0.92;
     text-transform: uppercase;
     font-weight: 400;
+    text-wrap: balance;
   }
 
   .sechead__lead {
-    margin: 10px 0 0;
-    max-width: 40ch;
+    margin: 12px 0 0;
+    max-width: var(--measure);
     font-size: var(--fs-small);
     line-height: 1.5;
     color: var(--ink-60);
+  }
+
+  /* ── With a photograph ─────────────────────────────────────────────────
+     The type sits on the image; the number goes gold, which holds up over a
+     photo far better than the pink outline does. */
+  .sechead--photo .sechead__text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+  }
+
+  .sechead--photo .section__num {
+    -webkit-text-stroke-color: var(--gold);
+  }
+
+  @supports not (-webkit-text-stroke: 1px black) {
+    .sechead--photo .section__num {
+      color: var(--gold);
+    }
+  }
+
+  .sechead--photo .sechead__title {
+    color: var(--cream);
+    text-shadow: 0 1px 18px rgba(18, 16, 15, 0.5);
+  }
+
+  .sechead--photo .sechead__lead {
+    margin-top: 16px;
+  }
+
+  @media (min-width: 860px) {
+    .sechead__media {
+      height: clamp(260px, 26vw, 380px);
+    }
+    .sechead--photo .sechead__text {
+      bottom: 20px;
+    }
+  }
+
+  /* ── Print ─────────────────────────────────────────────────────────────
+     Photographs are screen furniture; the heading returns to the flow. */
+  @media print {
+    .sechead__media {
+      display: none;
+    }
+    .sechead--photo .sechead__text {
+      position: static;
+    }
+    .sechead--photo .sechead__title {
+      color: #000;
+      text-shadow: none;
+    }
+    .section__num {
+      font-size: 34px;
+    }
   }
 </style>

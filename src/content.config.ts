@@ -225,14 +225,14 @@ const maps = defineCollection({
 
 /**
  * Phrasebook groups. `book` picks which section a group belongs to; a `hint`
- * is the rough English-speaker pronunciation, which only the Quechua entries
- * carry — Spanish reads close enough to how it's written.
+ * is the rough English-speaker pronunciation, which only the Quechua and
+ * Aymara entries carry — Spanish reads close enough to how it's written.
  */
 const phrases = defineCollection({
   loader: file('./src/content/phrases.json'),
   schema: z.object({
     order: z.number().int(),
-    book: z.enum(['spanish', 'quechua']),
+    book: z.enum(['spanish', 'quechua', 'aymara']),
     title: z.string(),
     aside: z.string().optional(),
     icon: z.string().optional(),

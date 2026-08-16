@@ -21,6 +21,9 @@ interface Props {
   groups: CollectionEntry<'phrases'>['data'][];
 }
 const { groups } = Astro.props;
+
+/** ISO 639-1, so a screen reader doesn't read Quechua with a Spanish voice. */
+const LANG = { spanish: 'es', quechua: 'qu', aymara: 'ay' } as const;
 ---
 
 <div class:list={['phrases', { 'phrases--single': groups.length === 1 }]}>
@@ -37,7 +40,7 @@ const { groups } = Astro.props;
         <dl class="phrase-group__list">
           {group.items.map((item) => (
             <div class="phrase">
-              <dt class="phrase__term" lang={group.book === 'quechua' ? 'qu' : 'es'}>
+              <dt class="phrase__term" lang={LANG[group.book]}>
                 {item.term}
               </dt>
               <dd class="phrase__gloss">

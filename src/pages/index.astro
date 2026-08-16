@@ -35,6 +35,7 @@ const packing = (await getCollection('packing')).sort((a, b) => a.data.order - b
 const phrases = (await getCollection('phrases')).sort((a, b) => a.data.order - b.data.order);
 const spanish = phrases.filter((p) => p.data.book === 'spanish').map((p) => p.data);
 const quechua = phrases.filter((p) => p.data.book === 'quechua').map((p) => p.data);
+const aymara = phrases.filter((p) => p.data.book === 'aymara').map((p) => p.data);
 const checklist = (await getCollection('checklist')).sort((a, b) => a.data.order - b.data.order);
 const maps = await getCollection('maps');
 const routeMap = maps.find((m) => m.id === 'peru');
@@ -59,6 +60,7 @@ const sections = [
   { num: '06', href: '#book-ahead-verify', label: 'Book ahead' },
   { num: '07', href: '#common-spanish-phrases', label: 'Spanish phrases' },
   { num: '08', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
+  { num: '09', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
 ];
 
 const dayLinks = days.map((d) => ({
@@ -380,12 +382,7 @@ const description =
         </section>
 
         <!-- ── 08 Key Quechua phrases ─────────────────────────────────── -->
-        <section
-          class="section section--last"
-          id="key-quechua-phrases-for-the-homestay"
-          data-section
-          aria-labelledby="quechua-title"
-        >
+        <section class="section" id="key-quechua-phrases-for-the-homestay" data-section aria-labelledby="quechua-title">
           <h2 class="sr-only" id="quechua-title">Key Quechua phrases, for the homestay</h2>
           <SectionFold
             num="08"
@@ -396,8 +393,10 @@ const description =
           >
             <p class="phrasenote">
               <span class="phrasenote__mark" aria-hidden="true">!</span>
-              Some communities on the lake speak Aymara rather than Quechua — listen to how your host family
-              greets you and follow their lead.
+              <span>
+                Some communities on the lake speak Aymara rather than Quechua — listen to how your host family
+                greets you and follow their lead. <a href="#key-aymara-phrases-just-in-case">Aymara is next</a>.
+              </span>
             </p>
 
             <PhraseList groups={quechua} />
@@ -406,6 +405,31 @@ const description =
               <span class="phrasetip__label">Tip</span>
               A small gift for the host family (fresh fruit from Puno market, school supplies) paired with a
               “Sulpayki” goes a long way.
+            </p>
+          </SectionFold>
+        </section>
+
+        <!-- ── 09 Key Aymara phrases ──────────────────────────────────── -->
+        <section
+          class="section section--last"
+          id="key-aymara-phrases-just-in-case"
+          data-section
+          aria-labelledby="aymara-title"
+        >
+          <h2 class="sr-only" id="aymara-title">Key Aymara phrases, just in case</h2>
+          <SectionFold
+            num="09"
+            title="Aymara phrases"
+            cover="titicaca-puno"
+            fold="key-aymara-phrases-just-in-case"
+            lead="Some Lake Titicaca communities speak Aymara rather than Quechua — especially around the lake toward the Bolivian side. If your host family greets you in Aymara, these will earn a big smile."
+          >
+            <PhraseList groups={aymara} />
+
+            <p class="phrasetip">
+              <span class="phrasetip__label">Tip</span>
+              When in doubt, “Kamisaraki” (hello) and “Yuspagara” (thank you) are the two to remember — pair
+              them with a small gift for the host family and you're golden.
             </p>
 
             {/* The sign-off closes the guide, so it follows the last section
@@ -897,6 +921,10 @@ const description =
     line-height: 1.5;
     color: var(--ink-62);
     max-width: var(--measure);
+  }
+
+  .phrasenote > span {
+    min-width: 0;
   }
 
   .phrasenote__mark {

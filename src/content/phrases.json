@@ -6,22 +6,70 @@
     "title": "Basics & courtesy",
     "icon": "speech",
     "items": [
-      { "term": "Hola", "gloss": "Hi" },
-      { "term": "Buenos días / Buenas tardes / Buenas noches", "gloss": "Good morning / afternoon / evening" },
-      { "term": "Por favor", "gloss": "Please" },
-      { "term": "Gracias / Muchas gracias", "gloss": "Thank you / Thanks a lot" },
-      { "term": "De nada", "gloss": "You're welcome" },
-      { "term": "Sí / No", "gloss": "Yes / No" },
-      { "term": "Disculpe", "gloss": "Excuse me (to get attention)" },
-      { "term": "Perdón", "gloss": "Sorry" },
-      { "term": "Con permiso", "gloss": "Excuse me (passing by)" },
-      { "term": "¿Cómo está?", "gloss": "How are you? (formal)" },
-      { "term": "Mucho gusto", "gloss": "Nice to meet you" },
-      { "term": "Adiós / Chau", "gloss": "Goodbye / Bye" },
-      { "term": "No entiendo", "gloss": "I don't understand" },
-      { "term": "¿Habla inglés?", "gloss": "Do you speak English?" },
-      { "term": "¿Puede repetir, por favor?", "gloss": "Can you repeat, please?" },
-      { "term": "¿Cómo se dice ___?", "gloss": "How do you say ___?" }
+      {
+        "term": "Hola",
+        "gloss": "Hi"
+      },
+      {
+        "term": "Buenos días / Buenas tardes / Buenas noches",
+        "gloss": "Good morning / afternoon / evening"
+      },
+      {
+        "term": "Por favor",
+        "gloss": "Please"
+      },
+      {
+        "term": "Gracias / Muchas gracias",
+        "gloss": "Thank you / Thanks a lot"
+      },
+      {
+        "term": "De nada",
+        "gloss": "You're welcome"
+      },
+      {
+        "term": "Sí / No",
+        "gloss": "Yes / No"
+      },
+      {
+        "term": "Disculpe",
+        "gloss": "Excuse me (to get attention)"
+      },
+      {
+        "term": "Perdón",
+        "gloss": "Sorry"
+      },
+      {
+        "term": "Con permiso",
+        "gloss": "Excuse me (passing by)"
+      },
+      {
+        "term": "¿Cómo está?",
+        "gloss": "How are you? (formal)"
+      },
+      {
+        "term": "Mucho gusto",
+        "gloss": "Nice to meet you"
+      },
+      {
+        "term": "Adiós / Chau",
+        "gloss": "Goodbye / Bye"
+      },
+      {
+        "term": "No entiendo",
+        "gloss": "I don't understand"
+      },
+      {
+        "term": "¿Habla inglés?",
+        "gloss": "Do you speak English?"
+      },
+      {
+        "term": "¿Puede repetir, por favor?",
+        "gloss": "Can you repeat, please?"
+      },
+      {
+        "term": "¿Cómo se dice ___?",
+        "gloss": "How do you say ___?"
+      }
     ]
   },
   {
@@ -31,14 +79,38 @@
     "title": "Getting around",
     "icon": "pin",
     "items": [
-      { "term": "¿Dónde está ___?", "gloss": "Where is ___?" },
-      { "term": "el baño", "gloss": "the bathroom" },
-      { "term": "¿Cuánto cuesta?", "gloss": "How much is it?" },
-      { "term": "¿Está lejos?", "gloss": "Is it far?" },
-      { "term": "a la izquierda / a la derecha / recto", "gloss": "left / right / straight" },
-      { "term": "Pare, por favor", "gloss": "Stop, please" },
-      { "term": "¿Cuánto es hasta ___?", "gloss": "How much to ___? (taxi)" },
-      { "term": "¿Tiene un mapa?", "gloss": "Do you have a map?" }
+      {
+        "term": "¿Dónde está ___?",
+        "gloss": "Where is ___?"
+      },
+      {
+        "term": "el baño",
+        "gloss": "the bathroom"
+      },
+      {
+        "term": "¿Cuánto cuesta?",
+        "gloss": "How much is it?"
+      },
+      {
+        "term": "¿Está lejos?",
+        "gloss": "Is it far?"
+      },
+      {
+        "term": "a la izquierda / a la derecha / recto",
+        "gloss": "left / right / straight"
+      },
+      {
+        "term": "Pare, por favor",
+        "gloss": "Stop, please"
+      },
+      {
+        "term": "¿Cuánto es hasta ___?",
+        "gloss": "How much to ___? (taxi)"
+      },
+      {
+        "term": "¿Tiene un mapa?",
+        "gloss": "Do you have a map?"
+      }
     ]
   },
   {
@@ -49,17 +121,50 @@
     "aside": "For the food-focused days.",
     "icon": "fork",
     "items": [
-      { "term": "La carta, por favor", "gloss": "The menu, please" },
-      { "term": "¿Qué recomienda?", "gloss": "What do you recommend?" },
-      { "term": "La cuenta, por favor", "gloss": "The bill, please" },
-      { "term": "Para llevar", "gloss": "To go / takeaway" },
-      { "term": "Está delicioso", "gloss": "It's delicious" },
-      { "term": "Sin picante / Con picante", "gloss": "Without spice / With spice" },
-      { "term": "Soy vegetariano/a", "gloss": "I'm vegetarian" },
-      { "term": "Soy alérgico/a a ___", "gloss": "I'm allergic to ___" },
-      { "term": "agua sin gas / con gas", "gloss": "still / sparkling water" },
-      { "term": "una mesa para dos", "gloss": "a table for two" },
-      { "term": "¿Aceptan tarjeta?", "gloss": "Do you accept card?" }
+      {
+        "term": "La carta, por favor",
+        "gloss": "The menu, please"
+      },
+      {
+        "term": "¿Qué recomienda?",
+        "gloss": "What do you recommend?"
+      },
+      {
+        "term": "La cuenta, por favor",
+        "gloss": "The bill, please"
+      },
+      {
+        "term": "Para llevar",
+        "gloss": "To go / takeaway"
+      },
+      {
+        "term": "Está delicioso",
+        "gloss": "It's delicious"
+      },
+      {
+        "term": "Sin picante / Con picante",
+        "gloss": "Without spice / With spice"
+      },
+      {
+        "term": "Soy vegetariano/a",
+        "gloss": "I'm vegetarian"
+      },
+      {
+        "term": "Soy alérgico/a a ___",
+        "gloss": "I'm allergic to ___"
+      },
+      {
+        "term": "agua sin gas / con gas",
+        "gloss": "still / sparkling water"
+      },
+      {
+        "term": "una mesa para dos",
+        "gloss": "a table for two"
+      },
+      {
+        "term": "¿Aceptan tarjeta?",
+        "gloss": "Do you accept card?"
+      }
     ]
   },
   {
@@ -70,14 +175,38 @@
     "aside": "Altitude-aware.",
     "icon": "first-aid",
     "items": [
-      { "term": "Ayuda", "gloss": "Help" },
-      { "term": "Necesito un médico", "gloss": "I need a doctor" },
-      { "term": "No me siento bien", "gloss": "I don't feel well" },
-      { "term": "Tengo soroche / mal de altura", "gloss": "I have altitude sickness" },
-      { "term": "Necesito agua", "gloss": "I need water" },
-      { "term": "¿Dónde hay una farmacia?", "gloss": "Where is a pharmacy?" },
-      { "term": "Llame a la policía", "gloss": "Call the police" },
-      { "term": "Estoy perdido/a", "gloss": "I'm lost" }
+      {
+        "term": "Ayuda",
+        "gloss": "Help"
+      },
+      {
+        "term": "Necesito un médico",
+        "gloss": "I need a doctor"
+      },
+      {
+        "term": "No me siento bien",
+        "gloss": "I don't feel well"
+      },
+      {
+        "term": "Tengo soroche / mal de altura",
+        "gloss": "I have altitude sickness"
+      },
+      {
+        "term": "Necesito agua",
+        "gloss": "I need water"
+      },
+      {
+        "term": "¿Dónde hay una farmacia?",
+        "gloss": "Where is a pharmacy?"
+      },
+      {
+        "term": "Llame a la policía",
+        "gloss": "Call the police"
+      },
+      {
+        "term": "Estoy perdido/a",
+        "gloss": "I'm lost"
+      }
     ]
   },
   {
@@ -88,20 +217,151 @@
     "aside": "Pronunciation is approximate.",
     "icon": "boat",
     "items": [
-      { "term": "Allillanchu", "gloss": "Hello / How are you?", "hint": "ah-yee-YAHN-choo" },
-      { "term": "Allillanmi", "gloss": "I'm well (reply)", "hint": "ah-yee-YAHN-mee" },
-      { "term": "Sulpayki", "gloss": "Thank you", "hint": "sool-PIE-kee" },
-      { "term": "Añay", "gloss": "Thanks (informal)", "hint": "ah-NYIGH" },
-      { "term": "Arí / Mana", "gloss": "Yes / No", "hint": "ah-REE / MAH-nah" },
-      { "term": "Ama hina kaspa", "gloss": "Please", "hint": "ah-mah HEE-nah KAHS-pah" },
-      { "term": "Imaynalla kashanki?", "gloss": "How are you?", "hint": "ee-migh-NAH-yah kah-SHAN-kee" },
-      { "term": "Ima sutiyki?", "gloss": "What's your name?", "hint": "EE-mah soo-TEE-kee" },
-      { "term": "Nuqaq sutiy ___", "gloss": "My name is ___", "hint": "NOH-kahk soo-TEE ___" },
-      { "term": "Añañaw", "gloss": "How beautiful! / Delicious!", "hint": "ah-nyah-NYOW" },
-      { "term": "Yakuta munani", "gloss": "I'd like some water", "hint": "yah-KOO-tah moo-NAH-nee" },
-      { "term": "Allin p'unchay", "gloss": "Good day", "hint": "ah-yeen POON-chai" },
-      { "term": "Tupananchiskama", "gloss": "See you / Goodbye", "hint": "too-pah-nahn-CHEES-kah-mah" },
-      { "term": "Sumaq mikhuna", "gloss": "Delicious food", "hint": "SOO-mahk MEEK-oo-nah" }
+      {
+        "term": "Allillanchu",
+        "gloss": "Hello / How are you?",
+        "hint": "ah-yee-YAHN-choo"
+      },
+      {
+        "term": "Allillanmi",
+        "gloss": "I'm well (reply)",
+        "hint": "ah-yee-YAHN-mee"
+      },
+      {
+        "term": "Sulpayki",
+        "gloss": "Thank you",
+        "hint": "sool-PIE-kee"
+      },
+      {
+        "term": "Añay",
+        "gloss": "Thanks (informal)",
+        "hint": "ah-NYIGH"
+      },
+      {
+        "term": "Arí / Mana",
+        "gloss": "Yes / No",
+        "hint": "ah-REE / MAH-nah"
+      },
+      {
+        "term": "Ama hina kaspa",
+        "gloss": "Please",
+        "hint": "ah-mah HEE-nah KAHS-pah"
+      },
+      {
+        "term": "Imaynalla kashanki?",
+        "gloss": "How are you?",
+        "hint": "ee-migh-NAH-yah kah-SHAN-kee"
+      },
+      {
+        "term": "Ima sutiyki?",
+        "gloss": "What's your name?",
+        "hint": "EE-mah soo-TEE-kee"
+      },
+      {
+        "term": "Nuqaq sutiy ___",
+        "gloss": "My name is ___",
+        "hint": "NOH-kahk soo-TEE ___"
+      },
+      {
+        "term": "Añañaw",
+        "gloss": "How beautiful! / Delicious!",
+        "hint": "ah-nyah-NYOW"
+      },
+      {
+        "term": "Yakuta munani",
+        "gloss": "I'd like some water",
+        "hint": "yah-KOO-tah moo-NAH-nee"
+      },
+      {
+        "term": "Allin p'unchay",
+        "gloss": "Good day",
+        "hint": "ah-yeen POON-chai"
+      },
+      {
+        "term": "Tupananchiskama",
+        "gloss": "See you / Goodbye",
+        "hint": "too-pah-nahn-CHEES-kah-mah"
+      },
+      {
+        "term": "Sumaq mikhuna",
+        "gloss": "Delicious food",
+        "hint": "SOO-mahk MEEK-oo-nah"
+      }
+    ]
+  },
+  {
+    "id": "ay-lake",
+    "order": 6,
+    "book": "aymara",
+    "title": "Around the lake",
+    "aside": "Pronunciation is approximate; listen to your hosts and copy how they say it.",
+    "icon": "mountain",
+    "items": [
+      {
+        "term": "Kamisaraki",
+        "gloss": "Hello / How are you?",
+        "hint": "kah-mee-SAH-rah-kee"
+      },
+      {
+        "term": "Waliki",
+        "gloss": "I'm well / Good (reply)",
+        "hint": "wah-LEE-kee"
+      },
+      {
+        "term": "Jallalla",
+        "gloss": "Cheers / Hooray / Well-wish",
+        "hint": "hah-YAH-yah"
+      },
+      {
+        "term": "Yuspagara",
+        "gloss": "Thank you",
+        "hint": "yoos-pah-GAH-rah"
+      },
+      {
+        "term": "Jisa / Janiwa",
+        "gloss": "Yes / No",
+        "hint": "HEE-sah / hah-NEE-wah"
+      },
+      {
+        "term": "Mira",
+        "gloss": "Please",
+        "hint": "MEE-rah"
+      },
+      {
+        "term": "Kunas sutimaxa?",
+        "gloss": "What's your name?",
+        "hint": "KOO-nahs soo-TEE-mah-hah"
+      },
+      {
+        "term": "Nayan sutixa ___",
+        "gloss": "My name is ___",
+        "hint": "NIGH-ahn soo-TEE-hah ___"
+      },
+      {
+        "term": "Suma",
+        "gloss": "Good / Beautiful",
+        "hint": "SOO-mah"
+      },
+      {
+        "term": "Suma manq'a",
+        "gloss": "Delicious food",
+        "hint": "SOO-mah MAHNK-ah"
+      },
+      {
+        "term": "Uma munta",
+        "gloss": "I'd like some water",
+        "hint": "OO-mah MOON-tah"
+      },
+      {
+        "term": "Aski uru",
+        "gloss": "Good day",
+        "hint": "AHS-kee OO-roo"
+      },
+      {
+        "term": "Jikisiñkama",
+        "gloss": "See you / Goodbye",
+        "hint": "hee-kee-SEEN-kah-mah"
+      }
     ]
   }
 ]

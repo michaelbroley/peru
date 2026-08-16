@@ -94,19 +94,19 @@ Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather
 
 ### The phrasebooks
 
-Sections 07 and 08 are a Spanish phrasebook (43 phrases in four groups) and a short Quechua one for the Titicaca homestay (14). They sit after Book ahead, at `#common-spanish-phrases` and `#key-quechua-phrases-for-the-homestay` — the same slug-the-whole-heading style as every other anchor.
+Sections 07, 08 and 09 are a Spanish phrasebook (43 phrases in four groups), a short Quechua one for the Titicaca homestay (14), and an Aymara one for the same homestay if the family greets you that way instead (13). They sit after Book ahead, at `#common-spanish-phrases`, `#key-quechua-phrases-for-the-homestay` and `#key-aymara-phrases-just-in-case` — the same slug-the-whole-heading style as every other anchor. The Quechua book's Aymara caveat links through to the Aymara one, since there is now somewhere to send you.
 
 `PhraseList` renders a `<dl>`, because that's what a phrasebook is: a term and its definition. A screen reader announces the pairing, so "Sulpayki, thank you" reads correctly without the punctuation between them having to carry it. The em dash is drawn in CSS rather than written into the markup, so it can't be read aloud or swept up when you copy a phrase to show someone. Terms carry `lang="es"` / `lang="qu"`.
 
-Only the Quechua entries have a pronunciation hint — Spanish reads close enough to how it's written. On a phone the hint drops to its own line under the meaning; from 600 px it goes inline in brackets.
+Only the Quechua and Aymara entries have a pronunciation hint — Spanish reads close enough to how it's written. On a phone the hint drops to its own line under the meaning; from 600 px it goes inline in brackets.
 
-The two columns are `columns: 2` rather than a grid. The Spanish groups run 8 to 16 phrases, and a grid row would leave a hole under the short group while the tall one carried on; the browser balances a multi-column better than a fixed row can. It's safe here in a way it wouldn't be around a Leaflet map — nothing in a phrase list is positioned or scripted. The Quechua book is a single group with nothing to balance against, so there the *phrases* take the two columns instead. Watch for `display: grid` on anything you want `columns` to split — grid wins, and the column count is silently ignored.
+The two columns are `columns: 2` rather than a grid. The Spanish groups run 8 to 16 phrases, and a grid row would leave a hole under the short group while the tall one carried on; the browser balances a multi-column better than a fixed row can. It's safe here in a way it wouldn't be around a Leaflet map — nothing in a phrase list is positioned or scripted. The Quechua and Aymara books are single groups with nothing to balance against, so there the *phrases* take the two columns instead. Watch for `display: grid` on anything you want `columns` to split — grid wins, and the column count is silently ignored.
 
 Print keeps both columns and won't split a group across a page. This is the one part of the guide you might genuinely want folded in a pocket.
 
 The two prose bits that aren't phrases — the Aymara caveat and the gift tip — use the guide's existing idioms: the gold `!` flag the recommendations use for anything unconfirmed, and the grey note box the days use.
 
-**The sign-off moved.** "Have the best trip" used to close Book ahead, which was the last section. It now follows the Quechua book instead, so it's still the last thing on the page.
+**The sign-off follows the last section**, wherever that is. It used to close Book ahead; it now closes the Aymara book. If another section is ever appended, move it again — a farewell stranded mid-document reads as a mistake.
 
 ### Chaska
 
@@ -212,7 +212,7 @@ Day dates live in each day file as `iso` (`2026-09-21`), which is what the panel
 
 A slim sticky bar and a mega panel, the same at every width. The bar carries only what's useful while reading — the section you're currently in, a jump to today, and the menu trigger — and is about 50 px tall.
 
-The panel opens as one view of the whole guide: the eight sections, all eleven days, all thirteen recommendation lists grouped under the same four chapters the section itself uses, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
+The panel opens as one view of the whole guide: the nine sections, all eleven days, all thirteen recommendation lists grouped under the same four chapters the section itself uses, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
 
 The panel is `position: fixed` rather than part of the sticky flow. That's deliberate: locking body scroll with `overflow: hidden` — the usual way to hold the page still behind a menu — removes the scrollport the sticky bar depends on, and the bar drops out of position the moment the menu opens.
 

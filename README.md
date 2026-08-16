@@ -56,7 +56,7 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -91,6 +91,26 @@ Every track inside the panel has an explicit zero minimum and the fact rows are 
 In print the locator and the gauge go, the block turns white, and the panel becomes the only place the elevation and weather appear. Its grid drops to one track there — with the locator hidden the facts would otherwise fall into the `auto` column and shrink to their own text.
 
 Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather table's `2,000–2,900 m` band for the cloud-forest days); the `metres` value only scales the gauge.
+
+### Chaska
+
+There is a llama at the bottom of the page. She has no job.
+
+She stands in the corner, and every fourteen-to-thirty-eight seconds does something: paces along the floor and turns at the edges, waves, catches a hoof and goes over, or dances. Poke her and she spits — an interrupt that plays over whatever she was doing and hands control back, so a second poke restarts it rather than queueing. On each of the eleven days of the trip she has a turn of her own and says so.
+
+The art is a handoff in `src/silly_virtual_llama/` — seventeen animations, 40 × 40 logical pixels each, exported at 4×. `src/lib/llama.ts` carries the sheet geometry and the day mapping; `Llama.astro` is the whole implementation.
+
+**The day mapping isn't the sheet's.** The sheet numbers its day animations 1–11, and taking them in order would put the Nazca lines on a Cusco rest day and a parrot on the flight home. Four land exactly — Lady Bee on the 16th, Maido on the 17th, the terraces on the 21st, the reed boat on the 24th — and the rest are matched to what we're actually doing, with reasons in the file.
+
+**What she costs:** 13 KB, once. The handoff's 174 KB PNG master re-encodes to lossless WebP at 13 KB with byte-identical pixels — `scripts/pack-llama.mjs` decodes both and compares the raw buffers before it will write. Nothing is resampled, recut or recoloured. The sheet is fetched on idle after `load`, so she never competes with the guide arriving, and she's precached for offline.
+
+**Behaviour worth knowing:**
+
+- Frames advance on accumulated milliseconds, not ticks, so she moves at the same speed on a 60 Hz laptop and a 120 Hz phone.
+- Her floor is the `.shell` card, not the whole monitor. On a wide screen the card is centred with the ink field either side, and a llama straddling that edge reads as a mistake rather than a joke.
+- `pointer-events: none` on the container, `auto` on her 80 px hit box, `z-index: 900` — under the nav, over everything else, never in the way of a tap meant for the guide.
+- She's off in one click (the switch is in the menu, beside the lens filter) and remembers it. Under `prefers-reduced-motion` the default flips to off; an explicit choice always wins.
+- No paper. She's a treat, not a fixture.
 
 ### The little black book
 

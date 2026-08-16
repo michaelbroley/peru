@@ -1,0 +1,442 @@
+---
+import {
+  LLAMA_ANIMATIONS,
+  LLAMA_CELL,
+  LLAMA_DAYS,
+  LLAMA_SHEET,
+  LLAMA_SHEET_COLUMNS,
+  LLAMA_SHEET_ROWS,
+} from '../lib/llama';
+
+/**
+ * Chaska, the 16-bit llama who lives along the bottom of the guide.
+ *
+ * She has no job. She stands in the corner, occasionally paces, waves, or
+ * catches a hoof and falls over; poke her and she spits. On each day of the
+ * trip she has something of her own to do — a cocktail on the 16th, the
+ * terraces on the 21st, the sun disc on the way home.
+ *
+ * One 174 KB sheet holds all seventeen animations and is fetched after the
+ * page has settled, so nothing here competes with the guide loading. The
+ * whole thing is off in one click and remembers that.
+ */
+const anims = JSON.stringify(LLAMA_ANIMATIONS);
+const days = JSON.stringify(LLAMA_DAYS);
+---
+
+<div class="llama" data-llama hidden>
+  <button class="llama__hit" type="button" data-llama-poke aria-label="Chaska the llama — poke her">
+    <span class="llama__sprite" data-llama-sprite></span>
+  </button>
+  <p class="llama__say" data-llama-say hidden aria-live="polite"></p>
+</div>
+
+<script
+  is:inline
+  type="application/json"
+  data-llama-config
+  set:html={JSON.stringify({
+    sheet: LLAMA_SHEET,
+    cell: LLAMA_CELL,
+    columns: LLAMA_SHEET_COLUMNS,
+    rows: LLAMA_SHEET_ROWS,
+    anims: JSON.parse(anims),
+    days: JSON.parse(days),
+  })}
+/>
+
+<style>
+  .llama {
+    position: fixed;
+    left: 0;
+    /* The hooves plant on row 38 of the 40px cell, so the cell's bottom two
+       logical pixels are empty — drop it by that much and she stands on the
+       floor rather than hovering above it. */
+    bottom: calc(env(safe-area-inset-bottom, 0px) - 4px);
+    z-index: 900;
+    /* Never in the way of the guide: only her own hit box takes a click. */
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .llama[hidden] {
+    display: none;
+  }
+
+  .llama__hit {
+    /* The sprite is 80px; the spec asks for a 44px minimum target and this is
+       comfortably over it. Transparent, no chrome — she is the button. */
+    display: block;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .llama__hit:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 2px;
+  }
+
+  .llama__sprite {
+    display: block;
+    width: 80px;
+    height: 80px;
+    background-repeat: no-repeat;
+    /* 16-bit art: never let the browser smooth it. */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    /* A hard offset rather than a blur — she has to read over a photograph as
+       well as over cream, and a soft shadow under pixel art looks wrong. */
+    filter: drop-shadow(0 3px 0 rgba(18, 16, 15, 0.18));
+  }
+
+  /* Set by the script when she's walking the other way. */
+  .llama[data-facing='1'] .llama__sprite {
+    transform: scaleX(-1);
+  }
+
+  .llama__say {
+    position: absolute;
+    left: 50%;
+    bottom: 74px;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 5px 9px;
+    background: var(--ink);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .llama__say[hidden] {
+    display: none;
+  }
+
+  /* She's a treat, not a fixture — leave her off paper entirely. */
+  @media print {
+    .llama {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { LLAMA_SHEET } from '../lib/llama';
+
+  interface Anim {
+    id: string;
+    row: number;
+    frames: number;
+    fps: number;
+  }
+  interface Config {
+    sheet: string;
+    cell: number;
+    columns: number;
+    rows: number;
+    anims: Record<string, Anim>;
+    days: Record<string, { anim: string; say: string }>;
+  }
+
+  const KEY = 'peru-llama';
+  const root = document.querySelector<HTMLElement>('[data-llama]');
+  const sprite = document.querySelector<HTMLElement>('[data-llama-sprite]');
+  const hit = document.querySelector<HTMLButtonElement>('[data-llama-poke]');
+  const say = document.querySelector<HTMLElement>('[data-llama-say]');
+  const configEl = document.querySelector('[data-llama-config]');
+
+  if (root && sprite && hit && say && configEl) {
+    const cfg = JSON.parse(configEl.textContent ?? '{}') as Config;
+    const A = cfg.anims;
+
+    /* --- Preference ------------------------------------------------------
+       On by default, because that's the point of her — except when the reader
+       has asked for less motion, where the polite default is off. Either way
+       an explicit choice wins and is remembered. */
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function stored(): boolean | null {
+      try {
+        const v = localStorage.getItem(KEY);
+        return v === null ? null : v === 'on';
+      } catch {
+        return null;
+      }
+    }
+    let enabled = stored() ?? !reduced;
+
+    /* --- Sprite ---------------------------------------------------------- */
+    const CELL = cfg.cell;
+    sprite.style.backgroundSize = `${cfg.columns * CELL}px ${cfg.rows * CELL}px`;
+
+    let current: Anim = A.idle!;
+    let override: Anim | null = null;
+    let overrideUntil = 0;
+    let frame = 0;
+    let elapsed = 0;
+    let last = 0;
+
+    /** Where she is, in px from the left edge, and which way she's pointing. */
+    let x = 0;
+    let facing: 1 | -1 = -1;
+    let walking = 0; // px/second, 0 when standing still
+    let raf = 0;
+
+    /**
+     * Her floor is the guide's own card, not the whole monitor: on a wide
+     * screen the card is centred with the ink field either side, and a llama
+     * straddling that edge reads as a mistake rather than a joke.
+     */
+    function bounds(): { min: number; max: number } {
+      const shell = document.querySelector('.shell')?.getBoundingClientRect();
+      const left = shell ? Math.max(0, shell.left + 6) : 6;
+      const right = shell ? Math.min(window.innerWidth, shell.right - 6) : window.innerWidth - 6;
+      return { min: left, max: Math.max(left, right - CELL) };
+    }
+    const maxX = () => bounds().max;
+    const minX = () => bounds().min;
+
+    function draw(): void {
+      const anim = override ?? current;
+      sprite.style.backgroundPosition = `-${frame * CELL}px -${anim.row * CELL}px`;
+      root!.style.transform = `translateX(${Math.round(x)}px)`;
+    }
+
+    function play(anim: Anim): void {
+      if (current === anim) return;
+      current = anim;
+      frame = 0;
+      elapsed = 0;
+    }
+
+    /* --- The loop --------------------------------------------------------
+       Time-based, not tick-based: frames step on accumulated milliseconds, so
+       she runs at the same speed on a 60 Hz laptop and a 120 Hz phone. */
+    function tick(now: number): void {
+      const dt = last ? Math.min(now - last, 250) : 0;
+      last = now;
+
+      if (override && now > overrideUntil) {
+        override = null;
+        frame = 0;
+        elapsed = 0;
+      }
+
+      const anim = override ?? current;
+      elapsed += dt;
+      const step = 1000 / anim.fps;
+      while (elapsed >= step) {
+        elapsed -= step;
+        frame = (frame + 1) % anim.frames;
+      }
+
+      if (walking !== 0) {
+        x += (walking * dt) / 1000;
+        // Turn at the edges rather than walking off.
+        if (x <= minX() || x >= maxX()) {
+          x = Math.max(minX(), Math.min(x, maxX()));
+          walking = -walking;
+          facing = walking > 0 ? 1 : -1;
+          root!.dataset.facing = String(facing);
+        }
+      }
+
+      draw();
+      raf = requestAnimationFrame(tick);
+    }
+
+    /* --- What she decides to do ------------------------------------------
+       A queue of one-shots on timers. Nothing here is clever: she stands
+       around, and every so often does something. */
+    let timer = 0;
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+    function stand(): void {
+      walking = 0;
+      play(A.idle!);
+    }
+
+    let speakTimer = 0;
+    function speak(text: string, ms = 2200): void {
+      say!.textContent = text;
+      say!.hidden = false;
+      // Centred over her by default, then nudged back inside the viewport —
+      // she talks from the corners, where a centred label hangs off the edge.
+      say!.style.transform = 'translateX(-50%)';
+      const box = say!.getBoundingClientRect();
+      let shift = 0;
+      if (box.left < 6) shift = 6 - box.left;
+      else if (box.right > window.innerWidth - 6) shift = window.innerWidth - 6 - box.right;
+      if (shift) say!.style.transform = `translateX(calc(-50% + ${Math.round(shift)}px))`;
+
+      window.clearTimeout(speakTimer);
+      speakTimer = window.setTimeout(() => {
+        say!.hidden = true;
+      }, ms);
+    }
+
+    /** Today's animation, if today is one of the eleven. */
+    function todaysAct(): { anim: string; say: string } | undefined {
+      const now = new Date();
+      const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+        now.getDate(),
+      ).padStart(2, '0')}`;
+      return cfg.days[iso];
+    }
+
+    function pace(): number {
+      // Head for somewhere else on the floor and walk there.
+      const target = rand(minX(), maxX());
+      walking = target > x ? 42 : -42;
+      facing = walking > 0 ? 1 : -1;
+      root!.dataset.facing = String(facing);
+      play(A.run!);
+      const ms = (Math.abs(target - x) / 42) * 1000;
+      window.setTimeout(stand, ms);
+      return ms + 400;
+    }
+
+    function oneShot(anim: Anim, cycles = 2): number {
+      walking = 0;
+      play(anim);
+      return (anim.frames / anim.fps) * 1000 * cycles;
+    }
+
+    function act(): void {
+      const today = todaysAct();
+      const roll = Math.random();
+
+      let hold: number;
+      if (today && roll < 0.4) {
+        // Her party piece for the day gets the biggest share.
+        hold = oneShot(A[today.anim] ?? A.idle!, 3);
+        speak(today.say);
+      } else if (roll < 0.6) {
+        hold = pace();
+      } else if (roll < 0.75) {
+        hold = oneShot(A.wave!, 2);
+      } else if (roll < 0.85) {
+        // Catches a hoof and goes over. Plays once — it's a pratfall, not a
+        // habit.
+        hold = oneShot(A.trip!, 1);
+      } else {
+        hold = oneShot(A.dance!, 2);
+      }
+
+      timer = window.setTimeout(() => {
+        stand();
+        timer = window.setTimeout(act, rand(14000, 38000));
+      }, hold);
+    }
+
+    /* --- Poke ------------------------------------------------------------
+       An interrupt, not a queue: a second poke restarts the spit rather than
+       stacking. */
+    hit.addEventListener('click', () => {
+      override = A.tap!;
+      frame = 0;
+      elapsed = 0;
+      overrideUntil = performance.now() + 700;
+    });
+
+    /* --- On / off --------------------------------------------------------- */
+    function start(): void {
+      root!.hidden = false;
+      x = Math.max(x, minX());
+      stand();
+      last = 0;
+      if (!raf) raf = requestAnimationFrame(tick);
+      const today = todaysAct();
+      // Say hello on arrival, or show off if it's one of her days.
+      window.setTimeout(() => {
+        if (today) {
+          play(A[today.anim] ?? A.wave!);
+          speak(today.say, 3000);
+          window.setTimeout(stand, 3200);
+        } else {
+          play(A.wave!);
+          window.setTimeout(stand, 1500);
+        }
+        timer = window.setTimeout(act, rand(9000, 20000));
+      }, 900);
+    }
+
+    function stop(): void {
+      // Removed, not frozen — a llama stopped mid-stride reads as a bug.
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      window.clearTimeout(timer);
+      walking = 0;
+      root!.hidden = true;
+      say!.hidden = true;
+    }
+
+    function setEnabled(on: boolean, remember = true): void {
+      enabled = on;
+      if (remember) {
+        try {
+          localStorage.setItem(KEY, on ? 'on' : 'off');
+        } catch {
+          /* no storage — she just won't be remembered */
+        }
+      }
+      for (const button of document.querySelectorAll<HTMLElement>('[data-llama-toggle]')) {
+        button.setAttribute('aria-pressed', String(on));
+        const label = button.querySelector('[data-llama-toggle-label]');
+        if (label) label.textContent = on ? 'On' : 'Off';
+      }
+      if (on) start();
+      else stop();
+    }
+
+    for (const button of document.querySelectorAll<HTMLElement>('[data-llama-toggle]')) {
+      button.addEventListener('click', () => setEnabled(!enabled));
+    }
+
+    window.addEventListener(
+      'resize',
+      () => {
+        x = Math.max(minX(), Math.min(x, maxX()));
+      },
+      { passive: true },
+    );
+
+    /* --- Bring her in ----------------------------------------------------
+       The sheet is 174 KB and she is not the point of the page, so she waits
+       for everything else to finish before fetching anything. */
+    function summon(): void {
+      const img = new Image();
+      img.onload = () => {
+        sprite!.style.backgroundImage = `url(${LLAMA_SHEET})`;
+        setEnabled(enabled, false);
+      };
+      // No llama is better than a broken one; fail silently.
+      img.onerror = () => undefined;
+      img.src = LLAMA_SHEET;
+    }
+
+    // Reflect the stored preference on the toggle straight away, even though
+    // she hasn't arrived yet.
+    for (const button of document.querySelectorAll<HTMLElement>('[data-llama-toggle]')) {
+      button.setAttribute('aria-pressed', String(enabled));
+      const label = button.querySelector('[data-llama-toggle-label]');
+      if (label) label.textContent = enabled ? 'On' : 'Off';
+    }
+
+    const idle = (fn: () => void) =>
+      'requestIdleCallback' in window
+        ? (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(fn)
+        : window.setTimeout(fn, 1200);
+
+    if (document.readyState === 'complete') idle(summon);
+    else window.addEventListener('load', () => idle(summon), { once: true });
+  }
+</script>

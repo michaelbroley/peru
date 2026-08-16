@@ -11,7 +11,7 @@
  * Bump CACHE when the content changes — old caches are dropped on activate.
  */
 
-const CACHE = 'peru-guide-v13';
+const CACHE = 'peru-guide-v14';
 
 /**
  * Map tiles live in their own capped cache: they're third-party, there can be
@@ -39,6 +39,7 @@ const PRECACHE = [
   '/icons/icon-512.png',
   '/icons/icon-maskable-512.png',
   '/icons/icon-180.png',
+  '/llama/chaska-4x.webp',
 ];
 
 self.addEventListener('install', (event) => {

@@ -20,6 +20,7 @@ import { Image } from 'astro:assets';
 import { covers } from '../lib/covers';
 import Icon, { type IconName } from '../components/Icon.astro';
 import RegionBar from '../components/RegionBar.astro';
+import Llama from '../components/Llama.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
@@ -385,6 +386,7 @@ const description =
   <MapSprite />
   <MapLoader />
   <TodayLoader />
+  <Llama />
 
   <script>
     // Expand / collapse all — the only other interactive bit on the page.

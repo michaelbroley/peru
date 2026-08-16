@@ -113,6 +113,13 @@ const { sections, days, categories } = Astro.props;
       <button class="nav__pill" type="button" data-lens-btn="all" aria-pressed="true">Everything</button>
       <button class="nav__pill" type="button" data-lens-btn="food" aria-pressed="false">Laura’s food</button>
       <button class="nav__pill" type="button" data-lens-btn="skate" aria-pressed="false">Michael’s skate</button>
+
+      {/* Chaska has nothing to do with navigating the guide, but this is the
+          one panel that holds every switch, so it's where you'd look. */}
+      <span class="nav__lenslabel nav__lenslabel--llama">Llama</span>
+      <button class="nav__pill" type="button" data-llama-toggle aria-pressed="true">
+        <span data-llama-toggle-label>On</span>
+      </button>
     </div>
   </div>
 </nav>
@@ -560,6 +567,10 @@ const { sections, days, categories } = Astro.props;
     margin-top: 20px;
     padding-top: 16px;
     border-top: 1px solid var(--cream-28);
+  }
+
+  .nav__lenslabel--llama {
+    margin-left: auto;
   }
 
   .nav__lenslabel {

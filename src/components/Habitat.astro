@@ -1,50 +1,32 @@
 ---
-import { Image } from 'astro:assets';
-import { getCover } from '../lib/covers';
+import { HABITAT_BACKDROPS } from '../lib/habitat';
+import Penguin from './Penguin.astro';
 
 /**
  * The footer: 500 px of ground at the bottom of the page for the llama to
- * stand in once you've reached it.
+ * stand in once you've reached it, and where the penguin lives.
  *
  * She needs no code to get here. She's fixed to the bottom of the viewport,
  * and the bottom of the viewport at full scroll *is* this band — so scrolling
  * to the end walks her out of the guide and into her habitat.
  *
- * The artwork is a pixel-Peru scene that hasn't landed yet. Until it does the
- * band draws its own horizon, which is deliberate rather than broken: give
- * `cover` a key from src/lib/covers.ts and the picture layers straight over
- * it. If the art has its own horizon rather than sitting on the very bottom
- * edge, set --habitat-floor to how far up from the bottom the ground line is,
- * and she'll stand on that instead.
+ * The backdrop is picked by the reader's own clock: coast in the morning,
+ * valley through the middle of the day, the Andes at dusk, and the night sky
+ * after that. It's set from script rather than rendered, so only the one
+ * scene that's wanted is ever fetched, and it waits for the guide to finish
+ * loading first.
  */
-interface Props {
-  /** Key in src/lib/covers.ts. Without one the drawn horizon shows through. */
-  cover?: string | undefined;
-  /** Distance from the bottom edge up to the ground line in the artwork. */
-  floor?: number;
-}
-const { cover, floor = 0 } = Astro.props;
-const image = getCover(cover);
 ---
 
-<footer class="habitat" data-habitat style={`--habitat-floor:${floor}px`}>
-  <div class="habitat__scene" aria-hidden="true">
-    {
-      image && (
-        <Image
-          class="habitat__bg"
-          src={image.src}
-          alt=""
-          widths={[640, 1000, 1400, 2000]}
-          sizes="100vw"
-          loading="lazy"
-          decoding="async"
-        />
-      )
-    }
+<footer class="habitat" data-habitat>
+  <div class="habitat__scene" data-habitat-scene aria-hidden="true">
     <span class="habitat__ground"></span>
   </div>
+
+  <Penguin />
 </footer>
+
+<script is:inline type="application/json" data-habitat-config set:html={JSON.stringify(HABITAT_BACKDROPS)} />
 
 <style>
   .habitat {
@@ -55,40 +37,34 @@ const image = getCover(cover);
        none. It's already the full width of the card. */
     overflow: hidden;
     background: var(--ink);
-    /* Read by the llama so she stands on the artwork's ground line rather
-       than on the very bottom edge. */
-    --habitat-floor: 0px;
   }
 
   .habitat__scene {
     position: absolute;
     inset: 0;
-  }
-
-  .habitat__bg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 100%;
-    display: block;
-    /* Pixel art, if that's what lands here. */
+    /* The art is 2356 x 982 with its ground along the bottom edge, so it's
+       anchored there and cropped off the top — the floor is the one part that
+       has to survive at every width. */
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    background-size: cover;
     image-rendering: pixelated;
   }
 
-  /* The stand-in horizon. Once a picture is set this sits under it and stops
-     mattering; without one it's a night on the altiplano rather than a hole. */
+  /* Stands in until a scene loads, so the band is a horizon rather than a
+     hole on a slow connection. */
   .habitat__ground {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(120px + var(--habitat-floor));
+    height: 120px;
     background: linear-gradient(to bottom, rgba(255, 251, 245, 0.05), rgba(255, 251, 245, 0.09));
     border-top: 2px solid var(--gold);
     opacity: 0.55;
   }
 
-  .habitat:has(.habitat__bg) .habitat__ground {
+  .habitat__scene[data-loaded] .habitat__ground {
     display: none;
   }
 
@@ -99,3 +75,31 @@ const image = getCover(cover);
     }
   }
 </style>
+
+<script>
+  import { backdropForHour } from '../lib/habitat';
+
+  const scene = document.querySelector<HTMLElement>('[data-habitat-scene]');
+  const configEl = document.querySelector('[data-habitat-config]');
+
+  if (scene && configEl) {
+    const backdrops = JSON.parse(configEl.textContent ?? '[]');
+    const chosen = backdropForHour(new Date().getHours());
+    const match = backdrops.find((b: { id: string }) => b.id === chosen.id) ?? chosen;
+
+    function paint(): void {
+      const img = new Image();
+      img.onload = () => {
+        scene!.style.backgroundImage = `url(${match.src})`;
+        scene!.dataset.loaded = match.id;
+      };
+      // The drawn horizon is already there; if the scene never arrives it
+      // stays, which is a footer rather than a gap.
+      img.onerror = () => undefined;
+      img.src = match.src;
+    }
+
+    if (document.readyState === 'complete') paint();
+    else window.addEventListener('load', paint, { once: true });
+  }
+</script>

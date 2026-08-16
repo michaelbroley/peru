@@ -1,0 +1,345 @@
+---
+import {
+  PENGUIN_ANIMATIONS,
+  PENGUIN_CELL,
+  PENGUIN_SHEET,
+  PENGUIN_SHEET_COLUMNS,
+  PENGUIN_SHEET_ROWS,
+  PENGUIN_SLIDE_SPEED,
+  PENGUIN_WADDLE_SPEED,
+} from '../lib/penguin';
+
+/**
+ * Pancho. He lives in the habitat and nowhere else.
+ *
+ * He waddles the length of the footer, now and then drops onto his belly and
+ * slides, and if you poke him he eats a fish. Unlike the llama he isn't fixed
+ * to the viewport — he's absolutely placed inside the habitat, on the same
+ * ground line she stands on, so he only exists once you've scrolled to him.
+ *
+ * Nothing runs until the habitat is actually on screen, and he follows the
+ * llama's on/off switch: one preference for the whole menagerie.
+ */
+const config = {
+  sheet: PENGUIN_SHEET,
+  cell: PENGUIN_CELL,
+  columns: PENGUIN_SHEET_COLUMNS,
+  rows: PENGUIN_SHEET_ROWS,
+  anims: PENGUIN_ANIMATIONS,
+  waddle: PENGUIN_WADDLE_SPEED,
+  slide: PENGUIN_SLIDE_SPEED,
+};
+---
+
+<div class="pancho" data-penguin hidden>
+  <button class="pancho__hit" type="button" data-penguin-poke aria-label="Pancho the penguin — poke him">
+    <span class="pancho__sprite" data-penguin-sprite></span>
+  </button>
+</div>
+
+<script is:inline type="application/json" data-penguin-config set:html={JSON.stringify(config)} />
+
+<style>
+  .pancho {
+    position: absolute;
+    left: 0;
+    /* The llama's hooves land on row 38 of a 40px cell and so do his feet, so
+       the same -4px puts them both on one floor. */
+    bottom: -4px;
+    z-index: 2;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .pancho[hidden] {
+    display: none;
+  }
+
+  .pancho__hit {
+    display: block;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pancho__hit:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .pancho__sprite {
+    display: block;
+    width: 80px;
+    height: 80px;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 3px 0 rgba(18, 16, 15, 0.22));
+  }
+
+  /* The art faces right, same as the llama, so walking left takes the mirror. */
+  .pancho[data-facing='-1'] .pancho__sprite {
+    transform: scaleX(-1);
+  }
+
+  @media print {
+    .pancho {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  interface Anim {
+    id: string;
+    row: number;
+    frames: number;
+    fps: number;
+  }
+  interface Config {
+    sheet: string;
+    cell: number;
+    columns: number;
+    rows: number;
+    anims: Record<string, Anim>;
+    waddle: number;
+    slide: number;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-penguin]');
+  const sprite = document.querySelector<HTMLElement>('[data-penguin-sprite]');
+  const hit = document.querySelector<HTMLButtonElement>('[data-penguin-poke]');
+  const habitat = document.querySelector<HTMLElement>('[data-habitat]');
+  const configEl = document.querySelector('[data-penguin-config]');
+
+  if (root && sprite && hit && habitat && configEl) {
+    const cfg = JSON.parse(configEl.textContent ?? '{}') as Config;
+    const A = cfg.anims;
+    const CELL = cfg.cell;
+    sprite.style.backgroundSize = `${cfg.columns * CELL}px ${cfg.rows * CELL}px`;
+
+    let current: Anim = A.idle!;
+    let override: Anim | null = null;
+    let overrideUntil = 0;
+    let frame = 0;
+    let elapsed = 0;
+    let last = 0;
+    let raf = 0;
+
+    /** Off the right-hand edge, so his first move is to walk on. */
+    let x = 0;
+    let facing: 1 | -1 = -1;
+    let walking = 0;
+    let arrived = false;
+
+    const bounds = () => ({ min: 8, max: Math.max(8, habitat.clientWidth - CELL - 8) });
+
+    function draw(): void {
+      const anim = override ?? current;
+      sprite!.style.backgroundPosition = `-${frame * CELL}px -${anim.row * CELL}px`;
+      root!.style.transform = `translateX(${Math.round(x)}px)`;
+    }
+
+    function play(anim: Anim): void {
+      if (current === anim) return;
+      current = anim;
+      frame = 0;
+      elapsed = 0;
+    }
+
+    function point(direction: number): void {
+      facing = direction > 0 ? 1 : -1;
+      root!.dataset.facing = String(facing);
+    }
+
+    function tick(now: number): void {
+      const dt = last ? Math.min(now - last, 250) : 0;
+      last = now;
+
+      if (override && now > overrideUntil) {
+        override = null;
+        frame = 0;
+        elapsed = 0;
+      }
+
+      const anim = override ?? current;
+      elapsed += dt;
+      const step = 1000 / anim.fps;
+      while (elapsed >= step) {
+        elapsed -= step;
+        frame = (frame + 1) % anim.frames;
+      }
+
+      // He stops dead while eating — a fish is a two-handed job.
+      if (walking !== 0 && !override) {
+        x += (walking * dt) / 1000;
+        const { min, max } = bounds();
+        if (x <= min || x >= max) {
+          x = Math.max(min, Math.min(x, max));
+          walking = -walking;
+          point(walking);
+        }
+      }
+
+      draw();
+      raf = requestAnimationFrame(tick);
+    }
+
+    /* --- What he gets up to ---------------------------------------------- */
+    const pending = new Set<number>();
+    function later(fn: () => void, ms: number): void {
+      const id = window.setTimeout(() => {
+        pending.delete(id);
+        fn();
+      }, ms);
+      pending.add(id);
+    }
+    function clearPending(): void {
+      for (const id of pending) window.clearTimeout(id);
+      pending.clear();
+    }
+
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+    function stand(): void {
+      walking = 0;
+      play(A.idle!);
+    }
+
+    /** Head somewhere else along the floor, on foot or on his belly. */
+    function travel(anim: Anim, speed: number): number {
+      const { min, max } = bounds();
+      const target = rand(min, max);
+      // Somewhere worth going: a two-pixel shuffle isn't a journey.
+      const distance = Math.abs(target - x);
+      if (distance < 40) return 0;
+      walking = target > x ? speed : -speed;
+      point(walking);
+      play(anim);
+      const ms = (distance / speed) * 1000;
+      later(stand, ms);
+      return ms + 300;
+    }
+
+    function act(): void {
+      const roll = Math.random();
+      let hold = 0;
+      if (roll < 0.3) hold = travel(A.slide!, cfg.slide);
+      else if (roll < 0.8) hold = travel(A.walk!, cfg.waddle);
+      if (hold === 0) hold = 1200;
+
+      later(() => {
+        stand();
+        later(act, rand(3500, 9000));
+      }, hold);
+    }
+
+    hit.addEventListener('click', () => {
+      override = A.eat!;
+      frame = 0;
+      elapsed = 0;
+      // One full pass of the eight frames, so the fish actually gets eaten.
+      overrideUntil = performance.now() + (A.eat!.frames / A.eat!.fps) * 1000;
+    });
+
+    /* --- Coming and going ------------------------------------------------- */
+    function start(): void {
+      if (raf) return;
+      root!.hidden = false;
+      last = 0;
+      raf = requestAnimationFrame(tick);
+      if (!arrived) {
+        // He arrives on his belly from off the right-hand edge. A waddle would
+        // take the better part of a minute to cross the band, and it shows off
+        // the slide the moment you get here rather than making you wait for it.
+        arrived = true;
+        x = habitat!.clientWidth + 20;
+        later(() => {
+          const { min, max } = bounds();
+          const target = rand(min + (max - min) * 0.25, min + (max - min) * 0.6);
+          walking = -cfg.slide;
+          point(walking);
+          play(A.slide!);
+          const ms = ((x - target) / cfg.slide) * 1000;
+          later(stand, ms);
+          later(act, ms + rand(1800, 4000));
+        }, 600);
+      } else {
+        later(act, rand(1500, 4000));
+      }
+    }
+
+    function stop(): void {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      clearPending();
+      walking = 0;
+    }
+
+    /** Nothing animates while the footer is off screen. */
+    let onScreen = false;
+    let allowed = true;
+
+    function sync(): void {
+      if (onScreen && allowed) start();
+      else {
+        stop();
+        root!.hidden = !allowed;
+      }
+    }
+
+    new IntersectionObserver(
+      (entries) => {
+        onScreen = entries.some((e) => e.isIntersecting);
+        sync();
+      },
+      { rootMargin: '120px' },
+    ).observe(habitat);
+
+    // One switch for the whole menagerie: if the llama has been sent to sleep,
+    // he isn't here either.
+    try {
+      allowed = (localStorage.getItem('peru-llama') ?? 'on') === 'on';
+    } catch {
+      /* no storage — he stays */
+    }
+    document.addEventListener('peru:llama', (event) => {
+      allowed = (event as CustomEvent<{ enabled: boolean }>).detail.enabled;
+      sync();
+    });
+
+    window.addEventListener(
+      'resize',
+      () => {
+        const { min, max } = bounds();
+        if (arrived) x = Math.max(min, Math.min(x, max));
+      },
+      { passive: true },
+    );
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop();
+      else sync();
+    });
+
+    /* The sheet is 2 KB, but he still waits for the guide to finish loading —
+       he's at the very bottom of the page and nobody is looking yet. */
+    function summon(): void {
+      const img = new Image();
+      img.onload = () => {
+        sprite!.style.backgroundImage = `url(${cfg.sheet})`;
+        sync();
+      };
+      img.onerror = () => undefined;
+      img.src = cfg.sheet;
+    }
+
+    if (document.readyState === 'complete') summon();
+    else window.addEventListener('load', summon, { once: true });
+  }
+</script>

@@ -56,7 +56,7 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `Habitat` · `Llama`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `Habitat` / `Penguin` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -116,9 +116,19 @@ The page ends in 500 px of ground for the llama to stand in. `Habitat.astro`, st
 
 No negative margin on the band either. The section covers bleed out of the padding their `<section>` carries; this hangs straight off `.shell`, which has none, so it's already the full width of the card. Giving it the usual `calc(var(--pad) * -1)` pushed it 40 px past the card on each side.
 
-**The artwork isn't in yet.** Until it lands the band draws its own horizon, which is deliberate rather than broken. Pass `cover` a key from `covers.ts` and the picture layers straight over it; if the art's ground line sits above the bottom edge, pass `floor` the distance up to it and she'll stand on that instead of on the very bottom.
+**The backdrop changes with the clock.** Four pixel scenes, picked by the reader's own hour: the coast in the morning, a green valley through the middle of the day, the Andes at dusk, and the night sky after nine. Whoever's reading late gets the one with the message in the stars. It's set from script rather than rendered, so only the scene that's wanted is ever fetched, and it waits for the guide to finish loading. Until it arrives a drawn horizon holds the band, so a slow connection gets a footer rather than a hole.
 
-**The penguin** is still to come — behaviours are walk, belly-slide, and eat a fish on tap. Nothing of it is built: it needs the sheet first, since the frame counts and row order have to match whatever arrives.
+All four are lossless WebP at full 2356 × 982 — **22 KB for the set, down from 545 KB of PNG**. Pixel art is exactly what lossless compresses well: a limited palette and dithered gradients. Quality-92 lossy is *thirty times* bigger and softens every edge, which is the one thing pixel art can't survive. `scripts/pack-habitat.mjs` checks the round-trip pixel-for-pixel and refuses to write if anything moved.
+
+### Pancho
+
+The penguin lives in the habitat and nowhere else. He waddles its length, drops onto his belly and slides, and eats a fish if you poke him. Unlike the llama he isn't fixed to the viewport — he's absolutely placed inside the footer on the same ground line she stands on, so he only exists once you've scrolled to him, and an IntersectionObserver means nothing runs until the band is actually on screen.
+
+**He arrives on his belly.** A 26 px/s waddle is a convincing penguin and took him *forty seconds* to cross the band — nobody's idea of a cameo. He now slides on from off the right edge at 130 px/s, which both gets him there and shows the slide off immediately rather than making you wait for a 30% branch to come up.
+
+`penguin-idle.png` shipped byte-identical to `penguin-walk.png`, so it isn't packed twice: standing about is the walk row at 3 fps with no travel, which reads as shifting his weight. If a distinct idle ever lands, add a row in `pack-penguin.mjs` and `lib/penguin.ts` — those two are the only places that have to agree.
+
+**One switch for the whole menagerie.** Sending the llama to sleep takes him with her: the toggle dispatches `peru:llama` and he listens. The backdrop stays either way — it's scenery, not motion.
 
 ### Chaska
 

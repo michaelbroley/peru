@@ -474,6 +474,9 @@ const days = JSON.stringify(LLAMA_DAYS);
         const label = button.querySelector('[data-llama-toggle-label]');
         if (label) label.textContent = on ? 'On' : 'Off';
       }
+      // One switch for the whole menagerie — the penguin in the footer takes
+      // his cue from this too.
+      document.dispatchEvent(new CustomEvent('peru:llama', { detail: { enabled: on } }));
       if (on) start();
       else goToSleep();
     }

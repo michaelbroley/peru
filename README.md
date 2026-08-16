@@ -34,6 +34,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | `packing.json`              | Packing groups                                                |
 | `checklist.json`            | Book-ahead / verify list                                      |
 | `currency.json`             | The soles/dollars reference rate, and Peru's coins and notes   |
+| `tipping.json`              | What to leave, in three groups                                 |
 | `maps.json`                 | The five map views — route, Lima, Cusco, valley, Puno — and their pins |
 
 Two conventions worth knowing:
@@ -57,13 +58,13 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `CurrencyConverter` · `Habitat` / `Penguin` · `Llama`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `PhraseList` · `CurrencyConverter` · `TipCalculator` / `TipList` · `Habitat` / `Penguin` · `Llama`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
 ### Photography
 
-The section heads (01–09) and the four leg dividers in the day list are full-bleed photographs with the number and title set over a scrim. `src/lib/covers.ts` is the manifest: it imports each photo, gives it alt text and an `object-position`, and exposes it under a short key. Sections take that key as a prop; a day's `regionStart.cover` carries it as data.
+The section heads (01–10) and the four leg dividers in the day list are full-bleed photographs with the number and title set over a scrim. `src/lib/covers.ts` is the manifest: it imports each photo, gives it alt text and an `object-position`, and exposes it under a short key. Sections take that key as a prop; a day's `regionStart.cover` carries it as data.
 
 The originals were 3–24 MB camera JPEGs, several with GPS EXIF. `node scripts/optimise-images.mjs --replace` converts them to WebP masters — EXIF orientation applied then all metadata stripped, long edge capped at 2400 px — which took the set from 154 MB to 8 MB. Astro generates the responsive sizes from those masters at build time.
 
@@ -73,7 +74,9 @@ Bands are sized to actually show the photograph: 285–420 px on a phone, 390–
 
 The hero image loads eagerly; of the ten section and leg covers, only the first does. A phone's initial load is ~134 KB including two images, and the rest arrive as you scroll. Print drops every photograph and returns the headings to the flow in black.
 
-Four images from the first upload are unused and listed at the top of `covers.ts` if you want to swap any in.
+A second upload added eight more photographs; the Urubamba market is section 10's cover and the other seven are spare. Anything unused is listed at the top of `covers.ts` if you want to swap one in.
+
+`optimise-images.mjs` skips `backdrop*.png`. Those are the habitat's pixel art and `pack-habitat.mjs` reads them as its source — a quality-82 resample would soften every edge, and `--replace` would then delete the only copy. Lossless is what pixel art wants, and that's the packer's job, not the optimiser's.
 
 ### The day status panel
 
@@ -120,6 +123,22 @@ Section 09, at `#currency-soles-to-canadian-dollars`: soles to Canadian dollars.
 Both inputs are two-way and parse leniently: a comma means a decimal point to half the world and a thousands separator to the other half, and either way the person typing means a number. Writing to one input fires the other's `input` event, so an `echo` flag stops a rounded value bouncing between them as you type.
 
 Updating the rate by hand is one number and one date in `currency.json`. Nothing else needs to change.
+
+`src/lib/fx.ts` owns the rate rather than the component, because section 10 needs the same number and the two must never disagree. One fetch, one cache, one value, however many subscribers — and a component that subscribes *after* the rate has arrived is told immediately rather than waiting for a broadcast it missed. That's why it's a module and not an event: import order can't matter.
+
+### Tipping
+
+Section 10, at `#tipping-what-to-leave-and-where`. Three groups — eating and drinking, guides and trekking staff, hotels and taxis — each row giving who, how much, and the caveat.
+
+**The service charge is the warning, not the amounts.** Peruvian restaurants often add 10–13% as *cargo de servicio* or *recargo de consumo*, and tipping on top of that is the mistake worth not making. It's the first thing in the section, in the same gold `!` flag the recommendations use for anything unconfirmed.
+
+**The calculator only does the one sum that needs doing.** Everything else in the section is a flat figure you hand over — a few soles a bag, ten to twenty for a guide, nothing for a taxi. Only a percentage of a restaurant bill needs arithmetic, so that's all it computes: 5/10/15% of a bill, in soles, with the dollar equivalent underneath from the shared rate.
+
+**It counts in centimos, not floating point.** 15% of S/ 86.50 is 12.975, which as a double is 12.97499…, and `toFixed(2)` hands back S/ 12.97 — a penny short, every time, for no visible reason. Rounding to whole centimos first fixes it, and there's a test pinned to exactly that bill.
+
+`amount` in the content is a string on purpose. Half of these are ranges and two of them are "not expected"; a number field would mean inventing precision Peru doesn't have. `TipList` sets the ones with digits in display type and the ones without in small caps, so "not expected" answers the question without pretending to be a sum.
+
+The figures come from Peruvian tour operators' own tipping guides, gathered August 2026. They're customs, not prices — treat them as the shape of the thing rather than a tariff.
 
 ### The habitat
 

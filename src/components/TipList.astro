@@ -1,0 +1,142 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon, { type IconName } from './Icon.astro';
+
+/**
+ * The reference half of the tipping section: three groups of who, how much,
+ * and the caveat that goes with it.
+ *
+ * Laid out as label/value rows rather than prose because it gets read standing
+ * at a counter — the amount is the thing you came for, so it's set large and
+ * on the right where the eye lands, with the explanation underneath.
+ */
+interface Props {
+  groups: CollectionEntry<'tipping'>['data'][];
+}
+const { groups } = Astro.props;
+
+/** "Not expected" is guidance, not a sum — it shouldn't shout like one. */
+const isAmount = (amount: string) => /\d/.test(amount);
+---
+
+<div class="tips">
+  {
+    groups.map((group) => (
+      <section class="tips__group" aria-labelledby={`tip-${group.title.toLowerCase().replace(/\s+/g, '-')}`}>
+        <h3 class="tips__title" id={`tip-${group.title.toLowerCase().replace(/\s+/g, '-')}`}>
+          {group.icon && <Icon name={group.icon as IconName} size={17} />}
+          {group.title}
+        </h3>
+
+        <dl class="tips__list">
+          {group.items.map((item) => (
+            <div class="tips__row">
+              <dt class="tips__what">
+                {item.what}
+                {item.aside && <span class="tips__aside">{item.aside}</span>}
+              </dt>
+              <dd class="tips__amount" data-plain={isAmount(item.amount) ? undefined : ''}>
+                {item.amount}
+              </dd>
+              <dd class="tips__note">{item.note}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .tips {
+    display: grid;
+    gap: 26px;
+  }
+
+  .tips__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-family: var(--display);
+    font-size: var(--fs-group);
+    letter-spacing: 0.01em;
+  }
+
+  .tips__list {
+    margin: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* The amount sits beside the name and the note runs full width beneath, so
+     the column of figures stays scannable however long the caveats get. */
+  .tips__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tips__what {
+    font-weight: 600;
+    font-size: var(--fs-body);
+  }
+
+  .tips__aside {
+    display: block;
+    font-weight: 400;
+    font-style: italic;
+    font-size: var(--fs-note);
+    color: var(--ink-50);
+  }
+
+  .tips__amount {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    align-self: start;
+    font-family: var(--display);
+    font-size: 21px;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: var(--pink);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* "Not expected" — the answer is still useful, it just isn't a number. */
+  .tips__amount[data-plain] {
+    font-family: var(--text);
+    font-size: var(--fs-body-sm);
+    font-weight: 600;
+    color: var(--ink-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 3px;
+  }
+
+  .tips__note {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: var(--fs-note);
+    line-height: 1.5;
+    color: var(--ink-62);
+  }
+
+  @media (min-width: 700px) {
+    .tips {
+      gap: 30px;
+    }
+  }
+
+  @media print {
+    .tips__group {
+      break-inside: avoid;
+    }
+
+    .tips__amount {
+      color: var(--ink);
+    }
+  }
+</style>

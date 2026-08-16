@@ -339,6 +339,8 @@ const config = { penPerCad: rate.penPerCad, updated: rate.updated };
 </style>
 
 <script>
+  import { onRate } from '../lib/fx';
+
   interface Config {
     penPerCad: number;
     updated: string;
@@ -408,10 +410,11 @@ const config = { penPerCad: rate.penPerCad, updated: rate.updated };
     }
 
     /* --- a live rate where there's signal ---------------------------------- */
-    const CACHE_KEY = 'peru-fx-rate';
-    type Cached = { rate: number; at: number };
+    onRate(cfg.penPerCad, ({ penPerCad: rate, at }) => {
+      // The first call carries the baked rate the server already rendered, so
+      // there's nothing to repaint until a better one turns up.
+      if (at === null) return;
 
-    function show(rate: number, at: number): void {
       penPerCad = rate;
       paint();
       if (stamp) {
@@ -420,45 +423,8 @@ const config = { penPerCad: rate.penPerCad, updated: rate.updated };
           month: 'long',
         })}`;
       }
-      // Whatever is in the boxes is now converted at the old rate.
-      if (pen && cadInput && pen.value !== '') pen.dispatchEvent(new Event('input'));
-    }
-
-    let cached: Cached | null = null;
-    try {
-      cached = JSON.parse(localStorage.getItem(CACHE_KEY) ?? 'null') as Cached | null;
-    } catch {
-      cached = null;
-    }
-    // Yesterday's real rate beats a figure typed into a JSON file months ago.
-    if (cached && typeof cached.rate === 'number' && Date.now() - cached.at < 7 * 24 * 3600_000) {
-      show(cached.rate, cached.at);
-    }
-
-    /**
-     * A rate this far from the baked one is a broken response, not a currency
-     * crisis — the sol has traded in a narrow band for twenty years. Taking a
-     * wrong number is worse than keeping a stale one.
-     */
-    const believable = (rate: number) => rate > cfg.penPerCad / 3 && rate < cfg.penPerCad * 3;
-
-    if (navigator.onLine !== false) {
-      fetch('https://open.er-api.com/v6/latest/CAD')
-        .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
-        .then((data: { rates?: Record<string, number> }) => {
-          const rate = data.rates?.PEN;
-          if (typeof rate !== 'number' || !believable(rate)) return;
-          const at = Date.now();
-          show(rate, at);
-          try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ rate, at }));
-          } catch {
-            /* storage full or blocked — the rate still showed */
-          }
-        })
-        .catch(() => {
-          /* no signal, or the service is down: the baked rate stays put */
-        });
-    }
+      // Whatever is in the boxes was converted at the old rate.
+      if (pen && pen.value !== '') pen.dispatchEvent(new Event('input'));
+    });
   }
 </script>

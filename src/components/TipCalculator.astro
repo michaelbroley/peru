@@ -1,0 +1,311 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * A tip calculator in soles, for the one case where the guidance needs
+ * arithmetic: a restaurant bill.
+ *
+ * Everything else in the section is a flat figure you can just hand over — a
+ * few soles a bag, ten to twenty for a guide. Only a percentage of a bill
+ * needs working out, so that's all this does.
+ *
+ * The dollar line comes from the same rate as section 09, through `lib/fx`,
+ * so the two can never disagree.
+ */
+interface Props {
+  rate: CollectionEntry<'currency'>['data'];
+}
+const { rate } = Astro.props;
+
+/** The restaurant range from the guidance, plus one above it for great service. */
+const presets = [5, 10, 15];
+const DEFAULT = 10;
+
+const soles = (n: number) => n.toFixed(2);
+
+const config = { penPerCad: rate.penPerCad, presets, initial: DEFAULT };
+---
+
+<div class="tip" data-tip>
+  <form class="tip__form" data-tip-form>
+    <div class="tip__bill">
+      <label class="tip__label" for="tip-bill">Bill</label>
+      <div class="tip__input">
+        <span class="tip__symbol" aria-hidden="true">S/</span>
+        <input
+          id="tip-bill"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="0.00"
+          data-tip-bill
+        />
+      </div>
+    </div>
+
+    <fieldset class="tip__rates">
+      <legend class="tip__label">Tip</legend>
+      <div class="tip__buttons" role="group">
+        {
+          presets.map((percent) => (
+            <button
+              type="button"
+              class="tip__percent"
+              data-tip-percent={percent}
+              aria-pressed={percent === DEFAULT ? 'true' : 'false'}
+            >
+              {percent}%
+            </button>
+          ))
+        }
+      </div>
+    </fieldset>
+  </form>
+
+  <output class="tip__out" data-tip-out aria-live="polite">
+    <div class="tip__figure">
+      <span class="tip__cap">Tip</span>
+      <strong class="tip__sum" data-tip-amount>S/ {soles(0)}</strong>
+    </div>
+    <div class="tip__figure">
+      <span class="tip__cap">Total</span>
+      <strong class="tip__sum" data-tip-total>S/ {soles(0)}</strong>
+    </div>
+    <p class="tip__cad" data-tip-cad hidden></p>
+  </output>
+</div>
+
+<script is:inline type="application/json" data-tip-config set:html={JSON.stringify(config)} />
+
+<style>
+  .tip {
+    display: grid;
+    gap: 14px;
+    border: 1px solid var(--rule-strong);
+    padding: 18px;
+  }
+
+  .tip__form {
+    display: grid;
+    gap: 14px;
+  }
+
+  .tip__label {
+    display: block;
+    margin-bottom: 6px;
+    padding: 0;
+    font-size: var(--fs-note);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-62);
+  }
+
+  .tip__input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--rule-strong);
+    background: var(--cream);
+    padding: 0 12px;
+  }
+
+  .tip__input:focus-within {
+    outline: 2px solid var(--pink);
+    outline-offset: -1px;
+  }
+
+  .tip__symbol {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--ink-45);
+  }
+
+  .tip__input input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: none;
+    padding: 12px 0;
+    font-family: var(--display);
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+
+  .tip__input input:focus {
+    outline: none;
+  }
+
+  .tip__rates {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .tip__buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .tip__percent {
+    padding: 11px 4px;
+    border: 1px solid var(--rule-strong);
+    background: var(--cream);
+    font-family: var(--display);
+    font-size: 19px;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tip__percent[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+
+  .tip__percent:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 2px;
+  }
+
+  .tip__out {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+
+  .tip__cap {
+    display: block;
+    font-size: var(--fs-note);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-50);
+  }
+
+  .tip__sum {
+    display: block;
+    font-family: var(--display);
+    font-size: var(--fs-stat);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+
+  [data-tip-amount] {
+    color: var(--pink);
+  }
+
+  .tip__cad {
+    grid-column: 1 / -1;
+    margin: 4px 0 0;
+    font-size: var(--fs-note);
+    color: var(--ink-62);
+  }
+
+  .tip__cad[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 620px) {
+    .tip__form {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  /* Nothing to fill in on paper — the guidance above it is the useful part. */
+  @media print {
+    .tip {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { onRate } from '../lib/fx';
+
+  interface Config {
+    penPerCad: number;
+    presets: number[];
+    initial: number;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-tip]');
+  const configEl = document.querySelector('[data-tip-config]');
+
+  if (root && configEl) {
+    const cfg = JSON.parse(configEl.textContent ?? '{}') as Config;
+    const form = root.querySelector<HTMLFormElement>('[data-tip-form]');
+    const bill = root.querySelector<HTMLInputElement>('[data-tip-bill]');
+    const amountEl = root.querySelector<HTMLElement>('[data-tip-amount]');
+    const totalEl = root.querySelector<HTMLElement>('[data-tip-total]');
+    const cadEl = root.querySelector<HTMLElement>('[data-tip-cad]');
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tip-percent]'));
+
+    let percent = cfg.initial;
+    let penPerCad = cfg.penPerCad;
+    let live = false;
+
+    const money = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' });
+
+    /** Same leniency as the converter: a comma is a decimal point to half the world. */
+    function parse(raw: string): number {
+      const cleaned = raw.replace(/[\s,]/g, (m) => (m === ',' ? '.' : ''));
+      if (cleaned === '' || !/^\d*\.?\d*$/.test(cleaned)) return 0;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function paint(): void {
+      // Money is counted in centimos, not in floating point. 15% of S/ 86.50
+      // is 12.975, which as a double is 12.97499…, and `toFixed(2)` then hands
+      // back S/ 12.97 — a penny short, every time, for no visible reason.
+      const cents = Math.round(parse(bill?.value ?? '') * 100);
+      const tipCents = Math.round((cents * percent) / 100);
+      const tip = tipCents / 100;
+
+      if (amountEl) amountEl.textContent = `S/ ${tip.toFixed(2)}`;
+      if (totalEl) totalEl.textContent = `S/ ${((cents + tipCents) / 100).toFixed(2)}`;
+
+      if (cadEl) {
+        // Only worth saying once there's something to say.
+        cadEl.hidden = tip === 0;
+        if (tip > 0) {
+          cadEl.textContent =
+            `About ${money.format(tip / penPerCad)} tip, ` +
+            `${money.format((cents + tipCents) / 100 / penPerCad)} all in` +
+            (live ? '' : ' (at the saved rate)');
+        }
+      }
+    }
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        percent = Number(button.dataset.tipPercent);
+        for (const other of buttons) {
+          other.setAttribute('aria-pressed', String(other === button));
+        }
+        paint();
+      });
+    }
+
+    bill?.addEventListener('input', paint);
+    // Nothing to submit — it adds up as you type.
+    form?.addEventListener('submit', (event) => event.preventDefault());
+
+    onRate(cfg.penPerCad, ({ penPerCad: rate, at }) => {
+      penPerCad = rate;
+      live = at !== null;
+      paint();
+    });
+  }
+</script>

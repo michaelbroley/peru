@@ -274,4 +274,39 @@ const currency = defineCollection({
   }),
 });
 
-export const collections = { days, places, categories, trip, weatherRows, packing, phrases, maps, currency };
+/**
+ * What to leave, and where. `amount` is deliberately a string — half of these
+ * are ranges, two of them are "not expected", and forcing a number would mean
+ * inventing precision Peru doesn't have.
+ */
+const tipping = defineCollection({
+  loader: file('./src/content/tipping.json'),
+  schema: z.object({
+    order: z.number().int(),
+    title: z.string(),
+    icon: z.string().optional(),
+    items: z.array(
+      z.object({
+        what: z.string(),
+        /** "5–10%", "S/ 2–5", "Not expected". */
+        amount: z.string(),
+        /** The local name for the thing, where it has one. */
+        aside: z.string().optional(),
+        note: z.string(),
+      }),
+    ),
+  }),
+});
+
+export const collections = {
+  days,
+  places,
+  categories,
+  trip,
+  weatherRows,
+  packing,
+  phrases,
+  maps,
+  currency,
+  tipping,
+};

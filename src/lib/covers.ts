@@ -18,6 +18,7 @@ import ladyBeeSign from '../images/lady-bee-sign.webp';
 import parqueDelAmor from '../images/parque-del-amor-lima-peru.webp';
 import limaCathedral from '../images/basilica-cathedral-lima-landmark-plaza-mayor-square-lima-peru-south-america.webp';
 import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
+import urubambaMarket from '../images/peruvian-market-culture-peru-market-urubamba-peru.webp';
 
 /**
  * Photographs used as section and leg headers, keyed so the content can
@@ -50,6 +51,11 @@ export const covers = {
     src: limaPlaza,
     alt: "Lima's Plaza Mayor, the cathedral and palm trees in the historic centre",
     focus: '50% 55%',
+  },
+  'urubamba-market': {
+    src: urubambaMarket,
+    alt: 'A market street in Urubamba hung with bright woven bunting, pom-pom garlands and hats, the Andes behind',
+    focus: '50% 60%',
   },
   'rainbow-mountain': {
     src: rainbowMountain,

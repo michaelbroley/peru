@@ -11,7 +11,7 @@
  * Bump CACHE when the content changes — old caches are dropped on activate.
  */
 
-const CACHE = 'peru-guide-v26';
+const CACHE = 'peru-guide-v27';
 
 /**
  * Map tiles live in their own capped cache: they're third-party, there can be

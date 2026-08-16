@@ -31,8 +31,20 @@ function tidyName(file) {
     .replace(/(^-|-$)/g, '');
 }
 
+/**
+ * Not every image in here is a photograph.
+ *
+ * The habitat's backdrops are pixel art, and `pack-habitat.mjs` reads these
+ * PNGs as its source. Running them through a quality-82 resample would soften
+ * every edge, and `--replace` would then delete the only copy. Lossless is
+ * what pixel art wants; that's the packer's job, not this one's.
+ */
+const NOT_PHOTOGRAPHS = /^backdrop\d+\.png$/i;
+
 const replace = process.argv.includes('--replace');
-const files = (await readdir(DIR)).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
+const files = (await readdir(DIR))
+  .filter((f) => /\.(jpe?g|png)$/i.test(f) && !NOT_PHOTOGRAPHS.test(f))
+  .sort();
 
 let before = 0;
 let after = 0;

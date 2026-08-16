@@ -22,6 +22,8 @@ import RegionBar from '../components/RegionBar.astro';
 import Llama from '../components/Llama.astro';
 import PhraseList from '../components/PhraseList.astro';
 import CurrencyConverter from '../components/CurrencyConverter.astro';
+import TipCalculator from '../components/TipCalculator.astro';
+import TipList from '../components/TipList.astro';
 import Habitat from '../components/Habitat.astro';
 
 const tripEntry = await getEntry('trip', 'snapshot');
@@ -31,6 +33,8 @@ const trip = tripEntry.data;
 const rateEntry = await getEntry('currency', 'rate');
 if (!rateEntry) throw new Error('Missing currency rate content');
 const rate = rateEntry.data;
+
+const tipping = (await getCollection('tipping')).sort((a, b) => a.data.order - b.data.order).map((t) => t.data);
 
 const days = (await getCollection('days')).sort((a, b) => a.data.order - b.data.order);
 const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
@@ -65,6 +69,7 @@ const sections = [
   { num: '07', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
   { num: '08', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
   { num: '09', href: '#currency-soles-to-canadian-dollars', label: 'Currency' },
+  { num: '10', href: '#tipping-what-to-leave-and-where', label: 'Tipping' },
 ];
 
 const dayLinks = days.map((d) => ({
@@ -440,6 +445,33 @@ const description =
             lead="Peru runs on soles (S/), and almost nowhere quotes a price in dollars. The rate below refreshes itself anywhere you have a signal, and the table works with none."
           >
             <CurrencyConverter rate={rate} />
+          </SectionFold>
+        </section>
+
+        <!-- ── 10 Tipping ─────────────────────────────────────────────── -->
+        <section class="section" id="tipping-what-to-leave-and-where" data-section aria-labelledby="tipping-title">
+          <h2 class="sr-only" id="tipping-title">Tipping, what to leave and where</h2>
+          <SectionFold
+            num="10"
+            title="Tipping"
+            cover="urubamba-market"
+            fold="tipping-what-to-leave-and-where"
+            lead="Tipping in Peru is genuinely optional and the amounts are small — nobody is counting. These are the customary figures rather than obligations."
+          >
+            <div class="stack">
+              <p class="phrasenote">
+                <span class="phrasenote__mark" aria-hidden="true">!</span>
+                <span>
+                  <strong>Check the bill before you tip in a restaurant.</strong> Many add a service charge
+                  already — <em>cargo de servicio</em> or <em>recargo de consumo</em>. If 10–13% is on there,
+                  nothing more is needed.
+                </span>
+              </p>
+
+              <TipCalculator rate={rate} />
+
+              <TipList groups={tipping} />
+            </div>
           </SectionFold>
         </section>
       </main>

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eating-and-drinking",
+    "order": 1,
+    "title": "Eating and drinking",
+    "icon": "fork",
+    "items": [
+      {
+        "what": "Sit-down restaurants",
+        "amount": "5–10%",
+        "note": "For good service — but check the bill first."
+      },
+      {
+        "what": "Cafés and local eateries",
+        "amount": "Not expected",
+        "aside": "chicherías, picanterías",
+        "note": "Leaving the loose change is polite."
+      },
+      {
+        "what": "Bars",
+        "amount": "S/ 2–5",
+        "note": "Per round of drinks."
+      }
+    ]
+  },
+  {
+    "id": "guides-and-trekking-staff",
+    "order": 2,
+    "title": "Guides and trekking staff",
+    "icon": "mountain",
+    "items": [
+      {
+        "what": "Tour guides",
+        "amount": "S/ 10–20",
+        "note": "Per person, for a standard day tour. A private or specialised guide is more like US$7–15 a day."
+      },
+      {
+        "what": "Trek porters and camp crew",
+        "amount": "S/ 75–100",
+        "note": "Per passenger, pooled as one tip from the whole group and split among the porters and crew. The Inca Trail works this way."
+      },
+      {
+        "what": "Drivers",
+        "amount": "S/ 10–25",
+        "note": "Per day, for a dedicated private driver — about US$3–7."
+      }
+    ]
+  },
+  {
+    "id": "hotels-and-taxis",
+    "order": 3,
+    "title": "Hotels and taxis",
+    "icon": "bag",
+    "items": [
+      {
+        "what": "Housekeeping",
+        "amount": "S/ 3–7",
+        "note": "Per room, per day — about US$1–2. Leave it in the room."
+      },
+      {
+        "what": "Bellhops and porters",
+        "amount": "S/ 2–5",
+        "note": "Per bag."
+      },
+      {
+        "what": "Taxis",
+        "amount": "Not expected",
+        "note": "Locals round the fare up by a sol or two, especially if the driver helped with heavy luggage."
+      }
+    ]
+  }
+]

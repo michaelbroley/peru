@@ -2,7 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import MegaNav from '../components/MegaNav.astro';
-import SectionHeader from '../components/SectionHeader.astro';
+import SectionFold from '../components/SectionFold.astro';
 import SnapshotTable from '../components/SnapshotTable.astro';
 import ReservationCard from '../components/ReservationCard.astro';
 import WeatherCard from '../components/WeatherCard.astro';
@@ -123,9 +123,8 @@ const description =
       <main id="main">
         <!-- ── 01 Trip snapshot ───────────────────────────────────────── -->
         <section class="section" id="trip-snapshot" data-section aria-labelledby="trip-snapshot-title">
-          <SectionHeader num="01" title="Trip snapshot" cover="lima-coast" eager />
           <h2 class="sr-only" id="trip-snapshot-title">Trip snapshot</h2>
-
+          <SectionFold num="01" title="Trip snapshot" cover="lima-coast" eager fold="trip-snapshot">
           <div class="stack">
             <SnapshotTable rows={[...trip.flights, ...trip.snapshot]} />
 
@@ -164,6 +163,7 @@ const description =
 
             {routeMap && <MapPanel view={routeMap.data} id="route" label="Route map" />}
           </div>
+          </SectionFold>
         </section>
 
         <!-- ── 02 Weather ─────────────────────────────────────────────── -->
@@ -173,29 +173,30 @@ const description =
           data-section
           aria-labelledby="weather-title"
         >
-          <SectionHeader
+          <h2 class="sr-only" id="weather-title">Weather</h2>
+          <SectionFold
             num="02"
             title="Weather"
             cover="rainbow-mountain"
+            fold="weather-september-50-year-averages"
             lead="September, ~50-year averages. Dry-season conditions, thinner crowds. Plan for the day/night swing more than rain — strong high-altitude sun burns even when cool, so sunscreen daily."
-          />
-          <h2 class="sr-only" id="weather-title">Weather</h2>
-
-          <div class="weather-grid">
-            {weatherRows.map((row) => <WeatherCard row={row.data} />)}
-          </div>
+          >
+            <div class="weather-grid">
+              {weatherRows.map((row) => <WeatherCard row={row.data} />)}
+            </div>
+          </SectionFold>
         </section>
 
         <!-- ── 03 Day by day ──────────────────────────────────────────── -->
         <section class="section" id="day-by-day" data-section aria-labelledby="days-title">
-          <SectionHeader
+          <h2 class="sr-only" id="days-title">Day by day</h2>
+          <SectionFold
             num="03"
             title="Day by day"
             cover="machu-picchu"
+            fold="day-by-day"
             lead="Each day shows where the plan puts us, how high up that is, and what the weather is doing — today's reading is live, the rest are September averages. It's the itinerary, not a GPS tracker."
-          />
-          <h2 class="sr-only" id="days-title">Day by day</h2>
-
+          >
           <div class="day-controls">
             <button class="btn btn--solid" type="button" data-days-expand>Expand all</button>
             <button class="btn" type="button" data-days-collapse>Collapse all</button>
@@ -217,6 +218,7 @@ const description =
               ))
             }
           </div>
+          </SectionFold>
         </section>
 
         <!-- ── 04 Recommendations ─────────────────────────────────────── -->
@@ -226,14 +228,14 @@ const description =
           data-section
           aria-labelledby="recs-title"
         >
-          <SectionHeader
+          <h2 class="sr-only" id="recs-title">Recommendations — Little Black Book</h2>
+          <SectionFold
             num="04"
             title="Recommendations"
             cover="dancers"
+            fold="recommendations-little-black-book-for-laura"
             lead={`The little black book, for Laura. Every entry: name — area — note, with address and phone where known. ${STAR} = top pick.`}
-          />
-          <h2 class="sr-only" id="recs-title">Recommendations — Little Black Book</h2>
-
+          >
           <div class="cats">
             {
               categories.map((category) => {
@@ -258,6 +260,7 @@ const description =
               })
             }
           </div>
+          </SectionFold>
         </section>
 
         <!-- ── 05 Packing ─────────────────────────────────────────────── -->
@@ -267,33 +270,53 @@ const description =
           data-section
           aria-labelledby="packing-title"
         >
-          <SectionHeader
+          <h2 class="sr-only" id="packing-title">Packing</h2>
+          <SectionFold
             num="05"
             title="Packing"
             cover="trekker"
+            fold="packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu"
             lead="Tuned to this trip: sea level to 3,800 m, cold nights, rustic homestay, early Machu Picchu."
-          />
-          <h2 class="sr-only" id="packing-title">Packing</h2>
-          <PackingList groups={packing.map((p) => p.data)} />
+          >
+            <PackingList groups={packing.map((p) => p.data)} />
+          </SectionFold>
         </section>
 
         <!-- ── 06 Book ahead / verify ─────────────────────────────────── -->
         <section class="section section--last" id="book-ahead-verify" data-section aria-labelledby="book-title">
-          <SectionHeader
+          <h2 class="sr-only" id="book-title">Book ahead and verify</h2>
+          <SectionFold
             num="06"
             title="Book ahead / verify"
             cover="titicaca-puno"
+            fold="book-ahead-verify"
             lead="Tap to tick off — saved on this device. Lady Bee & Maido are already booked."
-          />
-          <h2 class="sr-only" id="book-title">Book ahead and verify</h2>
-          <VerifyList items={checklist} />
+          >
+            <VerifyList items={checklist} />
 
-          <div class="farewell">
-            <h3 class="farewell__title">{trip.farewell.title}</h3>
-            <p class="farewell__text" set:html={trip.farewell.text} />
-          </div>
+            <div class="farewell">
+              <h3 class="farewell__title">{trip.farewell.title}</h3>
+              <p class="farewell__text" set:html={trip.farewell.text} />
+            </div>
+          </SectionFold>
         </section>
       </main>
+
+      {/* Inline and in the body on purpose: it runs while the parser is still
+          here, so a section you left shut is never painted open first. */}
+      <script is:inline>
+        try {
+          var shut = JSON.parse(localStorage.getItem('peru-folded-sections') || '[]');
+          if (Array.isArray(shut)) {
+            for (var i = 0; i < shut.length; i++) {
+              var el = document.querySelector('[data-section-fold="' + shut[i] + '"]');
+              if (el) el.open = false;
+            }
+          }
+        } catch (e) {
+          /* No storage, or nothing stored — every section stays open. */
+        }
+      </script>
     </div>
   </div>
 

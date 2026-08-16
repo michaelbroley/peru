@@ -84,8 +84,19 @@
     padding: 3px 7px;
   }
 
-  /* Every day open, no disclosure affordance. */
+  /* Every day and every section open, no disclosure affordance. Paper has no
+     way to expand anything, so a shut fold would silently drop its content.
+     ::details-content is the modern hook; the child rule covers engines
+     that still hide closed content the old way. */
   details {
+    display: block !important;
+  }
+  details::details-content {
+    content-visibility: visible !important;
+    display: block !important;
+    block-size: auto !important;
+  }
+  details:not([open]) > *:not(summary) {
     display: block !important;
   }
   details > summary {

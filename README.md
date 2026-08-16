@@ -56,7 +56,7 @@ Initial payload: ~60 KB gzipped HTML plus fonts — the day status panels and th
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionFold` / `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `DayStatus` / `MapSprite` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -91,6 +91,18 @@ Every track inside the panel has an explicit zero minimum and the fact rows are 
 In print the locator and the gauge go, the block turns white, and the panel becomes the only place the elevation and weather appear. Its grid drops to one track there — with the locator hidden the facts would otherwise fall into the `auto` column and shrink to their own text.
 
 Day elevations use the source's own wording (`Sea level`, `3,450 m`, the weather table's `2,000–2,900 m` band for the cloud-forest days); the `metres` value only scales the gauge.
+
+### Folding a section away
+
+Every numbered section shuts to its cover photograph. It's a `<details>` — the cover band is the `<summary>` — so it works with no JavaScript, takes the keyboard for free, and Chrome opens it to show a find-in-page hit. A **Hide / Show** pill sits in the top corner of the band as the affordance; the whole band is the click target.
+
+Shut, the band comes down to `clamp(168px, 24vw, 300px)` and the lead paragraph goes with it. Six full-height covers stacked is a slideshow, not an index, and being able to scroll past a section is the point — all six shut, the page is ~2,550 px on a desktop and ~1,875 px on a phone.
+
+Which sections are shut is kept in `localStorage` under `peru-folded-sections`. The restore runs from an `is:inline` script sitting in the body after `</main>`, not from the bundled module: it has to execute while the parser is still there, or a section you left shut gets painted open first and the page jumps.
+
+`MegaNav`'s `openTarget` walks *every* disclosure above the destination rather than the nearest one — a day is a `<details>` inside a section's fold — and opens a section's own fold when you jump at the section itself.
+
+Print forces all of it open. That rule used to be `details { display: block }`, which hasn't revealed closed content for years; it's now `::details-content { content-visibility: visible }` with the old child rule kept for engines that still hide it the old way. Collapsed days weren't printing their contents before this either.
 
 ### How a day is laid out
 

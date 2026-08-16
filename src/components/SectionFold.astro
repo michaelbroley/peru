@@ -1,0 +1,136 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+/**
+ * A numbered section, foldable down to just its cover band.
+ *
+ * The guide is one long page and any given visit wants two or three sections
+ * of it, so each one shuts to its photograph and stays shut — per device,
+ * across reloads. It's a <details>, which means it works with no JavaScript,
+ * takes the keyboard for free, and Chrome opens it to show a find-in-page hit.
+ *
+ * The lead paragraph lives inside the summary, where the header puts it, but
+ * is hidden while the section is shut: "just the hero" means the photograph.
+ */
+interface Props {
+  num: string;
+  title: string;
+  lead?: string | undefined;
+  cover?: string | undefined;
+  /** The first section is close enough to the fold to be worth loading eagerly. */
+  eager?: boolean;
+  /** The section's id — the key its open/shut state is stored under. */
+  fold: string;
+}
+const { num, title, lead, cover, eager = false, fold } = Astro.props;
+---
+
+<details class="fold" open data-section-fold={fold}>
+  <summary class="fold__summary">
+    <SectionHeader num={num} title={title} lead={lead} cover={cover} eager={eager} />
+
+    <span class="fold__pill" aria-hidden="true">
+      <span class="fold__word fold__word--open">Hide</span>
+      <span class="fold__word fold__word--shut">Show</span>
+      <span class="fold__chev">▼</span>
+    </span>
+  </summary>
+
+  <div class="fold__body"><slot /></div>
+</details>
+
+<style>
+  .fold__summary {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Anchored to the summary, whose top edge is the top of the band. */
+  .fold__pill {
+    position: absolute;
+    top: 13px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 11px;
+    background: rgba(18, 16, 15, 0.66);
+    border: 1px solid var(--cream-28);
+    color: var(--cream);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* The band is full-bleed, so on a phone the pill can sit out over it. */
+  @media (max-width: 599px) {
+    .fold__pill {
+      right: calc(var(--pad) * -1 + 10px);
+    }
+  }
+
+  .fold__summary:hover .fold__pill,
+  .fold__summary:focus-visible .fold__pill {
+    background: var(--pink);
+    border-color: var(--pink);
+  }
+
+  .fold__chev {
+    font-size: 9px;
+    transition: transform 0.18s ease;
+  }
+  .fold:not([open]) .fold__chev {
+    transform: rotate(-90deg);
+  }
+
+  .fold[open] .fold__word--shut,
+  .fold:not([open]) .fold__word--open {
+    display: none;
+  }
+
+  /* Shut, the section is the photograph and nothing else. The band comes down
+     with it — six full-height covers stacked is a slideshow, not an index,
+     and the point of folding is to be able to scroll past a section. */
+  .fold:not([open]) :global(.sechead__lead) {
+    display: none;
+  }
+
+  .fold:not([open]) :global(.sechead__media) {
+    height: clamp(168px, 24vw, 300px);
+  }
+
+  /* No affordance and nothing hidden on paper. */
+  @media print {
+    .fold__pill {
+      display: none;
+    }
+    .fold:not([open]) :global(.sechead__lead) {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  /* Remembering which sections are shut is the whole point — a guide you have
+     to re-fold on every load is worse than one that never folded. Bundled
+     once by Astro however many sections use it. */
+  const KEY = 'peru-folded-sections';
+
+  const folds = Array.from(document.querySelectorAll<HTMLDetailsElement>('[data-section-fold]'));
+
+  function save(): void {
+    const shut = folds.filter((f) => !f.open).map((f) => f.dataset.sectionFold);
+    try {
+      localStorage.setItem(KEY, JSON.stringify(shut));
+    } catch {
+      /* private mode, or the quota is full — folding still works, it just
+         won't be remembered. */
+    }
+  }
+
+  for (const fold of folds) {
+    fold.addEventListener('toggle', save);
+  }
+</script>

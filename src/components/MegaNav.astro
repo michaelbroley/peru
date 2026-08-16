@@ -194,8 +194,18 @@ const { sections, days, categories } = Astro.props;
     } catch {
       return;
     }
-    const details = target?.closest('details');
-    if (details) details.open = true;
+    if (!target) return;
+
+    // Every disclosure above the target, not just the nearest: a day sits
+    // inside its own <details> inside the section's fold.
+    let details = target.closest('details');
+    while (details) {
+      details.open = true;
+      details = details.parentElement?.closest('details') ?? null;
+    }
+
+    // Jumping at a whole section means opening its fold, which is inside it.
+    target.querySelector<HTMLDetailsElement>(':scope > [data-section-fold]')?.setAttribute('open', '');
   }
 
   for (const link of links) {

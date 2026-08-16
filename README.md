@@ -78,6 +78,22 @@ A second upload added eight more photographs; the Urubamba market is section 10'
 
 `optimise-images.mjs` skips `backdrop*.png`. Those are the habitat's pixel art and `pack-habitat.mjs` reads them as its source — a quality-82 resample would soften every edge, and `--replace` would then delete the only copy. Lossless is what pixel art wants, and that's the packer's job, not the optimiser's.
 
+### Getting there
+
+Nine of the eleven days move somewhere, so **travel is the first block in a day** — above the weather, above the logistics.
+
+It used to be two things saying versions of the same route: a transit card near the top, and a strip of stops buried between the logistics and the picks. Split like that neither one carried. Worse, a day with no duration to quote — Sept 18 is a leader-led walk downtown — got only the strip, which laid out horizontally as a row of small chips and read as tags rather than a journey.
+
+**One block now.** Mode and clock across the top, the route itself as the body, the day's travel notes underneath. `TravelCallout` renders `JourneyStrip` inside it, and `travel.detail` — the prose version of the route — only appears where there are no stops to draw, so nothing is said twice.
+
+**The route runs down the page, not across.** Stops are gold dots on a line, the mode of travel labels the leg it applies to, and the last stop is set in gold because where you sleep is the one thing you look for. A connector is drawn between *every* pair of stops, not only the ones with a named mode — drawing it only where there was a `(train)` left the unlabelled hops stacked like a list instead of joined like a route.
+
+**It reads with the day shut too.** A `Cusco → Puno` chip sits in the summary beside the travel-day chip. Scanning eleven collapsed days, where each one takes you is the thing you're after, and it used to need a click.
+
+The stop list is authored in each day's `journey`, modes of travel in parentheses: `["Cusco", "(train)", "Aguas Calientes"]`. Six days had a route that only existed as prose in `travel.detail`, or a `detail` that named a stop the list had skipped — those were reconciled into `journey` so the drawn route is the whole record. Sept 26's arrival time had nowhere to go in a route, so it moved to the travel notes.
+
+In print the dots and the line are redrawn as borders. Chrome's "Save as PDF" turns background graphics off by default, and this is the one place where a dropped background loses meaning rather than decoration — without them it stops being a route.
+
 ### The day status panel
 
 Family follow along with this, so each day carries a panel in the space beside its summary answering three things with the day still collapsed: **where in Peru**, **how high up**, and **what the weather is doing**. Today's weather is the live reading (the same fetch the header makes); every other day shows its September average, labelled as such.

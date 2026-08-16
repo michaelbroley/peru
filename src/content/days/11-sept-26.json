@@ -26,12 +26,17 @@
   },
   "glance": "Flight home departs 8:25 AM — really a travel morning. Arrange an airport transfer the night before.",
   "logistics": [],
-  "journey": [],
+  "journey": [
+    "Lima",
+    "(flight)",
+    "Montreal"
+  ],
   "travel": {
     "mode": "depart",
     "duration": "Flight 8:25 AM",
     "detail": "Lima → Montreal, arrives 5:45 PM",
     "notes": [
+      "Arrives in Montreal 5:45 PM",
       "Arrange the airport transfer the night before"
     ]
   },

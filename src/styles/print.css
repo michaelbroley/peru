@@ -84,15 +84,22 @@
   .hero__bg,
   .altitude__chart,
   .weather-card__track,
-  .wchip__track,
-  .journey__dot {
+  .wchip__track {
     display: none !important;
   }
 
-  /* The journey strip reads as plain text once its chips lose their fill. */
-  .journey__stop {
-    border: 1px solid #999;
-    padding: 3px 7px;
+  /* The route is the one place a dropped background would lose meaning rather
+     than decoration — without its dots and line it stops being a route. Both
+     are redrawn as borders, which print whatever the background setting. */
+  .route__marker {
+    background: none !important;
+    border: 2px solid #000;
+  }
+
+  .route__leg::before {
+    background: none !important;
+    width: 0 !important;
+    border-left: 2px solid #999;
   }
 
   /* Every day and every section open, no disclosure affordance. Paper has no

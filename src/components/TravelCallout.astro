@@ -1,22 +1,33 @@
 ---
 import Icon, { type IconName } from './Icon.astro';
+import JourneyStrip from './JourneyStrip.astro';
 
 /**
- * The transit block on a travel day. On a trip where five of the eleven days
- * are mostly getting somewhere, "how long is today?" is the first thing you
- * want off the page, so it's a block of its own rather than one bullet in
- * a logistics list.
+ * Where today takes you, and how long it takes.
+ *
+ * Nine of the eleven days move somewhere, so this is the first block in a day
+ * — before the weather, before the logistics. It used to be two things: a
+ * transit card here and a strip of stops further down, each saying a version
+ * of the same route. Split like that neither one carried, and on a day with no
+ * duration to quote (a led walk downtown) all you got was the strip, which
+ * read as a row of tags.
+ *
+ * One block now: the mode and the clock across the top, the route itself as
+ * the body, the day's travel notes underneath. `detail` is the prose version
+ * of the route, so it only appears when there are no stops to draw.
  */
 interface Props {
-  mode: string;
+  mode?: string | undefined;
   /** "~7.5 hrs", "First bus 6:00 AM" — the headline number. */
-  duration: string;
-  /** "Cusco → Altiplano → Puno" */
+  duration?: string | undefined;
+  /** "Cusco → Altiplano → Puno" — the fallback where there is no stop list. */
   detail?: string | undefined;
   /** "Depart hotel 5:30 AM" and friends. */
   notes?: string[];
+  /** The day's ordered stops, modes of travel in parentheses. */
+  stops?: string[];
 }
-const { mode, duration, detail, notes = [] } = Astro.props;
+const { mode, duration, detail, notes = [], stops = [] } = Astro.props;
 
 const icons: Record<string, IconName> = {
   plane: 'plane',
@@ -40,20 +51,26 @@ const labels: Record<string, string> = {
   walk: 'On foot',
 };
 
-const icon = icons[mode] ?? 'car';
-const label = labels[mode] ?? 'Travel';
+const icon = mode ? (icons[mode] ?? 'car') : 'pin';
+/* A day can have a route and no transit to quote — Sept 18 is a led walk
+   downtown. It still gets the block; it just has nothing to put on the clock. */
+const label = mode ? (labels[mode] ?? 'Travel') : 'Today’s route';
+
+const hasRoute = stops.length > 0;
+const spoken = [label, duration].filter(Boolean).join(', ');
 ---
 
-<aside class="travel" aria-label={`Travel today: ${label}, ${duration}`}>
+<aside class="travel" aria-label={`Travel today: ${spoken}`}>
   <div class="travel__head">
-    <span class="travel__icon"><Icon name={icon} size={26} /></span>
-    <div class="travel__headings">
-      <p class="travel__label">{label}</p>
-      <p class="travel__duration">{duration}</p>
-    </div>
+    <span class="travel__icon"><Icon name={icon} size={24} /></span>
+    <p class="travel__label">{label}</p>
+    {duration && <p class="travel__duration">{duration}</p>}
   </div>
 
-  {detail && <p class="travel__detail">{detail}</p>}
+  {hasRoute && <div class="travel__route"><JourneyStrip stops={stops} onInk /></div>}
+
+  {/* Only where there's no route to draw — otherwise it says it twice. */}
+  {!hasRoute && detail && <p class="travel__detail">{detail}</p>}
 
   {
     notes.length > 0 && (
@@ -70,25 +87,23 @@ const label = labels[mode] ?? 'Travel';
   .travel {
     background: var(--ink);
     color: var(--cream);
-    padding: 15px 16px 16px;
+    padding: 15px 17px 17px;
     border-left: 5px solid var(--gold);
   }
 
+  /* Mode on the left, clock on the right, hairline under both. */
   .travel__head {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cream-28);
   }
 
   .travel__icon {
     display: flex;
     color: var(--gold);
-  }
-
-  .travel__headings {
-    display: grid;
-    gap: 3px;
-    min-width: 0;
   }
 
   .travel__label {
@@ -104,13 +119,18 @@ const label = labels[mode] ?? 'Travel';
   .travel__duration {
     margin: 0;
     font-family: var(--display);
-    font-size: 26px;
+    font-size: 24px;
     line-height: 1;
     text-transform: uppercase;
+    text-align: right;
+  }
+
+  .travel__route {
+    padding-top: 14px;
   }
 
   .travel__detail {
-    margin: 11px 0 0;
+    margin: 13px 0 0;
     font-size: var(--fs-note);
     line-height: 1.45;
     color: rgba(255, 251, 245, 0.82);
@@ -119,7 +139,9 @@ const label = labels[mode] ?? 'Travel';
   .travel__notes {
     display: grid;
     gap: 3px;
-    margin: 9px 0 0;
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--cream-25);
     font-size: var(--fs-small);
     line-height: 1.4;
     color: var(--cream-55);
@@ -145,9 +167,15 @@ const label = labels[mode] ?? 'Travel';
     .travel__icon {
       color: #000;
     }
+    .travel__head {
+      border-bottom-color: #999;
+    }
     .travel__detail,
     .travel__notes {
       color: #333;
+    }
+    .travel__notes {
+      border-top-color: #999;
     }
   }
 </style>

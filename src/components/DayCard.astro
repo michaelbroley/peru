@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import WeatherChip from './WeatherChip.astro';
-import JourneyStrip from './JourneyStrip.astro';
 import ReservationBanner from './ReservationBanner.astro';
 import PlaceCard from './PlaceCard.astro';
 import LbbPanel from './LbbPanel.astro';
@@ -42,6 +41,15 @@ for (const pick of day.picks) {
   else groups.push({ label, items: [pick] });
 }
 
+/**
+ * Where the day starts and where it ends, for the collapsed row.
+ *
+ * Scanning eleven shut days, "Cusco → Puno" is the thing you're looking for,
+ * and it was only visible once you opened one. The middle stops stay inside.
+ */
+const named = day.journey.filter((stop) => !/^\(.*\)$/.test(stop));
+const endpoints = named.length > 1 ? `${named[0]} → ${named.at(-1)}` : null;
+
 // Little Black Book categories this day surfaces, resolved to their entries.
 const lbb = day.lbb.flatMap((categoryId) => {
   const entry = categories.find((c) => c.id === categoryId);
@@ -80,6 +88,14 @@ const lbb = day.lbb.flatMap((categoryId) => {
           {day.elevation.label}
         </span>
         {
+          endpoints && (
+            <span class="day__chip day__chip--route">
+              <Icon name="pin" size={13} />
+              {endpoints}
+            </span>
+          )
+        }
+        {
           day.travelDay && (
             <span class="day__chip day__chip--travel">
               <Icon name="clock" size={13} />
@@ -96,9 +112,12 @@ const lbb = day.lbb.flatMap((categoryId) => {
   </summary>
 
   <div class:list={['day__body', { 'day__body--lonelbb': lbb.length === 1 }]}>
-    <p class="day__weathernote">{day.weather.note}</p>
+    {/* Travel first. On a trip that is mostly getting somewhere, where today
+        takes you frames everything under it — and a day can have a route with
+        no transit to quote, so the block turns on for either. */}
+    {(day.travel || day.journey.length > 0) && <TravelCallout {...day.travel} stops={day.journey} />}
 
-    {day.travel && <TravelCallout {...day.travel} />}
+    <p class="day__weathernote">{day.weather.note}</p>
 
     {
       day.logistics.length > 0 && (
@@ -112,8 +131,6 @@ const lbb = day.lbb.flatMap((categoryId) => {
         </div>
       )
     }
-
-    {day.journey.length > 0 && <JourneyStrip stops={day.journey} />}
 
     {day.reservations.map((res) => <ReservationBanner {...res} showTimeInEyebrow={true} />)}
 
@@ -290,6 +307,17 @@ const lbb = day.lbb.flatMap((categoryId) => {
     font-weight: 700;
   }
 
+  /* Where today takes you, readable with the day still shut. */
+  .day__chip--route {
+    background: var(--ink);
+    color: var(--cream);
+    font-weight: 700;
+  }
+
+  .day__chip--route :global(svg) {
+    color: var(--gold);
+  }
+
   .day__body {
     padding: 0 0 24px;
     display: grid;
@@ -387,7 +415,6 @@ const lbb = day.lbb.flatMap((categoryId) => {
     .day__body > .day__note,
     .day__body > .day__block,
     .day__body > :global(.travel),
-    .day__body > :global(.journey),
     .day__body > :global(.reservation),
     .day__body > :global(.mapbox) {
       grid-column: 1 / -1;

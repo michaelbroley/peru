@@ -34,7 +34,9 @@
   "logistics": [],
   "journey": [
     "Titicaca",
-    "(Juliaca flight)",
+    "(bus)",
+    "Juliaca",
+    "(flight)",
     "Lima"
   ],
   "travel": {

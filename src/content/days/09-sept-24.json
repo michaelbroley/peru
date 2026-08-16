@@ -30,7 +30,12 @@
     "tonight: family homestay",
     "facilities basic, drop toilets, no showers"
   ],
-  "journey": [],
+  "journey": [
+    "Puno",
+    "(motorboat)",
+    "Uros floating islands",
+    "Homestay"
+  ],
   "travel": {
     "mode": "boat",
     "duration": "Motorboat",

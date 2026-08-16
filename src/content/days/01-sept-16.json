@@ -31,7 +31,11 @@
   },
   "glance": "Land off the redeye at 6:55 AM — take it easy. Check in, nap, gentle wander, then 8 PM cocktails at Lady Bee.",
   "logistics": [],
-  "journey": [],
+  "journey": [
+    "Jorge Chávez airport",
+    "(taxi, 30–90 min)",
+    "Miraflores"
+  ],
   "travel": {
     "mode": "arrive",
     "duration": "Lands 6:55 AM",

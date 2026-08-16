@@ -1,17 +1,23 @@
 ---
 /**
- * The day's ordered stops. Parenthesised entries ("(train)", "(bus up)") are
- * the mode of travel between places, so they're drawn as the connector rather
- * than as a stop.
+ * The day's ordered stops, drawn as a route rather than a sentence.
+ *
+ * Parenthesised entries ("(train)", "(bus up)") are the mode of travel between
+ * places, so they're the connector between two stops rather than a stop.
+ *
+ * It runs down the page, not across. Laid out horizontally these wrapped into
+ * a scatter of small chips that read as tags, which is exactly why the travel
+ * — the thing this trip is mostly made of — disappeared into the day.
  */
 interface Props {
   stops: string[];
+  /** Rendered on the ink travel block, so the palette inverts. */
+  onInk?: boolean;
 }
-const { stops } = Astro.props;
+const { stops, onInk = false } = Astro.props;
 
 type Leg = { stop: string; via: string | null };
 
-// Fold "(train)" into the leg that follows it.
 const legs: Leg[] = [];
 let pendingVia: string | null = null;
 for (const raw of stops) {
@@ -25,90 +31,135 @@ for (const raw of stops) {
 }
 ---
 
-<div class="journey">
-  <p class="eyebrow journey__label" id="journey-label">Journey</p>
-  <ol class="journey__list" aria-labelledby="journey-label">
-    {
-      legs.map((leg, i) => (
-        <li class="journey__item">
-          {i > 0 && (
-            <span class="journey__connector" aria-hidden="true">
-              <span class="journey__line" />
-              {leg.via && <span class="journey__via">{leg.via}</span>}
-              <span class="journey__line" />
-            </span>
-          )}
-          {leg.via && <span class="sr-only">by {leg.via} to</span>}
-          <span class="journey__stop">
-            <span class="journey__dot" aria-hidden="true" />
+<ol class:list={['route', { 'route--ink': onInk }]}>
+  {
+    legs.map((leg, i) => (
+      <li class="route__item">
+        {/* A line between every pair, whether or not the mode is named. Drawing
+            it only where there was a "(train)" left the unlabelled hops looking
+            like a stacked list rather than one continuous route. */}
+        {i > 0 && (
+          <span class:list={['route__leg', { 'route__leg--bare': !leg.via }]}>
+            {leg.via && <span class="route__via">{leg.via}</span>}
+          </span>
+        )}
+        {leg.via && <span class="sr-only">by {leg.via} to</span>}
+        <span class="route__stop">
+          <span class="route__marker" aria-hidden="true" />
+          <span class:list={['route__name', { 'route__name--end': i === legs.length - 1 && legs.length > 1 }]}>
             {leg.stop}
           </span>
-        </li>
-      ))
-    }
-  </ol>
-</div>
+        </span>
+      </li>
+    ))
+  }
+</ol>
 
 <style>
-  .journey__label {
-    margin: 0 0 8px;
+  .route {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .journey__list {
-    display: flex;
-    flex-wrap: wrap;
+  /* One track for the line and its dots, one for the words. */
+  .route__stop,
+  .route__leg {
+    display: grid;
+    grid-template-columns: 15px minmax(0, 1fr);
     align-items: center;
-    gap: 4px 0;
+    gap: 0 11px;
   }
 
-  .journey__item {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-  }
-
-  .journey__stop {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 9px;
-    background: var(--ink);
-    color: var(--cream);
-    font-weight: 600;
-    font-size: var(--fs-label-sm);
-    line-height: 1.2;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .journey__dot {
-    width: 5px;
-    height: 5px;
+  .route__marker {
+    grid-column: 1;
+    justify-self: center;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
     background: var(--gold);
-    flex: 0 0 auto;
   }
 
-  .journey__connector {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 0 5px;
+  .route__name {
+    grid-column: 2;
+    font-family: var(--display);
+    font-size: 20px;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
-  .journey__line {
-    width: 8px;
-    height: 1px;
+  /* Where you end the day, which is the one stop worth finding at a glance. */
+  .route__name--end {
+    color: var(--pink);
+  }
+
+  /* The line between two stops, carrying how you get along it. */
+  .route__leg {
+    position: relative;
+    min-height: 26px;
+  }
+
+  /* Nothing to say about this hop — just enough line to join the dots. */
+  .route__leg--bare {
+    min-height: 14px;
+  }
+
+  .route__leg::before {
+    content: '';
+    position: absolute;
+    /* Centred on the dots: the marker column is 15px, the line 2px. */
+    left: 6.5px;
+    /* Run under the dots at either end so the chain actually joins up. */
+    top: -7px;
+    bottom: -7px;
+    width: 2px;
     background: var(--ink-35);
   }
 
-  .journey__via {
-    font-weight: 600;
+  .route__via {
+    grid-column: 2;
+    padding: 2px 0;
+    font-weight: 700;
     font-size: var(--fs-label-xs);
-    line-height: 1;
-    letter-spacing: 0.08em;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ink-50);
-    white-space: nowrap;
+  }
+
+  /* --- on the ink block ---------------------------------------------------- */
+  .route--ink .route__name {
+    color: var(--cream);
+  }
+
+  .route--ink .route__name--end {
+    color: var(--gold);
+  }
+
+  .route--ink .route__leg::before {
+    background: var(--cream-30);
+  }
+
+  .route--ink .route__via {
+    color: var(--cream-55);
+  }
+
+  @media print {
+    .route--ink .route__name,
+    .route--ink .route__name--end {
+      color: #000;
+    }
+    .route--ink .route__via {
+      color: #333;
+    }
+    .route--ink .route__leg::before {
+      background: #999;
+    }
+    .route__marker {
+      background: #000;
+    }
   }
 </style>

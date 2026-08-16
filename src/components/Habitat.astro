@@ -1,6 +1,7 @@
 ---
 import { HABITAT_BACKDROPS } from '../lib/habitat';
 import Penguin from './Penguin.astro';
+import Choque from './Choque.astro';
 
 /**
  * The footer: 500 px of ground at the bottom of the page for the llama to
@@ -24,6 +25,7 @@ import Penguin from './Penguin.astro';
   </div>
 
   <Penguin />
+  <Choque />
 </footer>
 
 <script is:inline type="application/json" data-habitat-config set:html={JSON.stringify(HABITAT_BACKDROPS)} />

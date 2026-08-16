@@ -11,7 +11,7 @@
  * Bump CACHE when the content changes — old caches are dropped on activate.
  */
 
-const CACHE = 'peru-guide-v23';
+const CACHE = 'peru-guide-v24';
 
 /**
  * Map tiles live in their own capped cache: they're third-party, there can be
@@ -41,6 +41,7 @@ const PRECACHE = [
   '/icons/icon-180.png',
   '/llama/chaska-4x.webp',
   '/llama/pancho-4x.webp',
+  '/llama/choque-4x.webp',
   '/habitat/backdrop1.webp',
   '/habitat/backdrop2.webp',
   '/habitat/backdrop3.webp',

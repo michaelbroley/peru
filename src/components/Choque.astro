@@ -1,0 +1,269 @@
+---
+import {
+  CHOQUE_COOLDOWN,
+  CHOQUE_ENTRY_GAP,
+  CHOQUE_EXIT_GAP,
+  CHOQUE_FPS,
+  CHOQUE_FRAMES,
+  CHOQUE_HEIGHT,
+  CHOQUE_MAX_CLOSING,
+  CHOQUE_SHEET,
+  CHOQUE_WIDTH,
+} from '../lib/choque';
+
+/**
+ * The referee. It watches the llama and the penguin along the habitat floor,
+ * and when they're about to walk into each other it takes both of them off,
+ * plays the two-character crash in their place, and puts them back down on
+ * opposite sides still going the way they were.
+ *
+ * It reads their positions off the DOM rather than through an API — they each
+ * translate their own root, so a rect is all it needs — and it steers them
+ * with one `peru:crash` event that both listen for. Neither of them knows the
+ * other exists.
+ */
+const config = {
+  sheet: CHOQUE_SHEET,
+  width: CHOQUE_WIDTH,
+  height: CHOQUE_HEIGHT,
+  frames: CHOQUE_FRAMES,
+  fps: CHOQUE_FPS,
+  entryGap: CHOQUE_ENTRY_GAP,
+  exitGap: CHOQUE_EXIT_GAP,
+  cooldown: CHOQUE_COOLDOWN,
+  maxClosing: CHOQUE_MAX_CLOSING,
+};
+---
+
+<div class="choque" data-choque hidden aria-hidden="true">
+  <span class="choque__sprite" data-choque-sprite></span>
+</div>
+
+<script is:inline type="application/json" data-choque-config set:html={JSON.stringify(config)} />
+
+<style>
+  .choque {
+    position: absolute;
+    left: 0;
+    /* Same floor as both of them: their feet land on row 38 of a 40px cell. */
+    bottom: -4px;
+    z-index: 3;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .choque[hidden] {
+    display: none;
+  }
+
+  .choque__sprite {
+    display: block;
+    width: 160px;
+    height: 80px;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 3px 0 rgba(18, 16, 15, 0.2));
+  }
+
+  /* Penguin-left, llama-right: the whole cell flips, and the art is composed
+     so the swap and both exits still read correctly. */
+  .choque[data-mirrored] .choque__sprite {
+    transform: scaleX(-1);
+  }
+
+  @media print {
+    .choque {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  interface Config {
+    sheet: string;
+    width: number;
+    height: number;
+    frames: number;
+    fps: number;
+    entryGap: number;
+    exitGap: number;
+    cooldown: number;
+    maxClosing: number;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-choque]');
+  const sprite = document.querySelector<HTMLElement>('[data-choque-sprite]');
+  const habitat = document.querySelector<HTMLElement>('[data-habitat]');
+  const llama = document.querySelector<HTMLElement>('[data-llama]');
+  const penguin = document.querySelector<HTMLElement>('[data-penguin]');
+  const configEl = document.querySelector('[data-choque-config]');
+
+  if (root && sprite && habitat && llama && penguin && configEl) {
+    const cfg = JSON.parse(configEl.textContent ?? '{}') as Config;
+    sprite.style.backgroundSize = `${cfg.frames * cfg.width}px ${cfg.height}px`;
+
+    let ready = false;
+    let busy = false;
+    let until = 0;
+    let previousGap = Infinity;
+    let previousAt = 0;
+    let watching = 0;
+
+    /** Forget the last reading, so the next one only seeds the comparison. */
+    function reseed(): void {
+      previousGap = Infinity;
+      previousAt = 0;
+    }
+
+    const centreOf = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      return r.left + r.width / 2;
+    };
+
+    /**
+     * They can only collide when they're actually sharing a floor. The llama is
+     * fixed to the bottom of the viewport and the penguin is planted in the
+     * habitat, so that's only true once the band is fully scrolled to.
+     */
+    function sharingTheFloor(): boolean {
+      const a = llama!.getBoundingClientRect();
+      const b = habitat!.getBoundingClientRect();
+      return Math.abs(a.bottom - b.bottom) < 4;
+    }
+
+    function crash(llamaCentre: number, penguinCentre: number, drift: number): void {
+      busy = true;
+      const habitatLeft = habitat!.getBoundingClientRect().left;
+      const llamaOnLeft = llamaCentre < penguinCentre;
+      const mid = (llamaCentre + penguinCentre) / 2;
+
+      // Both of them off, and the composite down in their place.
+      document.dispatchEvent(new CustomEvent('peru:crash', { detail: { phase: 'start' } }));
+      root!.hidden = false;
+      if (llamaOnLeft) delete root!.dataset.mirrored;
+      else root!.dataset.mirrored = '';
+
+      let x = mid - cfg.width / 2 - habitatLeft;
+      let frame = 0;
+      let elapsed = 0;
+      let last = 0;
+      const step = 1000 / cfg.fps;
+
+      const paint = () => {
+        sprite!.style.backgroundPosition = `-${frame * cfg.width}px 0`;
+        root!.style.transform = `translateX(${Math.round(x)}px)`;
+      };
+      paint();
+
+      const play = (now: number) => {
+        const dt = last ? Math.min(now - last, 250) : 0;
+        last = now;
+        // Keep the tableau moving at the speed the pair were closing at, so
+        // nothing lurches at either cut.
+        x += (drift * dt) / 1000;
+        elapsed += dt;
+        while (elapsed >= step && frame < cfg.frames - 1) {
+          elapsed -= step;
+          frame += 1;
+        }
+        paint();
+
+        if (frame >= cfg.frames - 1 && elapsed >= step) {
+          finish(habitatLeft, x, llamaOnLeft);
+          return;
+        }
+        requestAnimationFrame(play);
+      };
+      requestAnimationFrame(play);
+    }
+
+    function finish(habitatLeft: number, x: number, llamaOnLeft: boolean): void {
+      root!.hidden = true;
+      const mid = x + habitatLeft + cfg.width / 2;
+      const half = cfg.exitGap / 2;
+
+      // They come out of the dust having swapped sides, each still going the
+      // way they were, which is what the last two frames show.
+      const llamaCentre = llamaOnLeft ? mid + half : mid - half;
+      const penguinCentre = llamaOnLeft ? mid - half : mid + half;
+
+      document.dispatchEvent(
+        new CustomEvent('peru:crash', {
+          detail: {
+            phase: 'end',
+            llama: { centre: llamaCentre, dir: llamaOnLeft ? 1 : -1 },
+            penguin: { centre: penguinCentre, dir: llamaOnLeft ? -1 : 1 },
+          },
+        }),
+      );
+
+      until = performance.now() + cfg.cooldown;
+      busy = false;
+      reseed();
+    }
+
+    function watch(): void {
+      watching = requestAnimationFrame(watch);
+      const now = performance.now();
+      if (busy || !ready || now < until) return;
+      if (llama!.hidden || penguin!.hidden || llama!.hasAttribute('data-asleep')) {
+        // Whatever they do while nobody's looking doesn't count as approaching.
+        reseed();
+        return;
+      }
+      if (!sharingTheFloor()) {
+        reseed();
+        return;
+      }
+
+      const llamaCentre = centreOf(llama!);
+      const penguinCentre = centreOf(penguin!);
+      const gap = Math.abs(llamaCentre - penguinCentre);
+      const dt = previousAt ? (now - previousAt) / 1000 : 0;
+      const wasGap = previousGap;
+      previousGap = gap;
+      previousAt = now;
+
+      // Closing, not just near: two characters standing next to each other
+      // haven't run into anything. The first reading only seeds the
+      // comparison — treating "no previous gap" as closing would crash them
+      // the moment the referee started watching if they happened to be near.
+      if (wasGap === Infinity || dt <= 0 || gap > cfg.entryGap) return;
+
+      // And closing at walking pace. A gap that shuts faster than either of
+      // them can move is a jump, not an approach — a resize, or one of them
+      // being put back down — so it seeds the next comparison instead.
+      const rate = (wasGap - gap) / dt;
+      if (rate <= 0 || rate > cfg.maxClosing) return;
+
+      // The pair's midpoint barely moves — they arrive at each other at
+      // similar speeds from opposite sides — so the tableau holds still and
+      // the art carries the movement, which is how it's drawn.
+      crash(llamaCentre, penguinCentre, 0);
+    }
+
+    function summon(): void {
+      const img = new Image();
+      img.onload = () => {
+        sprite!.style.backgroundImage = `url(${cfg.sheet})`;
+        ready = true;
+        if (!watching) watching = requestAnimationFrame(watch);
+      };
+      img.onerror = () => undefined;
+      img.src = cfg.sheet;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && watching) {
+        cancelAnimationFrame(watching);
+        watching = 0;
+      } else if (!document.hidden && ready && !watching) {
+        watching = requestAnimationFrame(watch);
+      }
+    });
+
+    if (document.readyState === 'complete') summon();
+    else window.addEventListener('load', summon, { once: true });
+  }
+</script>

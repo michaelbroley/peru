@@ -284,8 +284,11 @@ const config = {
     /** Nothing animates while the footer is off screen. */
     let onScreen = false;
     let allowed = true;
+    /** Set while the referee has him off stage for a collision. */
+    let crashed = false;
 
     function sync(): void {
+      if (crashed) return;
       if (onScreen && allowed) start();
       else {
         stop();
@@ -325,6 +328,44 @@ const config = {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stop();
       else sync();
+    });
+
+    /* --- Walking into the llama -------------------------------------------
+       Same deal as her: the referee takes him off and puts him back down. */
+    document.addEventListener('peru:crash', (event) => {
+      const detail = (event as CustomEvent<{
+        phase: 'start' | 'end';
+        penguin?: { centre: number; dir: 1 | -1 };
+      }>).detail;
+
+      if (detail.phase === 'start') {
+        crashed = true;
+        clearPending();
+        walking = 0;
+        root!.hidden = true;
+        return;
+      }
+
+      crashed = false;
+      if (!allowed || !onScreen) {
+        // He was switched off or scrolled away from mid-crash, so the state
+        // change he slept through is the one that applies, not this.
+        sync();
+        return;
+      }
+      root!.hidden = false;
+      if (detail.penguin) {
+        // Centres come from the referee; his x is the left of an 80px cell,
+        // and he lives in habitat coordinates rather than the viewport's.
+        const habitatLeft = habitat!.getBoundingClientRect().left;
+        const { min, max } = bounds();
+        x = Math.max(min, Math.min(detail.penguin.centre - CELL / 2 - habitatLeft, max));
+        walking = detail.penguin.dir * cfg.waddle;
+        point(walking);
+        play(A.walk!);
+        later(stand, 1100);
+        later(act, rand(2600, 6000));
+      }
     });
 
     /* The sheet is 2 KB, but he still waits for the guide to finish loading —

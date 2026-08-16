@@ -156,6 +156,20 @@ The art is a handoff in `src/silly_virtual_llama/` — seventeen animations at 4
 - She's off in one click (the switch is in the menu, beside the lens filter) and remembers it. Under `prefers-reduced-motion` the default flips to off; an explicit choice always wins.
 - No paper. She's a treat, not a fixture.
 
+### El choque
+
+Sooner or later the two of them walk into each other, and there's a sprite for it. Ten frames of an 80 × 40 cell — the only one with both characters in it — from the moment before impact, through the dust, to the pair of them picking themselves up on opposite sides and carrying on the way they were going.
+
+**`Choque.astro` is a referee, not a third character.** It reads both of their positions off the DOM — they each translate their own root, so a rect is all it needs — and steers them with a single `peru:crash` event that both listen for. Neither the llama nor the penguin knows the other exists, which is what lets them keep their own independent loops.
+
+**One strip covers both arrangements.** The art is composed llama-left, penguin-right; mirroring the whole cell gives penguin-left, llama-right. The swap and the two exits both survive the flip, so approaching from either side is one `scaleX(-1)` and no second sheet. The trigger distance and the distance they're put back down at are measured off frames 0 and 9 rather than picked, so neither cut jumps.
+
+**A gap that shuts isn't enough — it has to shut at walking pace.** Two characters standing next to each other haven't run into anything, so the referee compares consecutive readings; but comparing distance alone made *every* jump a collision. A resize, the llama being switched back on, the pair being put down after the previous crash: each of those closes a large gap in one frame, and each of them crashed them again. Measuring the closing *rate* against a ceiling of 400 px/s — a running llama is 42, a sliding penguin 130 — is what separates an approach from a teleport. The test drives collisions by placing the pair outside the trigger gap and letting them walk in, so it's exercising the real thing.
+
+Two guards beside that: they must be sharing a floor (she's fixed to the viewport, he's planted in the band, so that's only true at full scroll), and a sleeping llama collides with nothing. A six-second cooldown stops them piling straight back into each other.
+
+`scripts/pack-choque.mjs` packs it the same way as the rest — lossless WebP, round-trip compared pixel-for-pixel before writing. 1.9 KB.
+
 ### The little black book
 
 Thirteen lists one after another, all set the same way on cream, was a wall you couldn't get a purchase on. Three things break it up:

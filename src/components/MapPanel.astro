@@ -83,6 +83,12 @@ const config = {
   .mapbox {
     margin: 0;
     border: 1px solid var(--rule);
+    /* Leaflet puts its controls at z-index 1000 and its panes at 400. Without
+       a stacking context of its own, those escape the card and ride over the
+       sticky nav while you scroll. `isolation` pins them inside. */
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
   }
 
   .mapbox__canvas {

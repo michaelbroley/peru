@@ -116,7 +116,6 @@
   --pad: 22px;
   --gap: 16px;
   --measure: 68ch;
-  --rail: 0px;
 
   /* Radii — the design is square-edged; pills are the only exception. */
   --radius: 0px;
@@ -125,7 +124,7 @@
   --shadow-nav: 0 6px 18px rgba(0, 0, 0, 0.28);
 
   /* Sticky-header offset for in-page jumps. Overridden by the nav at runtime. */
-  --nav-h: 104px;
+  --nav-h: 58px;
   --scroll-offset: calc(var(--nav-h) + 12px);
 }
 
@@ -290,12 +289,12 @@ summary::-webkit-details-marker {
   }
 }
 
-/* Desktop: the nav leaves the top and becomes a sticky rail on the left. */
+/* Desktop. The nav is a bar at every size, so the card is a single column
+   and the content gets all of it. */
 @media (min-width: 1080px) {
   :root {
     --wrap: 1120px;
     --pad: 40px;
-    --rail: 232px;
   }
 }
 
@@ -303,21 +302,6 @@ summary::-webkit-details-marker {
   :root {
     --wrap: 1320px;
     --pad: 48px;
-    --rail: 264px;
-  }
-}
-
-/* The two-column shell. Below the rail breakpoint --rail is 0 and this is a
-   plain single column, with the nav sticking to the top as before. */
-@media (min-width: 1080px) {
-  .layout {
-    display: grid;
-    grid-template-columns: var(--rail) minmax(0, 1fr);
-    align-items: start;
-    /* The nav is sticky and only as tall as its own content, so paint the
-       rail column ink for the full height of the row — otherwise cream shows
-       through beneath it on a long page. */
-    background: linear-gradient(to right, var(--ink) 0 var(--rail), transparent var(--rail));
   }
 }
 

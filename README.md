@@ -55,7 +55,7 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 ### Components
 
-`TocNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -91,6 +91,16 @@ Without JavaScript the panel renders the trip dates and a plain link to Day 1, s
 
 Day dates live in each day file as `iso` (`2026-09-21`), which is what the panel matches against; `point` is the day's location for the weather lookup.
 
+### Navigation
+
+A slim sticky bar and a mega panel, the same at every width. The bar carries only what's useful while reading — the section you're currently in, a jump to today, and the menu trigger — and is about 50 px tall.
+
+The panel opens as one view of the whole guide: the six sections, all eleven days, all twelve recommendation categories, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
+
+The panel is `position: fixed` rather than part of the sticky flow. That's deliberate: locking body scroll with `overflow: hidden` — the usual way to hold the page still behind a menu — removes the scrollport the sticky bar depends on, and the bar drops out of position the moment the menu opens.
+
+`--nav-h` is measured from the bar alone and drives `scroll-margin-top`, so anchors clear it exactly.
+
 ### Responsive layout
 
 Mobile is the comp, unchanged. Above that the card grows in steps and the extra width buys layout rather than longer lines — running text is capped at `--measure` everywhere, so nothing ever stretches to an unreadable line length.
@@ -99,12 +109,11 @@ Mobile is the comp, unchanged. Above that the card grows in steps and the extra 
 | ------- | --------------------------------------------------------------------------------------------- |
 | 600 px  | Card widens a little                                                                            |
 | 700 px  | Recommendations, weather, packing and the snapshot table go two-up                              |
-| 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair; checklist goes two-up       |
-| 1080 px | **Nav becomes a sticky rail down the left**, always showing every day and category; snapshot table goes three-up; day gutters widen |
+| 720 px  | Menu panel goes to three columns                                                                |
+| 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair; checklist goes two-up |
+| 1080 px | Snapshot table goes three-up; day gutters widen                                                  |
 | 1200 px | Recommendations go three-up; packing four-up; a day's Little Black Book panels pair side by side |
 | 1440 px | Card reaches 1320 px; weather goes four-up                                                       |
-
-The one JS consequence is the nav: on the rail there's nothing to collapse and nothing overlapping the content, so the "All sections" toggle hides itself and the sticky-scroll offset drops to zero. Crossing the breakpoint in either direction re-syncs both.
 
 ### Maps
 
@@ -116,6 +125,7 @@ Three things happen when the tiles can't load:
 
 - Tiles you've already looked at are served from a capped runtime cache, so a map you opened on hotel wifi still draws later with no signal.
 - Failing that, the map says "map tiles need a signal" rather than showing an empty rectangle.
+- Each map is its own stacking context (`isolation: isolate`). Leaflet puts its controls at `z-index: 1000` and its panes at 400; without that, they escape the card and ride over the sticky nav as you scroll.
 - Every pin is also listed as plain text under the map — name, note and the same Google Maps link. That list is keyboard-reachable, works with no tiles at all, and is what gets printed.
 
 Pin links reuse the place's address where the content has one (`src/lib/addressBook.ts` gathers them from places, days and the trip snapshot) and fall back to the pin's exact coordinates otherwise.

@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import TocNav from '../components/TocNav.astro';
+import MegaNav from '../components/MegaNav.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import SnapshotTable from '../components/SnapshotTable.astro';
 import ReservationBanner from '../components/ReservationBanner.astro';
@@ -35,20 +35,22 @@ const placeData = places.map((p) => p.data);
 
 // Anchors mirror the Quick Links TOC in Peru_Trip_Content.md.
 const sections = [
-  { href: '#trip-snapshot', label: 'Snapshot' },
-  { href: '#weather-september-50-year-averages', label: 'Weather' },
-  { href: '#day-by-day', label: 'Days' },
-  { href: '#recommendations-little-black-book-for-laura', label: 'Recommendations' },
+  { num: '01', href: '#trip-snapshot', label: 'Trip snapshot' },
+  { num: '02', href: '#weather-september-50-year-averages', label: 'Weather' },
+  { num: '03', href: '#day-by-day', label: 'Day by day' },
+  { num: '04', href: '#recommendations-little-black-book-for-laura', label: 'Recommendations' },
   {
+    num: '05',
     href: '#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu',
     label: 'Packing',
   },
-  { href: '#book-ahead-verify', label: 'Book ahead' },
+  { num: '06', href: '#book-ahead-verify', label: 'Book ahead' },
 ];
 
 const dayLinks = days.map((d) => ({
   href: `#${d.data.slug}`,
-  label: `${d.data.date} — ${d.data.title}`,
+  meta: d.data.date,
+  label: d.data.title,
 }));
 
 const categoryLinks = categories.map((c) => ({
@@ -110,10 +112,9 @@ const description =
         </dl>
       </header>
 
-      <div class="layout">
-        <TocNav sections={sections} days={dayLinks} categories={categoryLinks} />
+      <MegaNav sections={sections} days={dayLinks} categories={categoryLinks} />
 
-        <main id="main">
+      <main id="main">
         <!-- ── 01 Trip snapshot ───────────────────────────────────────── -->
         <section class="section" id="trip-snapshot" data-section aria-labelledby="trip-snapshot-title">
           <SectionHeader num="01" title="Trip snapshot" cover="lima-coast" eager />
@@ -277,8 +278,7 @@ const description =
             <p class="farewell__text" set:html={trip.farewell.text} />
           </div>
         </section>
-        </main>
-      </div>
+      </main>
     </div>
   </div>
 

@@ -80,6 +80,20 @@
       if (el.jump) el.jump.href = `#${first.slug}`;
     }
 
+    /* The nav's Today button and the panel's day rows want the same answer,
+       so they're driven from here rather than recomputing the date. */
+    const navToday = document.querySelector<HTMLAnchorElement>('[data-nav-today]');
+    const navTodayLabel = document.querySelector<HTMLElement>('[data-nav-today-label]');
+    if (current) {
+      if (navToday) navToday.href = `#${current.slug}`;
+      if (navTodayLabel) navTodayLabel.textContent = 'Today';
+      document.querySelector(`[data-nav-day="${current.slug}"]`)?.classList.add('is-today');
+    } else {
+      // Off-trip, the button points at the day list and says so.
+      if (navToday) navToday.href = '#day-by-day';
+      if (navTodayLabel) navTodayLabel.textContent = untilStart > 0 ? 'Day 1' : 'The days';
+    }
+
     // Opening the target day is the whole point of the button.
     el.jump?.addEventListener('click', () => {
       const target = document.querySelector(el.jump!.getAttribute('href') ?? '');

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+html,body{margin:0;padding:0;background:#131019;}
+a{color:#f2c14e;text-decoration:none;border-bottom:1px solid rgba(242,193,78,.35);}
+a:hover{color:#ffe27a;border-bottom-color:#ffe27a;}
+::selection{background:#d9282f;color:#fff;}
+canvas{display:block;image-rendering:pixelated;}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#131019;color:#efe9df;font-family:'Space Grotesk',system-ui,sans-serif;padding:48px 40px 72px;box-sizing:border-box;">
+
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:40px;">
+
+<div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #2a2536;padding-bottom:28px;">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:640px;">
+<div style="font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:.18em;color:#d9282f;">SPRITE SET · v1</div>
+<div style="font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1;">Chaska, the 16-bit travel llama</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.65;color:#9c94ad;text-wrap:pretty;">Eleven animations, one unlocked per day of an 11-day Peru trip, plus six anytime states: idle, greeting, dance, run, trip-and-fall and a tap reaction. Every frame is transparent PNG at 40&times;40 logical pixels &mdash; it sits on top of app UI with no background of its own. Tap any llama to see the poke reaction.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;min-width:220px;">
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<div onClick="{{ togglePlay }}" role="switch" style="display:flex;align-items:center;gap:10px;padding:7px 12px 7px 10px;background:#1e1a29;border:1px solid #35304a;border-radius:6px;cursor:pointer;user-select:none;" style-hover="border-color:#f2c14e;">
+<div style="position:relative;width:38px;height:20px;border-radius:3px;border:2px solid #241c2b;background:{{ switchTrack }};transition:background .12s steps(2);">
+<div style="position:absolute;top:0;bottom:0;width:16px;background:#f7e9d2;border:2px solid #241c2b;border-radius:2px;left:{{ switchKnob }};transition:left .12s steps(3);"></div>
+</div>
+<span style="font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.08em;color:#efe9df;">{{ switchLabel }}</span>
+</div>
+<button onClick="{{ cycleScale }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:9px 14px;background:#1e1a29;color:#efe9df;border:1px solid #35304a;border-radius:6px;cursor:pointer;" style-hover="background:#282239;border-color:#f2c14e;">{{ scaleLabel }}</button>
+<button onClick="{{ cycleBackdrop }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:9px 14px;background:#1e1a29;color:#efe9df;border:1px solid #35304a;border-radius:6px;cursor:pointer;" style-hover="background:#282239;border-color:#f2c14e;">{{ backdropLabel }}</button>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#6b6480;line-height:1.6;">40&times;40 px frame &middot; 19-colour palette &middot; 5&ndash;12 fps</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:18px;">
+<sc-for list="{{ anims }}" as="a" hint-placeholder-count="12">
+<div style="background:#1b1725;border:1px solid #2a2536;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;">
+<span style="font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.1em;color:#f2c14e;">{{ a.dayLabel }}</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8b839e;">{{ a.meta }}</span>
+</div>
+<div onClick="{{ a.onTap }}" style="position:relative;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:10px 0;cursor:pointer;border:1px solid #262133;">
+<div style="position:absolute;inset:0;background-image:{{ backdropCss }};background-size:12px 12px;background-position:0 0;"></div>
+<canvas id="cv-{{ a.id }}" style="position:relative;"></canvas>
+</div>
+<div style="display:flex;flex-direction:column;gap:3px;">
+<div style="font-size:14.5px;font-weight:600;letter-spacing:-.01em;">{{ a.name }}</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8b839e;line-height:1.5;text-wrap:pretty;">{{ a.theme }}</div>
+</div>
+<div style="display:flex;gap:6px;margin-top:2px;">
+<button onClick="{{ a.onDownload }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:7px 8px;background:transparent;color:#8b839e;border:1px solid #2f2942;border-radius:5px;cursor:pointer;" style-hover="color:#f2c14e;border-color:#f2c14e;">sheet.png</button>
+<button onClick="{{ a.onStrip }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:7px 8px;background:transparent;color:#8b839e;border:1px solid #2f2942;border-radius:5px;cursor:pointer;" style-hover="color:#f2c14e;border-color:#f2c14e;">frames</button>
+</div>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ stripAnim }}" hint-placeholder-val="{{ true }}">
+<div style="background:#1b1725;border:1px solid #2a2536;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+<div style="display:flex;flex-direction:column;gap:4px;">
+<div style="font-size:17px;font-weight:600;">{{ stripName }} &mdash; frame strip</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b839e;">{{ stripMeta }}</div>
+</div>
+<button onClick="{{ closeStrip }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 13px;background:#241f33;color:#9c94ad;border:1px solid #35304a;border-radius:6px;cursor:pointer;" style-hover="color:#f2c14e;">close</button>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+<sc-for list="{{ stripFrames }}" as="fr" hint-placeholder-count="8">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+<div style="position:relative;border:1px solid #2f2942;border-radius:6px;overflow:hidden;">
+<div style="position:absolute;inset:0;background:repeating-conic-gradient(#211c2e 0% 25%,#1a1624 0% 50%);background-size:10px 10px;"></div>
+<canvas id="{{ fr.sid }}" style="position:relative;"></canvas>
+</div>
+<div style="font-family:'Silkscreen',monospace;font-size:10px;color:#8b839e;">{{ fr.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;">
+
+<div style="background:#1b1725;border:1px solid #2a2536;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;">
+<div style="font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.14em;color:#d9282f;">HANDOFF</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.85;color:#a9a1ba;">
+<div>frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 40 &times; 40 px, transparent</div>
+<div>export&nbsp;&nbsp;&nbsp;&nbsp; @4x &rarr; 160 px cells</div>
+<div>display&nbsp;&nbsp;&nbsp; 80 css px (2x), 64 px min</div>
+<div>layout&nbsp;&nbsp;&nbsp;&nbsp; horizontal strip, left&rarr;right</div>
+<div>loop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; all cycles seamless</div>
+<div>scaling&nbsp;&nbsp;&nbsp; nearest-neighbour only</div>
+<div>mirror&nbsp;&nbsp;&nbsp;&nbsp; flip Trote on X to run left</div>
+<div>off&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; freeze frame 0, unmount sprite</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button onClick="{{ downloadAll }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:10px 14px;background:#f2c14e;color:#1b1725;font-weight:500;border:none;border-radius:6px;cursor:pointer;" style-hover="background:#ffe27a;">Download master sheet</button>
+<button onClick="{{ downloadManifest }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:10px 14px;background:#1e1a29;color:#efe9df;border:1px solid #35304a;border-radius:6px;cursor:pointer;" style-hover="border-color:#f2c14e;">manifest.json</button>
+</div>
+</div>
+
+<div style="background:#1b1725;border:1px solid #2a2536;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;">
+<div style="font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.14em;color:#d9282f;">PALETTE</div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
+<sc-for list="{{ palette }}" as="c" hint-placeholder-count="18">
+<div style="display:flex;flex-direction:column;gap:5px;">
+<div style="aspect-ratio:1;border-radius:4px;border:1px solid rgba(255,255,255,.09);background:{{ c.hex }};"></div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#615a75;text-align:center;">{{ c.key }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:#8b839e;text-wrap:pretty;">Fleece, hoof and outline carry every frame. Flag red and Inti gold are the only saturated accents outside a themed prop.</div>
+</div>
+
+</div>
+
+<div style="background:#1b1725;border:1px solid #2a2536;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;">
+<div style="font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.14em;color:#d9282f;">UNLOCK CADENCE</div>
+<div style="display:flex;flex-direction:column;gap:0;">
+<sc-for list="{{ anims }}" as="a" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:64px 1fr 110px 88px;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #241f33;font-family:'IBM Plex Mono',monospace;font-size:11.5px;">
+<span style="font-family:'Silkscreen',monospace;font-size:10px;color:#f2c14e;">{{ a.dayLabel }}</span>
+<span style="color:#efe9df;">{{ a.name }}</span>
+<span style="color:#8b839e;">{{ a.trigger }}</span>
+<span style="color:#615a75;">{{ a.meta }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4f4a61;text-align:center;padding-top:8px;">Chaska is a placeholder name &mdash; Quechua for &ldquo;star.&rdquo;</div>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:1600}}">
+class Component extends DCLogic {
+  state = { playing: true, scale: 4, backdrop: 0, strip: null, tap: {}, ready: false };
+
+  metas() {
+    return [
+      { id:'ladybee', day:1,  name:'Lady Bee',           theme:'Shakes a cocktail, then sips. A bee circles the coupe.', trigger:'evening, arrival night', n:8, fps:8 },
+      { id:'maido',   day:2,  name:'Maido',              theme:'Nikkei nigiri lifted on chopsticks. Chews. Approves.',   trigger:'dinner reservation',     n:8, fps:7 },
+      { id:'dress',   day:3,  name:'Chullo & poncho',    theme:'Cusco textile stripes, earflaps, gold fringe.',  trigger:'city arrival',  n:8, fps:7 },
+      { id:'eat',     day:4,  name:'Ceviche & pisco',    theme:'Head-down feast, then a sip and a hiccup.',      trigger:'food booking',  n:8, fps:6 },
+      { id:'flag',    day:5,  name:'Bandera',            theme:'Waves the Peru flag. Six-frame ripple cycle.',   trigger:'trip midpoint', n:6, fps:8 },
+      { id:'ruins',   day:6,  name:'Machu Picchu',       theme:'On the terraces with Huayna Picchu behind, mist drifting.', trigger:'site check-in', n:6, fps:5 },
+      { id:'nazca',   day:7,  name:'Nazca lines',        theme:'Traces a glowing geoglyph in the desert floor.', trigger:'flight day',    n:8, fps:8 },
+      { id:'rainbow', day:8,  name:'Vinicunca',          theme:'Climbs the rainbow ridge, banded in seven.',     trigger:'summit',        n:8, fps:6 },
+      { id:'boat',    day:9,  name:'Titicaca de noche',  theme:'Reed boat after dark. Chullo on, shivering, breath fogging.', trigger:'lake night', n:6, fps:5 },
+      { id:'amazon',  day:10, name:'Amazonía',           theme:'A parrot lands on its head. Mild alarm.',        trigger:'jungle leg',    n:8, fps:7 },
+      { id:'inti',    day:11, name:'Inti Raymi',         theme:'Sun rays turn behind the finale flag dance.',    trigger:'trip complete', n:8, fps:8 },
+      { id:'wave',    day:0,  badge:'HELLO', name:'Buenos días',      theme:'Wave hello. The core greeting pose.',       trigger:'app open',  n:6, fps:8 },
+      { id:'dance',   day:0,  badge:'DANCE', name:'Huayno with a cuy', theme:'Andean two-step. A guinea pig hops along.', trigger:'booking confirmed', n:8, fps:10 },
+      { id:'idle',    day:0,  badge:'IDLE', name:'Descanso',  theme:'Stands still, breathes, glances left and right.', trigger:'default resting state', n:8, fps:4 },
+      { id:'run',     day:0,  badge:'MOVE', name:'Trote',  theme:'Runs the bottom of the screen. Mirror the strip for the return leg.', trigger:'transit / loading', n:6, fps:12 },
+      { id:'trip',    day:0,  badge:'OOPS', name:'Tropezón', theme:'Catches a hoof, face-plants, gets back up.',  trigger:'error / empty state', n:8, fps:10 },
+      { id:'tap',     day:0,  badge:'TAP',  name:'¡Oye!',  theme:'Cheeky spit. Plays over whatever is running.',   trigger:'on tap',        n:6, fps:10 }
+    ];
+  }
+
+  componentDidMount() {
+    this.build();
+    this.setState({ ready: true });
+    this.tick = this.tick.bind(this);
+    this.raf = requestAnimationFrame(this.tick);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  componentDidUpdate() { this.paintCards(); this.paintStrip(); }
+
+  paintCards() {
+    if (!this.sheets) return;
+    const t = this.clock || 0, sc = this.state.scale, F = this.F, now = performance.now();
+    for (const m of this.metas()) {
+      if (m.id === 'tap') { this.paint('cv-tap', 'tap', Math.floor(t/100)%6, sc, F); continue; }
+      const t0 = this.state.tap[m.id];
+      if (t0 && now - t0 < 600) this.paint('cv-'+m.id, 'tap', Math.min(5, Math.floor((now-t0)/100)), sc, F);
+      else this.paint('cv-'+m.id, m.id, Math.floor(t/1000*m.fps)%m.n, sc, F);
+    }
+  }
+
+  build() {
+    const P = { o:'#241c2b', L:'#f7e9d2', M:'#e0c8a6', S:'#bfa27e', n:'#a3866a', e:'#241c2b',
+      h:'#6b533e', r:'#d9282f', w:'#ffffff', g:'#f2c14e', t:'#3fa9a0', p:'#d8456b', G:'#4a9e5c',
+      u:'#6b4f9e', b:'#8a5a3b', B:'#2f7fd1', k:'#ef8b3c', y:'#f0d68a', s:'#9a958c', d:'#6e6a64' };
+    this.P = P;
+    const F = 40;
+
+    const HEAD = ["..o.....o..",".oLo...oLo.",".oLo...oLo.",".oLLo.oLLo.",".oLLLoLLLo.","oLLeLLLLLLo","oLLLLLLnnno","oMLLLLnnnno",".oMMMMnnnno","..oooooooo."];
+    const HEADB = ["..o.....o..",".oLo...oLo.",".oLo...oLo.",".oLLo.oLLo.",".oLLLoLLLo.","oLLLLLLLLLo","oLLeeLLnnno","oMLLLLnnnno",".oMMMMnnnno","..oooooooo."];
+    const SHAKER = [".ooooo.","ossssso",".ooooo.",".ooooo.","ossssso","ossssso","osssgso","ossssso","ossssso",".ooooo."];
+    const COUPE = ["ooooooo","oyyyyyo",".oyyyo.","..ooo..","...o...","...o...","..ooo..",".ooooo."];
+    const BEE = [".w.w.","owgwo",".ogo.","..o.."];
+    const PLATE = ["ooooooooooo","owwwwwwwwwo",".ooooooooo."];
+    const NIGIRI = [".oooo.","orrrro","orrrro","owwwwo","owwwwo",".oooo."];
+    const BODY = ["....oooooooooooo....","..ooLLLLLLLLLLLLoo..",".oLLLLLLLLLLLLLLLLo.","oLLLLLLLLLLLLLLLLLLo","oLLLLLLLLLLLLLLLLLLo","oMLLLLLLLLLLLLLLLLMo","oMMLLLLLLLLLLLLLLMMo",".oMMMLLLLLLLLLLMMMo.","..ooMMMMMMMMMMMMoo..","....oooooooooooo...."];
+    const LEG  = ["oLLo","oLLo","oLMo","oLMo","oMMo","oMMo","ohho","oooo"];
+    const TAIL = ["..oo.",".oLLo","oLLLo","oLMo.","oMo..",".o..."];
+    const CHULLO = [".....o.......","....oyo......","....oro......","...orrro.....","..ouuuuuo....",".ottttttto...","opppppppppo..","oGGGGGGGGGGo.","oo.......oo..",".o.......o..."];
+    const PONCHO = ["....oooooooooooo....","..oorrrrrrrrrrrroo..",".orrrrrrrrrrrrrrrro.","orrrrrrrrrrrrrrrrrro","owwwwwwwwwwwwwwwwwwo","orrrrrrrrrrrrrrrrrro","otttttttttttttttttto","orrrrrrrrrrrrrrrrrro",".oggggggggggggggggo.","..oooooooooooooooo..",".g.g.g.g.g.g.g.g.g.."];
+    const BOWL = [".ooooooooo.","owkwwkwwkwo","owwkwwkwwwo",".oSSSSSSSo.","..ooooooo.."];
+    const GLASS = [".oooo..","oyyyyo.","oyyyyo.","owwwwo.",".oooo..","..oo...","..oo...",".oooo.."];
+    const CUY = ["..oooo....",".obbbbbo..","obbebbbbo.","obLbbbbbbo","obbbbbbbbo",".ohhoohho.","..oo..oo.."];
+    const PARROT = ["..ooo....",".oGGGo...",".oGeGko..","oGGGGkko.","oGGGGGko.","oGGGGGo..",".oGGGo...","..oro....","..o.o...."];
+    const TERR = ["..oooooooooooooooo......",".osssssssssssssssso.....",".osddsssddsssddsssdo....","oooooooooooooooooooooooo","osssssssssssssssssssssso","osddsssddsssddsssddsssso","oooooooooooooooooooooooo"];
+    const BOAT = ["oo......................oo",".oyo..................oyo.",".oyyo................oyyo.","..oyyooooooooooooooooyyo..","..oyyyyyyyyyyyyyyyyyyyyo..","...oykyykyykyykyykyykko...","...oyyyyyyyyyyyyyyyyyyo...","....oooooooooooooooooo...."];
+
+    const LEGD = LEG.map(r => r.split('').map(c => c==='L'?'M':c==='M'?'S':c==='h'?'d':c).join(''));
+
+    const blit = (g,m,x,y) => {
+      for (let j=0;j<m.length;j++) for (let i=0;i<m[j].length;i++) {
+        const c = m[j][i]; if (c==='.') continue;
+        g.fillStyle = P[c] || '#f0f'; g.fillRect(x+i, y+j, 1, 1);
+      }
+    };
+    const px = (g,x,y,c) => { g.fillStyle=c; g.fillRect(Math.round(x),Math.round(y),1,1); };
+    const rct = (g,x,y,w,hh,c) => { g.fillStyle=c; g.fillRect(x,y,w,hh); };
+    const thick = (g,x0,y0,x1,y1,w,c) => {
+      const dx=Math.abs(x1-x0), dy=Math.abs(y1-y0), sx=x0<x1?1:-1, sy=y0<y1?1:-1;
+      let err=dx-dy, x=x0, y=y0, o=Math.floor(w/2);
+      g.fillStyle=c;
+      for(let i=0;i<80;i++){ g.fillRect(x-o,y-o,w,w); if(x===x1&&y===y1) break; const e2=2*err; if(e2>-dy){err-=dy;x+=sx;} if(e2<dx){err+=dx;y+=sy;} }
+    };
+
+    // base anchors in the 40x40 frame
+    const BX=12, BY=22, HX=23, HY=4, TX=8, TY=23, LY=31, LYD=30, GROUND=38;
+
+    const llama = (g,o={}) => {
+      const dx=o.dx|0, dy=o.dy|0, bob=o.bob|0;
+      const hdx=(o.hdx|0), hdy=(o.hdy|0);
+      if(!o.noFar){
+        blit(g,LEGD, 17+dx+(o.l2|0), LYD+dy+(o.l2y|0));
+        blit(g,LEGD, 24+dx+(o.l3|0), LYD+dy+(o.l3y|0));
+      }
+      blit(g,TAIL, TX+dx+(o.tdx|0), TY+dy+bob);
+      blit(g,BODY, BX+dx, BY+dy+bob);
+      if(o.poncho) blit(g,PONCHO, BX+dx, BY+dy+bob-1);
+      if(!o.noBack) blit(g,LEG, 13+dx+(o.l1|0), LY+dy+(o.l1y|0));
+      if(!o.noFront) blit(g,LEG, 27+dx+(o.l4|0), LY+dy+(o.l4y|0));
+      // neck: thick line from shoulder to head base
+      const hx=HX+dx+hdx, hy=HY+dy+bob+hdy;
+      thick(g, 30+dx, 25+dy+bob, hx+5, hy+8, 7, P.o);
+      thick(g, 30+dx, 25+dy+bob, hx+5, hy+8, 5, P.L);
+      blit(g, o.blink?HEADB:HEAD, hx, hy);
+      if(o.hat) blit(g, CHULLO, hx-1, hy-3);
+    };
+
+    const limb = (g,x0,y0,x1,y1) => {
+      thick(g,x0,y0,x1,y1,5,P.o); thick(g,x0,y0,x1,y1,3,P.L);
+      rct(g,x1-2,y1-2,5,5,P.o); rct(g,x1-1,y1-1,3,3,P.M); rct(g,x1-1,y1+1,3,1,P.h);
+    };
+
+    const flag = (g,x,y,ph) => {
+      rct(g,x-1,y,1,17,P.o); rct(g,x,y,2,17,P.b); rct(g,x+2,y,1,17,P.o);
+      for(let cx=0;cx<9;cx++){
+        const off = Math.round(1.5*Math.sin(cx*0.75+ph));
+        for(let cy=0;cy<7;cy++){
+          const c = (cx<3||cx>=6) ? P.r : P.w;
+          px(g, x+3+cx, y+2+cy+off, c);
+        }
+        px(g, x+3+cx, y+1+off, P.o); px(g, x+3+cx, y+9+off, P.o);
+      }
+    };
+
+    const sunrays = (g,ph,cx0) => {
+      const R = 15, cx = cx0 || 20, cy = 20;
+      for(let a=0;a<360;a+=3){
+        const rd = a*Math.PI/180;
+        px(g, cx+Math.round(Math.cos(rd)*R), cy+Math.round(Math.sin(rd)*R), P.g);
+      }
+      for(let k=0;k<8;k++){
+        const rd = k*Math.PI/4, len = (k%2===ph%2) ? 3 : 1;
+        for(let r=R+2;r<=R+1+len;r++)
+          px(g, cx+Math.round(Math.cos(rd)*r), cy+Math.round(Math.sin(rd)*r), P.y);
+      }
+    };
+
+    const mountain = (g,rev) => {
+      const cols = [P.r,P.k,P.g,P.G,P.t,P.B,P.u];
+      for(let x=2;x<38;x++){
+        const hgt = Math.max(0, Math.round(9*Math.sin(Math.PI*(x-2)/36)));
+        for(let y=GROUND-hgt;y<=GROUND;y++){
+          const band = Math.min(6, Math.floor((GROUND-y)/1.6));
+          px(g,x,y+1,cols[band]);
+        }
+        if(hgt>0) px(g,x,GROUND-hgt,P.o);
+      }
+    };
+    const mHeight = x => Math.max(0, Math.round(9*Math.sin(Math.PI*(x-2)/36)));
+
+    const GLYPH = (() => {
+      const pts = [[2,36],[3,33]];
+      for(let k=0;k<=36;k++){
+        const a = -Math.PI/2 + k/36*Math.PI*4.2, r = 1.2 + k/36*6.2;
+        pts.push([Math.round(8+Math.cos(a)*r), Math.round(27+Math.sin(a)*r)]);
+      }
+      return pts;
+    })();
+    const glyph = (g,prog,pulse) => {
+      const total = GLYPH.length-1, upto = Math.round(prog*total);
+      for(let i=0;i<upto;i++) thick(g,GLYPH[i][0],GLYPH[i][1],GLYPH[i+1][0],GLYPH[i+1][1],1,pulse?P.y:P.g);
+    };
+
+    const mist = (g,ph) => {
+      for(let k=0;k<7;k++){
+        const x = ((k*7 + ph*3) % 40);
+        px(g, x, 28+((k%3)*3), 'rgba(255,255,255,.35)');
+        px(g, x+1, 28+((k%3)*3), 'rgba(255,255,255,.22)');
+      }
+    };
+
+    const water = (g,ph) => {
+      const o = ph%2;
+      rct(g,3+o,38,5,1,P.B); rct(g,12-o,39,4,1,'#2a6fb8');
+      rct(g,24+o,38,5,1,P.B); rct(g,33-o,39,4,1,'#2a6fb8');
+    };
+
+    const A = {
+      _run:(g,ph,b) => {
+        const hoof = (hx,hy,off,dk) => {
+          const p = ph+off;
+          const fx = hx+Math.round(5*Math.cos(p));
+          const fy = 36-Math.round(3*Math.max(0,Math.sin(p)));
+          if(dk){ thick(g,hx,hy,fx,fy,4,P.o); thick(g,hx,hy,fx,fy,2,P.S);
+                  rct(g,fx-1,fy-1,3,3,P.o); rct(g,fx,fy,1,2,P.d); }
+          else limb(g,hx,hy,fx,fy);
+        };
+        hoof(19,30,0.5,true); hoof(26,30,Math.PI+0.5,true);
+        blit(g,TAIL, TX-1, TY+b);
+        blit(g,BODY, BX, BY+b);
+        hoof(16,31,0,false); hoof(29,31,Math.PI,false);
+        const hx = HX+2, hy = HY+b;
+        thick(g,30,25+b,hx+5,hy+8,7,P.o); thick(g,30,25+b,hx+5,hy+8,5,P.L);
+        blit(g,HEAD,hx,hy);
+      },
+      _flat:(g,dust,blinkOff) => {
+        thick(g,18,33,11,37,4,P.o); thick(g,18,33,11,37,2,P.S);
+        thick(g,24,33,32,37,4,P.o); thick(g,24,33,32,37,2,P.S);
+        blit(g,TAIL, 5, 29);
+        blit(g,BODY, 10, 28);
+        limb(g,15,34,8,37); limb(g,25,34,20,38);
+        thick(g,27,31,31,35,7,P.o); thick(g,27,31,31,35,5,P.L);
+        blit(g, blinkOff?HEAD:HEADB, 28, 30);
+        if(dust) for(const q of [[6,25],[9,23],[35,25],[37,28],[3,30]]) px(g,q[0],q[1],'rgba(255,255,255,.55)');
+      },
+      wave:(g,i)=>{ const b=[0,-1,-1,0,-1,-1][i], t=[0,1,2,1,0,1][i];
+        llama(g,{bob:b, hdy:-1, noFront:true, blink:i===3});
+        limb(g,29,29+b,34+t,20-t); },
+
+      dance:(g,i)=>{ const b=[0,-1,-2,-1,0,-1,-2,-1][i], sw=[0,1,1,0,-1,-1,0,1][i];
+        llama(g,{bob:b, tdx:sw, hdx:sw, hdy:b, l1y:i%4<2?0:-2, l4y:i%4<2?-2:0, l2y:i%4<2?-1:0, l3y:i%4<2?0:-1});
+        const cy=[0,-2,-3,-2,0,-2,-3,-2][i];
+        blit(g,CUY, 1, 31+cy); },
+
+      dress:(g,i)=>{ const drop=[-14,-8,-3,0,0,0,0,0][i], on=i>=3, pon=i>=4;
+        const b=i>=5?[0,-1,0][i-5]||0:0;
+        llama(g,{bob:b, hat:on, poncho:pon, l1y:i>=5&&i%2?-2:0, l4y:i>=5&&i%2?0:-2});
+        if(!on) blit(g,CHULLO, 22, 1+drop); },
+
+      eat:(g,i)=>{ const dip=[2,14,22,20,22,20,4,0][i], fwd=[0,2,4,4,4,4,2,0][i];
+        const sip = i===6||i===7;
+        llama(g,{dx:-4, hdy:dip, hdx:fwd, blink:i===2||i===4, noFront:sip});
+        blit(g,BOWL, 25, 35);
+        if(sip){ blit(g,GLASS, 30, i===6?25:22); limb(g,26,30,31,i===6?27:24); } },
+
+      flag:(g,i)=>{ const b=[0,-1,0,-1,0,-1][i];
+        llama(g,{dx:-7, bob:b, hdy:b, noFront:true, blink:i===4});
+        limb(g,23,30+b,28,22);
+        flag(g,28,9+b,i*1.1); },
+
+      ruins:(g,i)=>{
+        for(let x=28;x<40;x++){
+          const h = Math.round(16 - Math.abs(x-34)*2.6);
+          if(h<=0) continue;
+          for(let y=32-h;y<=32;y++) px(g,x,y, y===32-h ? P.o : P.d);
+        }
+        blit(g,TERR, 8, 33); mist(g,i);
+        llama(g,{dx:-2, dy:-4, hdy:0, tdx:i===2||i===3?1:0, blink:i===3}); },
+
+      nazca:(g,i)=>{ glyph(g, Math.min(1,(i+1)/6), i%2===0);
+        const b=[0,-1,0,0,-1,0,0,-1][i];
+        llama(g,{dx:5, bob:b, hdx:-1, hdy:2+ (i%2), blink:i===5}); },
+
+      rainbow:(g,i)=>{ mountain(g); const step=[-6,-4,-2,0,2,0,-2,-4][i];
+        const cx=22+step, lift=Math.max(-4, -mHeight(cx)+1);
+        llama(g,{dx:step, dy:lift, hdy:0, l1y:i%2?-2:0, l4y:i%2?0:-2, l2y:i%2?0:-1, l3y:i%2?-1:0, blink:i===6}); },
+
+      boat:(g,i)=>{ const b=[0,-1,-1,0,1,0][i], sh=i%2?1:0;
+        water(g,i);
+        for(const s of [[4,5],[13,2],[24,4],[33,6],[37,12]]) px(g,s[0],s[1], (i+s[0])%3 ? P.w : P.y);
+        llama(g,{dx:-1+sh, dy:2+b, hdy:-1, hat:true, poncho:true, tdx:i%2?1:0, blink:i===2, noFront:true, noBack:true, noFar:true});
+        blit(g,BOAT, 7, 28+b);
+        const pf = i%3;
+        if(pf<2) for(let k=0;k<=pf;k++) px(g, 33+k*2+sh, 12+b-k, 'rgba(255,255,255,'+(0.6-k*0.25)+')'); },
+
+      amazon:(g,i)=>{ const land=i>=3;
+        const jerk=[0,0,0,2,1,0,0,0][i];
+        llama(g,{hdy:jerk, blink:i===3||i===4, bob:i===3?1:0});
+        if(!land) blit(g,PARROT, 31-i*3, 1+i*2);
+        else { const fl=i%2; blit(g,PARROT, 24, fl); } },
+
+      inti:(g,i)=>{ sunrays(g, i, 16);
+        const b=[0,0,-1,0,0,0,-1,0][i];
+        llama(g,{dx:-6, bob:b, hat:true, poncho:true, hdy:1, noFront:true, l1y:i%2?-2:0, tdx:i%2?1:0});
+        limb(g,24,30+b,28,22+b);
+        flag(g,28,10+b,i*1.0); },
+
+      ladybee:(g,i)=>{
+        const shake = i<4, b=[0,-1,0,-1,0,0,-1,0][i];
+        llama(g,{dx:-3, bob:b, hdy:shake?0:2, noFront:true, blink:i===5});
+        if(shake){ const jx=[-1,1,-2,1][i], jy=[0,-1,1,-2][i];
+          limb(g,25,29+b,30+jx,21+jy);
+          blit(g,SHAKER, 28+jx, 11+jy+b);
+        } else {
+          limb(g,25,29+b,30,24);
+          blit(g,COUPE, 28, 16+b);
+          const a = (i-4)/4*Math.PI*2;
+          blit(g,BEE, 30+Math.round(Math.cos(a)*5), 8+Math.round(Math.sin(a)*4));
+        }
+      },
+
+      maido:(g,i)=>{
+        const dip = [2,12,20,20,8,1,0,3][i], fwd = [0,2,4,4,2,0,0,1][i];
+        llama(g,{dx:-4, hdy:dip, hdx:fwd, blink:i===3||i===6, bob:i===5?-1:0});
+        blit(g,PLATE, 25, 36);
+        rct(g,32,36,1,1,P.G); rct(g,33,36,1,1,P.G);
+        if(i<3) blit(g,NIGIRI, 26, 30);
+      },
+
+      idle:(g,i)=>{
+        const b   = [0,0,-1,0,0,0,-1,0][i];
+        const hdx = [0,0,-2,-3,-2,1,2,1][i];
+        const hdy = [0,0,1,1,1,0,-1,0][i];
+        llama(g,{ bob:b, hdx:hdx, hdy:hdy, tdx:(i===2||i===6)?1:0, blink:(i===1||i===5) });
+      },
+
+      run:(g,i)=>{ A._run(g, i/6*Math.PI*2, [0,-1,-2,-1,0,-1][i], 0); },
+
+      trip:(g,i)=>{
+        if(i===0){ A._run(g, 0.9, -1, 0); return; }
+        if(i===1 || i===2){
+          const ang = (i===1?12:26)*Math.PI/180;
+          const t = document.createElement('canvas'); t.width=40; t.height=40;
+          const tg = t.getContext('2d'); tg.imageSmoothingEnabled = false;
+          llama(tg,{ hdx:i===1?3:5, hdy:i===1?8:16, l1y:-3, l4:2, l2y:-2, blink:true });
+          g.save(); g.imageSmoothingEnabled=false;
+          g.translate(30,22); g.rotate(ang); g.translate(-30,-22);
+          g.drawImage(t,0,0); g.restore();
+          return;
+        }
+        if(i>=3 && i<=5){ A._flat(g, i===4, i===5); return; }
+        if(i===6){ llama(g,{ bob:3, hdy:6, blink:true }); return; }
+        llama(g,{ hdy:-1, tdx:1 });
+      },
+
+      tap:(g,i)=>{ const rear=[0,-3,-4,0,1,0][i];
+        llama(g,{hdy:rear, hdx:i>=3?2:-2, blink:i<=2, bob:i>=3?1:0});
+        if(i>=3){ const t=i-3; rct(g,34+t*2,12+t*2,2,2,P.t); px(g,36+t*2,13+t*2,P.w); }
+        if(i===3) rct(g,32,12,2,1,P.p); }
+    };
+
+    // pre-render every frame
+    this.sheets = {};
+    for (const m of this.metas()) {
+      const arr = [];
+      for (let i=0;i<m.n;i++) {
+        const c = document.createElement('canvas'); c.width=F; c.height=F;
+        const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+        A[m.id](g, i);
+        arr.push(c);
+      }
+      this.sheets[m.id] = arr;
+    }
+    this.F = F;
+  }
+
+  tick(ts) {
+    this.raf = requestAnimationFrame(this.tick);
+    if (!this.sheets) return;
+    if (this.last == null) this.last = ts;
+    if (this.state.playing) this.clock = (this.clock || 0) + (ts - this.last);
+    this.last = ts;
+    this.paintCards();
+  }
+
+  paint(elId, animId, frame, sc, F) {
+    const el = document.getElementById(elId); if (!el) return;
+    const w = F*sc;
+    if (el.width !== w) { el.width = w; el.height = w; el.style.width = w+'px'; el.style.height = w+'px'; }
+    const g = el.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.clearRect(0,0,w,w);
+    g.globalAlpha = (this.state.playing || elId.startsWith('st-')) ? 1 : 0.22;
+    g.drawImage(this.sheets[animId][frame], 0, 0, w, w);
+    g.globalAlpha = 1;
+  }
+
+  paintStrip() {
+    const id = this.state.strip; if (!id || !this.sheets) return;
+    const m = this.metas().find(x => x.id === id); if (!m) return;
+    for (let i=0;i<m.n;i++) this.paint('st-'+id+'-'+i, id, i, 3, this.F);
+  }
+
+  sheetCanvas(id, scale) {
+    const frames = this.sheets[id], F = this.F;
+    const c = document.createElement('canvas');
+    c.width = frames.length*F*scale; c.height = F*scale;
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    frames.forEach((f,i) => g.drawImage(f, i*F*scale, 0, F*scale, F*scale));
+    return c;
+  }
+
+  save(canvas, name) {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png'); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  renderVals() {
+    const P = this.P || {};
+    const backdrops = [
+      'repeating-conic-gradient(#221d30 0% 25%,#1a1624 0% 50%)',
+      'linear-gradient(#ffffff,#ffffff)',
+      'linear-gradient(#0e0c14,#0e0c14)',
+      'linear-gradient(#3fa9a0,#2f7fd1)'
+    ];
+    const bLabels = ['backdrop: none','backdrop: light','backdrop: dark','backdrop: colour'];
+    const strip = this.state.strip;
+    const sm = strip ? this.metas().find(m => m.id === strip) : null;
+
+    return {
+      anims: this.metas().map(m => ({
+        id: m.id,
+        name: m.name,
+        theme: m.theme,
+        trigger: m.trigger,
+        dayLabel: m.badge || ('DAY ' + String(m.day).padStart(2,'0')),
+        meta: m.n + 'f · ' + m.fps + 'fps',
+        onTap: () => this.setState(s => ({ tap: { ...s.tap, [m.id]: performance.now() } })),
+        onStrip: () => this.setState({ strip: m.id }),
+        onDownload: () => this.save(this.sheetCanvas(m.id, 4), 'chaska-' + m.id + '@4x.png')
+      })),
+      palette: Object.keys(P).filter(k => k !== 'e').map(k => ({ key: k, hex: P[k] })),
+      backdropCss: backdrops[this.state.backdrop],
+      backdropLabel: bLabels[this.state.backdrop],
+      scaleLabel: 'zoom ' + this.state.scale + 'x',
+      switchLabel: this.state.playing ? 'LLAMA ON' : 'LLAMA OFF',
+      switchTrack: this.state.playing ? '#4a9e5c' : '#3a3450',
+      switchKnob: this.state.playing ? '18px' : '0px',
+      togglePlay: () => this.setState(s => ({ playing: !s.playing })),
+      cycleScale: () => this.setState(s => ({ scale: s.scale >= 5 ? 2 : s.scale + 1 })),
+      cycleBackdrop: () => this.setState(s => ({ backdrop: (s.backdrop + 1) % 4 })),
+      stripAnim: !!sm,
+      stripName: sm ? sm.name : '',
+      stripMeta: sm ? (sm.n + ' frames · ' + sm.fps + ' fps · ' + Math.round(1000/sm.fps) + 'ms hold · loops') : '',
+      stripFrames: sm ? Array.from({length: sm.n}, (_,i) => ({ sid: 'st-' + sm.id + '-' + i, label: String(i+1).padStart(2,'0') })) : [],
+      closeStrip: () => this.setState({ strip: null }),
+      downloadAll: () => {
+        const ms = this.metas(), F = this.F, sc = 4;
+        const cols = Math.max(...ms.map(m => m.n));
+        const c = document.createElement('canvas');
+        c.width = cols*F*sc; c.height = ms.length*F*sc;
+        const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+        ms.forEach((m,row) => this.sheets[m.id].forEach((f,i) => g.drawImage(f, i*F*sc, row*F*sc, F*sc, F*sc)));
+        this.save(c, 'chaska-master@4x.png');
+      },
+      downloadManifest: () => {
+        const F = this.F, sc = 4;
+        const data = {
+          sprite: 'chaska', frame: { w: F, h: F }, exportScale: sc, cell: F*sc,
+          masterSheet: 'chaska-master@4x.png',
+          rows: this.metas().map((m,row) => ({
+            id: m.id, day: m.day || null, name: m.name, trigger: m.trigger,
+            frames: m.n, fps: m.fps, loop: true, row, y: row*F*sc
+          }))
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'chaska-manifest.json';
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

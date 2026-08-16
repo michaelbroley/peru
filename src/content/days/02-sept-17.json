@@ -53,6 +53,30 @@
       "note": "Bajada de Baños, Pasaje Oroya, and the Bridge of Sighs. Lima's open-air mural gallery. Golden hour is best.",
       "pick": true,
       "lens": "art"
+    },
+    {
+      "group": "More museums, if you have the time",
+      "name": "MALI – Museo de Arte de Lima",
+      "area": "Parque de la Exposición",
+      "note": "The city's main fine-art museum, pre-Columbian through contemporary.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "group": "More museums, if you have the time",
+      "name": "Museo Amano",
+      "area": "Miraflores",
+      "note": "Exquisite Chancay textiles; small, and entry is timed.",
+      "pick": false,
+      "lens": "art"
+    },
+    {
+      "group": "More museums, if you have the time",
+      "name": "MAC Lima",
+      "area": "Barranco",
+      "note": "Contemporary art — pairs neatly with the Barranco street-art walk.",
+      "pick": false,
+      "lens": "art"
     }
   ],
   "notes": [],

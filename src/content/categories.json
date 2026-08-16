@@ -61,8 +61,16 @@
     "icon": "column"
   },
   {
-    "id": "cusco-eat",
+    "id": "animals-wildlife",
     "order": 8,
+    "slug": "animals-and-wildlife",
+    "title": "Animals & wildlife",
+    "icon": "bird",
+    "region": "Peru"
+  },
+  {
+    "id": "cusco-eat",
+    "order": 9,
     "slug": "cusco-eat-and-drink-picanterías-for-the-real-thing-san-blas-for-cafés",
     "title": "Cusco — Eat & drink",
     "aside": "Picanterías for the real thing; San Blas for cafés.",
@@ -71,7 +79,7 @@
   },
   {
     "id": "cusco-art",
-    "order": 9,
+    "order": 10,
     "slug": "cusco-art-history-and-skate",
     "title": "Cusco — Art, history & skate",
     "region": "Cusco",
@@ -79,7 +87,7 @@
   },
   {
     "id": "sacred-valley",
-    "order": 10,
+    "order": 11,
     "slug": "sacred-valley",
     "title": "Sacred Valley",
     "region": "Sacred Valley",
@@ -87,7 +95,7 @@
   },
   {
     "id": "aguas-calientes",
-    "order": 11,
+    "order": 12,
     "slug": "aguas-calientes-machu-picchu-base-town-food-costs-more-it-all-arrives-by-train",
     "title": "Aguas Calientes",
     "aside": "Machu Picchu base town; food costs more — it all arrives by train.",
@@ -96,7 +104,7 @@
   },
   {
     "id": "puno-titicaca",
-    "order": 12,
+    "order": 13,
     "slug": "puno-and-lake-titicaca",
     "title": "Puno & Lake Titicaca",
     "region": "Puno",

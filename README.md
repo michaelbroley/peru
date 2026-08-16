@@ -27,8 +27,8 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | File                        | Holds                                                        |
 | --------------------------- | ------------------------------------------------------------ |
 | `days/01-sept-16.json` … ×11 | One file per day: date, location point, weather, glance, logistics, journey, reservations, picks |
-| `places.json`               | The Little Black Book — 45 entries, each tagged with a category |
-| `categories.json`           | The 12 recommendation categories and their anchor slugs       |
+| `places.json`               | The Little Black Book — 57 entries, each tagged with a category |
+| `categories.json`           | The 13 recommendation categories and their anchor slugs       |
 | `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables |
 | `weather.json`              | The September averages table                                  |
 | `packing.json`              | Packing groups                                                |
@@ -37,6 +37,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 
 Two conventions worth knowing:
 
+- **`lens`** is `food`, `art`, `skate` or `wild` — which traveller's interest an entry serves. The filter shows food or skate on demand; `art` and `wild` appear under Everything.
 - **`pick: true` is the ★** from the source markdown. It drives the gold treatment everywhere.
 - **`order`** on `places` and `weather` entries preserves source order — the content loader keys entries by `id`, so without it the list would render alphabetically.
 - **Map pins carry their own coordinates**, taken from the design comp's map page rather than derived from the addresses. A pin and its address are therefore two independent records of the same place; if they ever disagree, the address is the one to trust.
@@ -105,7 +106,7 @@ Day dates live in each day file as `iso` (`2026-09-21`), which is what the panel
 
 A slim sticky bar and a mega panel, the same at every width. The bar carries only what's useful while reading — the section you're currently in, a jump to today, and the menu trigger — and is about 50 px tall.
 
-The panel opens as one view of the whole guide: the six sections, all eleven days, all twelve recommendation categories, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
+The panel opens as one view of the whole guide: the six sections, all eleven days, all thirteen recommendation categories, and the lens filter. It closes on selection, Escape, or a click outside; focus moves in on open, is trapped while open, and returns to the trigger on dismissal (but follows the destination when you pick something). Choosing a day opens that day's card as well as scrolling to it.
 
 The panel is `position: fixed` rather than part of the sticky flow. That's deliberate: locking body scroll with `overflow: hidden` — the usual way to hold the page still behind a menu — removes the scrollport the sticky bar depends on, and the bar drops out of position the moment the menu opens.
 
@@ -144,7 +145,7 @@ Pin links reuse the place's address where the content has one (`src/lib/addressB
 
 `public/sw.js` precaches the page, fonts, icons and Leaflet. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. Map tiles use a separate capped cache that survives content releases. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
 
-**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v4` → `v5`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
+**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v5` → `v6`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
 
 ### Icons
 

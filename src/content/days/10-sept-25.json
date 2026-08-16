@@ -60,6 +60,15 @@
       "address": "Mayo, Av. Pedro de Osma 301, Barranco, Lima",
       "pick": false,
       "lens": "food"
+    },
+    {
+      "group": "Or make it a night out",
+      "name": "La Candelaria",
+      "area": "Barranco",
+      "note": "Instead of the dinner plan: an Afro-Peruvian and criollo peña with live music and dance.",
+      "verify": "Verify show nights.",
+      "pick": false,
+      "lens": "food"
     }
   ],
   "notes": [],

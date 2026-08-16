@@ -32,6 +32,7 @@ Note for design: addresses can be turned into Google Maps links; phone numbers i
   - [Lima — Art & street art](#lima-art-and-street-art-barranco-is-an-open-air-gallery)
   - [Lima — Skate & streetwear](#lima-skate-and-streetwear-for-michael-buy-good-gear-here-cusco-is-thin)
   - [Lima — History & oddities](#lima-history-and-oddities)
+  - [Animals & wildlife](#animals-and-wildlife)
   - [Cusco — Eat & drink](#cusco-eat-and-drink-picanterías-for-the-real-thing-san-blas-for-cafés)
   - [Cusco — Art, history & skate](#cusco-art-history-and-skate)
   - [Sacred Valley](#sacred-valley)
@@ -99,6 +100,7 @@ Good window: dry-season conditions, thinner crowds. Plan for the day/night tempe
   - ★ Larco Museum (Pueblo Libre) — world-class pre-Columbian art in a garden mansion; the single best museum in Lima. Beautiful café on site. Address: Av. Simón Bolívar 1515, Pueblo Libre, Lima.
   - Convento de San Francisco (Historic Centre) — Baroque monastery with underground catacomb ossuary and a 20,000-volume antique library. Guided entry only.
   - ★ Barranco street-art walk — Bajada de Baños, Pasaje Oroya, and the Bridge of Sighs. Lima's open-air mural gallery. Golden hour is best.
+  - MALI, Museo Amano, MAC Lima — optional extra museums if the day runs long. See recommendations.
 
 <a id="fri-sept-18-tour-day-1-lima-tour-begins"></a>
 ### Fri, Sept 18 — Tour Day 1: Lima (tour begins)
@@ -160,6 +162,10 @@ Good window: dry-season conditions, thinner crowds. Plan for the day/night tempe
 - Relaxed option — San Blas:
   - ★ San Blas artisan quarter — cobbled galleries & workshops; Casa Mérida ceramics, Mendívil figures, the 7 Angelitos alley. Address: Plazoleta San Blas, Cusco.
   - ChocoMuseo (Plaza Regocijo 216) — bean-to-bar chocolate workshops and a pisco/coffee/chocolate tasting; fun and hands-on.
+- Wildlife + art half-day:
+  - ★ Cochahuasi Animal Sanctuary (Km 22 Cusco–Pisac road) — condor, bear and puma rescue on the Pisac road; ticket funds the release program.
+  - Awana Kancha (Cusco–Pisac road) — llamas, alpacas, vicuñas and guanacos to feed, plus live weaving. Pairs with Cochahuasi.
+  - Museo de Arte Precolombino (MAP) (Plazoleta Nazarenas 231) — if you'd rather stay in town.
 
 <a id="wed-sept-23-tour-day-6-drive-to-puno"></a>
 ### Wed, Sept 23 — Tour Day 6: Drive to Puno
@@ -193,6 +199,7 @@ Good window: dry-season conditions, thinner crowds. Plan for the day/night tempe
 - Farewell-dinner ideas (Barranco):
   - ★ Isolina (Barranco) — José del Castillo's nostalgic Limeño tavern; huge sharing plates; on Latin America's 50 Best. Reserve. Address: Av. San Martín 101, Barranco, Lima.
   - Mayo (at Central's Casa Túpac, Av. Pedro de Osma 301, Barranco) — Central's cocktail bar; a stylish nightcap.
+  - La Candelaria (Barranco) — or make it a night out: Afro-Peruvian/criollo peña with live music and dance. Verify show nights.
 
 <a id="sat-sept-26-tour-day-9-depart-lima"></a>
 ### Sat, Sept 26 — Tour Day 9: Depart Lima
@@ -232,6 +239,7 @@ Every entry: Name — Area — note. Address / phone where known. ★ = top pick
 - Carnaval (San Isidro) — the other 50-Best bar; ask for the 'Gran Carnaval' flight; famous ice program. Reserve. Address: Av. Pardo y Aliaga 662, San Isidro, Lima.
 - Tostaduría Bisetti (Barranco) — pioneering roaster + coffee lab. Try the 'Brew Fruit' (cold coffee + pineapple). Address: Av. Pedro de Osma 116, Barranco, Lima.
 - BarBarian (Barranco / Miraflores) — craft-beer taproom, 20+ Peruvian taps. Laid-back. Address: Av. Pedro de Osma 144, Barranco, Lima.
+- La Candelaria (Barranco) — Afro-Peruvian/criollo peña with live music and dance; good for a free Friday night. Verify show nights.
 
 <a id="lima-art-and-street-art-barranco-is-an-open-air-gallery"></a>
 ### Lima — Art & street art (Barranco is an open-air gallery)
@@ -239,6 +247,9 @@ Every entry: Name — Area — note. Address / phone where known. ★ = top pick
 - ★ Dédalo (Barranco) — 30-year institution in a restored mansion: 700+ artists across themed rooms, courtyard café. Address: Jirón Sáenz Peña 295, Barranco, Lima.
 - MATE – Museo Mario Testino (Barranco) — the Peruvian photographer's museum; sharp, stylish, compact.
 - Museo Pedro de Osma (Barranco) — colonial art in a gorgeous mansion with stunning stained glass. Address: Av. Pedro de Osma 421, Barranco, Lima.
+- MALI – Museo de Arte de Lima (Parque de la Exposición) — the city's main fine-art museum, pre-Columbian through contemporary.
+- Museo Amano (Miraflores) — exquisite Chancay textiles; small, timed entry.
+- MAC Lima (Barranco) — contemporary art; pairs with the Barranco street-art walk.
 
 <a id="lima-skate-and-streetwear-for-michael-buy-good-gear-here-cusco-is-thin"></a>
 ### Lima — Skate & streetwear (for Michael; buy good gear here, Cusco is thin)
@@ -254,6 +265,16 @@ Every entry: Name — Area — note. Address / phone where known. ★ = top pick
 - Casa Aliaga (Historic Centre) — viceregal mansion gifted by Pizarro, still owned by the same family 480+ years on. By tour. Address: Jirón de la Unión 224, Lima.
 - Magic Water Circuit (Parque de la Reserva) — choreographed illuminated fountains at night; kitschy, huge, genuinely fun.
 
+<a id="animals-and-wildlife"></a>
+### Animals & wildlife
+
+- ★ Cochahuasi Animal Sanctuary (Sacred Valley, Km 22 Cusco–Pisac road, ~30 min from Cusco) — family-run rescue for Andean condors, spectacled (Andean) bears, pumas, macaws and vicuñas; ticket funds the release program. Ethical and right on the way to Pisac.
+- Awana Kancha (Cusco–Pisac road) — "living museum" of llamas, alpacas, vicuñas and guanacos you can feed, plus live weaving demos. Quick stop; pairs with Cochahuasi.
+- Islas Palomino (Lima, boats from Callao) — boat tour to swim with a wild sea-lion colony; also seabirds and penguins. Half-day.
+- Pantanos de Villa (Chorrillos, Lima) — protected coastal wetland with ~200 bird species including flamingos. Easy half-day.
+- Inkaterra Machu Picchu Pueblo (Aguas Calientes) — spectacled-bear rescue project and cloud-forest birding. Verify access for non-guests.
+- Mandor Gardens (Aguas Calientes) — birding and waterfall walk from town.
+
 <a id="cusco-eat-and-drink-picanterías-for-the-real-thing-san-blas-for-cafés"></a>
 ### Cusco — Eat & drink (picanterías for the real thing; San Blas for cafés)
 - ★ Pachapapa (San Blas) — open-air courtyard with a clay oven on Plazoleta San Blas; roast dishes, cuy for the brave.
@@ -267,6 +288,8 @@ Every entry: Name — Area — note. Address / phone where known. ★ = top pick
 - Twelve-Angled Stone (Hatun Rumiyoc) — famous perfectly-fitted Inca stone in an old palace wall; a two-minute marvel.
 - Qorikancha (Av. El Sol) — the Inca Temple of the Sun beneath Santo Domingo church; small site museum attached.
 - Skatepark La Florida (Barrio La Florida) — basic free concrete park; the spot to meet local skaters/fingerboarders. Community is social-media-run; ask around.
+- ★ Museo de Arte Precolombino / MAP (Cusco) — Larco's sister collection (gold, silver, ceramics) in a gorgeous mansion, with MAP Café — one of Cusco's best restaurants — in the courtyard. Address: Plazoleta Nazarenas 231, Cusco.
+- Museo Machupicchu / Casa Concha (Cusco) — the artifacts Bingham took to Yale, now returned; the context you don't get at the site itself.
 
 <a id="sacred-valley"></a>
 ### Sacred Valley

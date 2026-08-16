@@ -471,5 +471,129 @@
     "note": "A 160-year-old British-built iron steamship, now a floating museum. Delightfully odd.",
     "pick": false,
     "lens": "art"
+  },
+  {
+    "id": "cochahuasi",
+    "category": "animals-wildlife",
+    "name": "Cochahuasi Animal Sanctuary",
+    "area": "Sacred Valley, ~30 min from Cusco",
+    "note": "Family-run rescue for Andean condors, spectacled (Andean) bears, pumas, macaws and vicuñas; the ticket funds the release program. Ethical, and right on the way to Pisac.",
+    "address": "Cochahuasi Animal Sanctuary, Km 22 Cusco–Pisac road, Cusco",
+    "pick": true,
+    "lens": "wild",
+    "order": 46
+  },
+  {
+    "id": "awana-kancha",
+    "category": "animals-wildlife",
+    "name": "Awana Kancha",
+    "area": "Cusco–Pisac road",
+    "note": "“Living museum” of llamas, alpacas, vicuñas and guanacos you can feed, plus live weaving demonstrations. Quick stop; pairs with Cochahuasi.",
+    "pick": false,
+    "lens": "wild",
+    "order": 47
+  },
+  {
+    "id": "islas-palomino",
+    "category": "animals-wildlife",
+    "name": "Islas Palomino",
+    "area": "Lima, boats from Callao",
+    "note": "Boat tour out to a wild sea-lion colony you can swim with; seabirds and penguins too. Half-day.",
+    "pick": false,
+    "lens": "wild",
+    "order": 48
+  },
+  {
+    "id": "pantanos-de-villa",
+    "category": "animals-wildlife",
+    "name": "Pantanos de Villa",
+    "area": "Chorrillos, Lima",
+    "note": "Protected coastal wetland with ~200 bird species, flamingos among them. Easy half-day.",
+    "pick": false,
+    "lens": "wild",
+    "order": 49
+  },
+  {
+    "id": "inkaterra-mp-pueblo",
+    "category": "animals-wildlife",
+    "name": "Inkaterra Machu Picchu Pueblo",
+    "area": "Aguas Calientes",
+    "note": "Spectacled-bear rescue project and cloud-forest birding on the hotel grounds.",
+    "verify": "Verify access for non-guests.",
+    "pick": false,
+    "lens": "wild",
+    "order": 50
+  },
+  {
+    "id": "mandor-gardens",
+    "category": "animals-wildlife",
+    "name": "Mandor Gardens",
+    "area": "Aguas Calientes",
+    "note": "Birding and a waterfall walk, straight out of town.",
+    "pick": false,
+    "lens": "wild",
+    "order": 51
+  },
+  {
+    "id": "mali",
+    "category": "lima-art",
+    "name": "MALI – Museo de Arte de Lima",
+    "area": "Parque de la Exposición",
+    "note": "The city's main fine-art museum, pre-Columbian through contemporary.",
+    "pick": false,
+    "lens": "art",
+    "order": 52
+  },
+  {
+    "id": "museo-amano",
+    "category": "lima-art",
+    "name": "Museo Amano",
+    "area": "Miraflores",
+    "note": "Exquisite Chancay textiles; small, timed entry.",
+    "pick": false,
+    "lens": "art",
+    "order": 53
+  },
+  {
+    "id": "mac-lima",
+    "category": "lima-art",
+    "name": "MAC Lima",
+    "area": "Barranco",
+    "note": "Contemporary art; pairs with the Barranco street-art walk.",
+    "pick": false,
+    "lens": "art",
+    "order": 54
+  },
+  {
+    "id": "map-precolombino",
+    "category": "cusco-art",
+    "name": "Museo de Arte Precolombino / MAP",
+    "area": "Cusco",
+    "note": "Larco's sister collection — gold, silver, ceramics — in a gorgeous mansion, with MAP Café, one of Cusco's best restaurants, out in the courtyard.",
+    "address": "Museo de Arte Precolombino, Plazoleta Nazarenas 231, Cusco",
+    "pick": true,
+    "lens": "art",
+    "order": 55
+  },
+  {
+    "id": "casa-concha",
+    "category": "cusco-art",
+    "name": "Museo Machupicchu / Casa Concha",
+    "area": "Cusco",
+    "note": "The artifacts Bingham took to Yale, now returned — the context you don't get at the site itself.",
+    "pick": false,
+    "lens": "art",
+    "order": 56
+  },
+  {
+    "id": "la-candelaria",
+    "category": "lima-drink",
+    "name": "La Candelaria",
+    "area": "Barranco",
+    "note": "Afro-Peruvian and criollo peña with live music and dance; a good Friday night out.",
+    "verify": "Verify show nights.",
+    "pick": false,
+    "lens": "food",
+    "order": 57
   }
 ]

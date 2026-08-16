@@ -18,7 +18,7 @@ const place = z.object({
   /** ★ in the source markdown. */
   pick: z.boolean().default(false),
   /** Which traveller's interest this serves — drives the "lens" filter. */
-  lens: z.enum(['food', 'art', 'skate']).default('food'),
+  lens: z.enum(['food', 'art', 'skate', 'wild']).default('food'),
   /** Set where the source says to double-check something before relying on it. */
   verify: z.string().optional(),
   /** Sub-heading within a day's picks, where the source splits them up. */

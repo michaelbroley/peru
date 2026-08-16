@@ -21,7 +21,7 @@
     "lat": -13.532,
     "lng": -71.9675
   },
-  "glance": "Your one truly flexible day. Big-adventure option (Rainbow Mountain, Humantay) or a relaxed art-market-and-café crawl through San Blas — a lighter day here is smart before Titicaca.",
+  "glance": "Your one truly flexible day. Big-adventure option (Rainbow Mountain, Humantay), a wildlife-and-art half-day on the Pisac road, or a relaxed art-market-and-café crawl through San Blas — a lighter day here is smart before Titicaca.",
   "logistics": [],
   "journey": [],
   "reservations": [],
@@ -58,8 +58,36 @@
       "address": "ChocoMuseo, Plaza Regocijo 216, Cusco",
       "pick": false,
       "lens": "food"
+    },
+    {
+      "group": "Wildlife + art half-day",
+      "name": "Cochahuasi Animal Sanctuary",
+      "area": "Sacred Valley, ~30 min out",
+      "note": "Family-run rescue for Andean condors, spectacled bears, pumas and vicuñas; the ticket funds the release program. On the Pisac road, so it pairs with Awana Kancha.",
+      "address": "Cochahuasi Animal Sanctuary, Km 22 Cusco–Pisac road, Cusco",
+      "pick": true,
+      "lens": "wild"
+    },
+    {
+      "group": "Wildlife + art half-day",
+      "name": "Awana Kancha",
+      "area": "Cusco–Pisac road",
+      "note": "Llamas, alpacas, vicuñas and guanacos you can feed, plus live weaving. A quick stop on the same road out.",
+      "pick": false,
+      "lens": "wild"
+    },
+    {
+      "group": "Wildlife + art half-day",
+      "name": "Museo de Arte Precolombino (MAP)",
+      "area": "Plazoleta Nazarenas 231",
+      "note": "If you'd rather stay in town: Larco's sister collection in a beautiful mansion, with MAP Café in the courtyard.",
+      "address": "Museo de Arte Precolombino, Plazoleta Nazarenas 231, Cusco",
+      "pick": false,
+      "lens": "art"
     }
   ],
   "notes": [],
-  "lbb": []
+  "lbb": [
+    "animals-wildlife"
+  ]
 }

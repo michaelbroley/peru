@@ -206,15 +206,23 @@ The art is a handoff in `src/silly_virtual_llama/` — seventeen animations at 4
 
 ### The little black book
 
-Thirteen lists one after another, all set the same way on cream, was a wall you couldn't get a purchase on. Three things break it up:
+Sections 04–07: **one per region** — Lima, Across Peru, Cusco & the Sacred Valley, Puno & Lake Titicaca — rather than thirteen lists behind a single Recommendations fold. The book is a third of the page, so as one section getting to the packing list meant scrolling past all of it or shutting the whole thing; now each region shuts on its own and the menu lands you in the right one.
 
-**Chapters.** The lists group into four — Lima, Across Peru, Cusco & the Sacred Valley, Puno & Lake Titicaca — each introduced by a photographic band carrying its counts ("7 lists · 30 places"). It's the same `RegionBar` the day list uses for the legs of the trip, at a `compact` height so a chapter marker inside a section doesn't compete with the section head. Two new covers came off the unused half of the upload for this. The grouping lives in `RECOMMENDATION_CHAPTERS` in `index.astro` and only says where the breaks fall — the order is still the content's. A region no chapter claims lands in an "Elsewhere" chapter at the end rather than dropping off the page.
+Section numbers are positional, so promoting the four pushed everything after them from 05–10 to 08–13. Nothing in the markup hard-codes a number any more — `num('#anchor')` looks each one up in the same array that builds the Quick Links menu, so the two can't drift apart again.
+
+The chapter slugs are prefixed `recommendations-`. Two of them would otherwise collide with a list that already owns that id: `#puno-and-lake-titicaca` and `#sacred-valley` are categories. The guide's old single-section anchor, `#recommendations-little-black-book-for-laura`, survives as an empty span before Lima, so links written against the source document still resolve.
+
+**An empty chapter is now an empty section.** Under Michael's skate lens, Puno has nothing to show. As a slim divider that was untidy; as a full-height photographic band with nothing under it, it's a hole. Each chapter section carries its own `data-lens-empty-when`, computed from every place inside it, so the whole thing stands down.
+
+Three things break it up inside a section:
+
+**The section head carries the counts.** What the old chapter band said in its meta line — "7 lists, 29 places" — is now part of each section's lead, along with the entry format and what the ★ means, so a section you jumped straight into explains itself. The grouping lives in `RECOMMENDATION_CHAPTERS` in `index.astro` and only says where the breaks fall; the order is still the content's. A region no chapter claims lands in an "Elsewhere" section at the end rather than dropping off the page — and it gets its number from the same positional count as the rest.
 
 **List headers.** Each list sits under a solid ink bar with its icon in gold and its counts on the right — how many entries, and how many of those we'd go out of our way for. Enough to decide whether to read it.
 
 **Top picks as cards.** A ★ entry gets a warm gold wash and padding here, so the ones worth a detour surface out of the grid. Days keep the quieter rule-only treatment — there are only ever two or three in front of you there.
 
-That nests a level deeper than a day does (chapter → list → entry), so `PlaceCard` takes a `level` prop and the recommendations pass `5`. The section costs about 35% more height than the undifferentiated wall did, which is the trade: it's longer, but you can find your way down it — and the whole section folds away now.
+Headings nest section → list → entry, the same depth a day does, so `PlaceCard` takes a `level` prop and these pass `4`. It was `5` while the book was one section with a chapter band inside it; promoting the chapters took a level back out.
 
 ### Booked tables in the day list
 

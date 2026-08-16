@@ -18,7 +18,6 @@ import { STAR } from '../lib/glyphs';
 import { Image } from 'astro:assets';
 import { covers } from '../lib/covers';
 import Icon, { type IconName } from '../components/Icon.astro';
-import RegionBar from '../components/RegionBar.astro';
 import Llama from '../components/Llama.astro';
 import PhraseList from '../components/PhraseList.astro';
 import CurrencyConverter from '../components/CurrencyConverter.astro';
@@ -54,23 +53,6 @@ const placeData = places.map((p) => p.data);
 const route = days.map((d) => ({ lat: d.data.point.lat, lng: d.data.point.lng }));
 const peak = days.reduce((max, d) => Math.max(max, d.data.elevation.metres), 0);
 
-// Anchors mirror the Quick Links TOC in Peru_Trip_Content.md.
-const sections = [
-  { num: '01', href: '#trip-snapshot', label: 'Trip snapshot' },
-  { num: '02', href: '#weather-september-50-year-averages', label: 'Weather' },
-  { num: '03', href: '#day-by-day', label: 'Day by day' },
-  { num: '04', href: '#recommendations-little-black-book-for-laura', label: 'Recommendations' },
-  {
-    num: '05',
-    href: '#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu',
-    label: 'Packing',
-  },
-  { num: '06', href: '#common-spanish-phrases', label: 'Spanish phrases' },
-  { num: '07', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
-  { num: '08', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
-  { num: '09', href: '#currency-soles-to-canadian-dollars', label: 'Currency' },
-  { num: '10', href: '#tipping-what-to-leave-and-where', label: 'Tipping' },
-];
 
 const dayLinks = days.map((d) => ({
   href: `#${d.data.slug}`,
@@ -86,20 +68,53 @@ const dayLinks = days.map((d) => ({
  * The order is the content's own; these only say where the breaks fall.
  */
 const RECOMMENDATION_CHAPTERS = [
-  { title: 'Lima', regions: ['Lima'], cover: 'lima-cathedral' },
-  { title: 'Across Peru', regions: ['Peru'], cover: 'alpaca' },
+  {
+    title: 'Lima',
+    slug: 'recommendations-lima',
+    regions: ['Lima'],
+    cover: 'lima-cathedral',
+    lead: 'Where we eat, drink and wander either end of the trip.',
+  },
+  {
+    title: 'Across Peru',
+    slug: 'recommendations-across-peru',
+    regions: ['Peru'],
+    cover: 'alpaca',
+    lead: 'Not tied to one town — worth knowing wherever we are.',
+  },
   {
     title: 'Cusco & the Sacred Valley',
+    slug: 'recommendations-cusco-and-the-sacred-valley',
     regions: ['Cusco', 'Sacred Valley', 'Aguas Calientes'],
     cover: 'terraces',
+    lead: 'The middle of the trip, from Cusco out through the valley to Machu Picchu.',
   },
-  { title: 'Puno & Lake Titicaca', regions: ['Puno'], cover: 'uros-boat' },
+  {
+    title: 'Puno & Lake Titicaca',
+    slug: 'recommendations-puno-and-lake-titicaca',
+    regions: ['Puno'],
+    cover: 'uros-boat',
+    lead: 'The last stop, and the homestay on the lake.',
+  },
 ] as const;
 
 const chapters = RECOMMENDATION_CHAPTERS.map((chapter) => {
   const lists = categories.filter((c) => (chapter.regions as readonly string[]).includes(c.data.region));
-  const count = lists.reduce((n, c) => n + placeData.filter((p) => p.category === c.id).length, 0);
-  return { title: chapter.title, cover: chapter.cover, lists, count };
+  const places = lists.flatMap((c) => placeData.filter((p) => p.category === c.id));
+  return {
+    title: chapter.title,
+    slug: chapter.slug as string,
+    cover: chapter.cover,
+    lead: chapter.lead as string,
+    lists,
+    count: places.length,
+    /**
+     * A chapter with nothing in it under a lens now hides a whole section
+     * band, not a slim divider — an empty photograph the size of a hero is a
+     * far worse thing to leave behind than an empty rule was.
+     */
+    emptyWhen: (['food', 'skate'] as const).filter((lens) => !places.some((p) => p.lens === lens)).join(' '),
+  };
 });
 
 // A region nobody claimed would otherwise vanish off the page — put it at the
@@ -107,13 +122,70 @@ const chapters = RECOMMENDATION_CHAPTERS.map((chapter) => {
 const claimed = new Set(chapters.flatMap((c) => c.lists.map((l) => l.id)));
 const orphans = categories.filter((c) => !claimed.has(c.id));
 if (orphans.length > 0) {
+  const places = orphans.flatMap((c) => placeData.filter((p) => p.category === c.id));
   chapters.push({
     title: 'Elsewhere',
+    slug: 'recommendations-elsewhere',
     cover: undefined as unknown as (typeof RECOMMENDATION_CHAPTERS)[number]['cover'],
+    lead: 'Lists that belong to no region above.',
     lists: orphans,
-    count: orphans.reduce((n, c) => n + placeData.filter((p) => p.category === c.id).length, 0),
+    count: places.length,
+    emptyWhen: (['food', 'skate'] as const).filter((lens) => !places.some((p) => p.lens === lens)).join(' '),
   });
 }
+
+/** "4 lists, 22 places" — what RegionBar used to carry, now in the lead. */
+const chapterLead = (chapter: (typeof chapters)[number]) =>
+  `${chapter.lead} ${chapter.lists.length} list${chapter.lists.length === 1 ? '' : 's'}, ` +
+  `${chapter.count} places. Every entry: name — area — note. ${STAR} = top pick.`;
+
+/**
+ * Anchors mirror the Quick Links TOC in Peru_Trip_Content.md, except for the
+ * recommendation chapters — those were one section there and are four here.
+ *
+ * The little black book was a third of the page behind a single fold, so
+ * getting to anything after it meant scrolling past all thirteen lists or
+ * shutting the lot. As four sections each one shuts on its own, and the menu
+ * lands you in the right region rather than at the top of the whole book.
+ *
+ * Numbering is positional, so promoting the chapters pushed everything after
+ * them along by three.
+ */
+const sections = [
+  { num: '01', href: '#trip-snapshot', label: 'Trip snapshot' },
+  { num: '02', href: '#weather-september-50-year-averages', label: 'Weather' },
+  { num: '03', href: '#day-by-day', label: 'Day by day' },
+  ...chapters.map((chapter, i) => ({
+    num: String(4 + i).padStart(2, '0'),
+    href: `#${chapter.slug}`,
+    label: chapter.title,
+  })),
+  {
+    num: String(4 + chapters.length).padStart(2, '0'),
+    href: '#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu',
+    label: 'Packing',
+  },
+  { num: String(5 + chapters.length).padStart(2, '0'), href: '#common-spanish-phrases', label: 'Spanish phrases' },
+  {
+    num: String(6 + chapters.length).padStart(2, '0'),
+    href: '#key-quechua-phrases-for-the-homestay',
+    label: 'Quechua phrases',
+  },
+  {
+    num: String(7 + chapters.length).padStart(2, '0'),
+    href: '#key-aymara-phrases-just-in-case',
+    label: 'Aymara phrases',
+  },
+  {
+    num: String(8 + chapters.length).padStart(2, '0'),
+    href: '#currency-soles-to-canadian-dollars',
+    label: 'Currency',
+  },
+  { num: String(9 + chapters.length).padStart(2, '0'), href: '#tipping-what-to-leave-and-where', label: 'Tipping' },
+];
+
+/** Look a section's number up by anchor, so the markup below never hard-codes one. */
+const num = (href: string) => sections.find((s) => s.href === href)?.num ?? '00';
 
 const categoryLinks = chapters.flatMap((chapter) =>
   chapter.lists.map((c, i) => ({
@@ -283,31 +355,28 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 04 Recommendations ─────────────────────────────────────── -->
-        <section
-          class="section"
-          id="recommendations-little-black-book-for-laura"
-          data-section
-          aria-labelledby="recs-title"
-        >
-          <h2 class="sr-only" id="recs-title">Recommendations — Little Black Book</h2>
-          <SectionFold
-            num="04"
-            title="Recommendations"
-            cover="dancers"
-            fold="recommendations-little-black-book-for-laura"
-            lead={`The little black book, for Laura. Every entry: name — area — note, with address and phone where known. ${STAR} = top pick.`}
-          >
-          {
-            chapters.map((chapter) => (
-              <div class="chapter">
-                <RegionBar
-                  title={chapter.title}
-                  meta={`${chapter.lists.length} list${chapter.lists.length === 1 ? '' : 's'} · ${chapter.count} places`}
-                  cover={chapter.cover}
-                  compact
-                />
-
+        {/* ── 04–07 The little black book, a section per region ──────────
+            One fold each, so getting to the packing list no longer means
+            scrolling past thirteen lists or shutting the whole book. The old
+            single-section anchor still resolves, to the first of them. */}
+        <span id="recommendations-little-black-book-for-laura" class="anchor-alias" aria-hidden="true"></span>
+        {
+          chapters.map((chapter) => (
+            <section
+              class="section"
+              id={chapter.slug}
+              data-section
+              data-lens-empty-when={chapter.emptyWhen || undefined}
+              aria-labelledby={`${chapter.slug}-title`}
+            >
+              <h2 class="sr-only" id={`${chapter.slug}-title`}>{`Recommendations — ${chapter.title}`}</h2>
+              <SectionFold
+                num={num(`#${chapter.slug}`)}
+                title={chapter.title}
+                cover={chapter.cover}
+                fold={chapter.slug}
+                lead={chapterLead(chapter)}
+              >
                 <div class="cats">
                   {chapter.lists.map((category) => {
                     const catPlaces = placeData.filter((p) => p.category === category.id);
@@ -317,7 +386,7 @@ const description =
                       .join(' ');
                     return (
                       <section class="cat" id={category.data.slug} data-lens-empty-when={emptyWhen || undefined}>
-                        <h4 class="cat__title">
+                        <h3 class="cat__title">
                           {category.data.icon && (
                             <Icon name={category.data.icon as IconName} size={20} class="cat__icon" />
                           )}
@@ -326,24 +395,23 @@ const description =
                             <span>{catPlaces.length}</span>
                             {picks > 0 && <span class="cat__countpick">{`${STAR}${picks}`}</span>}
                           </span>
-                        </h4>
+                        </h3>
                         {category.data.aside && <p class="cat__aside">{category.data.aside}</p>}
                         <div class="cat__grid">
                           {catPlaces.map((place) => (
-                            <PlaceCard {...place} level={5} />
+                            <PlaceCard {...place} level={4} />
                           ))}
                         </div>
                       </section>
                     );
                   })}
                 </div>
-              </div>
-            ))
-          }
-          </SectionFold>
-        </section>
+              </SectionFold>
+            </section>
+          ))
+        }
 
-        <!-- ── 05 Packing ─────────────────────────────────────────────── -->
+        <!-- ── Packing ─────────────────────────────────────────────────── -->
         <section
           class="section"
           id="packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu"
@@ -352,7 +420,7 @@ const description =
         >
           <h2 class="sr-only" id="packing-title">Packing</h2>
           <SectionFold
-            num="05"
+            num={num('#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu')}
             title="Packing"
             cover="trekker"
             fold="packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu"
@@ -362,11 +430,11 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 06 Common Spanish phrases ──────────────────────────────── -->
+        <!-- ── Common Spanish phrases ──────────────────────────────────── -->
         <section class="section" id="common-spanish-phrases" data-section aria-labelledby="spanish-title">
           <h2 class="sr-only" id="spanish-title">Common Spanish phrases</h2>
           <SectionFold
-            num="06"
+            num={num('#common-spanish-phrases')}
             title="Spanish phrases"
             cover="parque-del-amor"
             fold="common-spanish-phrases"
@@ -376,11 +444,11 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 07 Key Quechua phrases ─────────────────────────────────── -->
+        <!-- ── Key Quechua phrases ─────────────────────────────────────── -->
         <section class="section" id="key-quechua-phrases-for-the-homestay" data-section aria-labelledby="quechua-title">
           <h2 class="sr-only" id="quechua-title">Key Quechua phrases, for the homestay</h2>
           <SectionFold
-            num="07"
+            num={num('#key-quechua-phrases-for-the-homestay')}
             title="Quechua phrases"
             cover="uros"
             fold="key-quechua-phrases-for-the-homestay"
@@ -404,7 +472,7 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 08 Key Aymara phrases ──────────────────────────────────── -->
+        <!-- ── Key Aymara phrases ──────────────────────────────────────── -->
         <section
           class="section"
           id="key-aymara-phrases-just-in-case"
@@ -413,7 +481,7 @@ const description =
         >
           <h2 class="sr-only" id="aymara-title">Key Aymara phrases, just in case</h2>
           <SectionFold
-            num="08"
+            num={num('#key-aymara-phrases-just-in-case')}
             title="Aymara phrases"
             cover="titicaca-puno"
             fold="key-aymara-phrases-just-in-case"
@@ -429,7 +497,7 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 09 Currency ────────────────────────────────────────────── -->
+        <!-- ── Currency ────────────────────────────────────────────────── -->
         <section
           class="section"
           id="currency-soles-to-canadian-dollars"
@@ -438,7 +506,7 @@ const description =
         >
           <h2 class="sr-only" id="currency-title">Currency, soles to Canadian dollars</h2>
           <SectionFold
-            num="09"
+            num={num('#currency-soles-to-canadian-dollars')}
             title="Currency"
             cover="lima-plaza"
             fold="currency-soles-to-canadian-dollars"
@@ -448,11 +516,11 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 10 Tipping ─────────────────────────────────────────────── -->
+        <!-- ── Tipping ─────────────────────────────────────────────────── -->
         <section class="section" id="tipping-what-to-leave-and-where" data-section aria-labelledby="tipping-title">
           <h2 class="sr-only" id="tipping-title">Tipping, what to leave and where</h2>
           <SectionFold
-            num="10"
+            num={num('#tipping-what-to-leave-and-where')}
             title="Tipping"
             cover="urubamba-market"
             fold="tipping-what-to-leave-and-where"
@@ -848,16 +916,19 @@ const description =
 
   /* ── Recommendations ───────────────────────────────────────────────────
      Thirteen lists on cream, one after another, was a wall you couldn't get
-     a purchase on. Now: photographic chapter bands to scroll between, and
-     each list under a solid header carrying its icon and its counts. */
-  .chapter + .chapter {
-    margin-top: 8px;
-  }
-
+     a purchase on. Now: a numbered section per region, each shutting on its
+     own, and each list under a solid header carrying its icon and its counts. */
   .cats {
     display: grid;
     gap: 26px;
-    margin-top: 18px;
+  }
+
+  /* Nothing but a landing spot for the anchor the book used to have, kept so
+     links written against the source document still resolve. */
+  .anchor-alias {
+    display: block;
+    height: 0;
+    scroll-margin-top: var(--scroll-offset);
   }
 
   .cat__title {

@@ -131,11 +131,12 @@
 
     function showLiveOnDay(temp: number, code: number, at: number): void {
       if (!dayStatus) return;
+      const panel = dayStatus.closest<HTMLElement>('.dstatus');
       const temps = dayStatus.querySelector<HTMLElement>('[data-daystatus-temp]');
-      const note = dayStatus.parentElement?.querySelector<HTMLElement>('[data-daystatus-note]');
+      const note = panel?.querySelector<HTMLElement>('[data-daystatus-note]');
       if (temps) temps.textContent = `${Math.round(temp)}° now`;
       if (note) note.textContent = Date.now() - at > 3 * 3600_000 ? 'Reading, earlier' : 'Live reading';
-      dayStatus.dataset.live = 'true';
+      if (panel) panel.dataset.live = 'true';
       paintIcon(dayStatus.querySelector('[data-daystatus-wicon]'), iconForCode(code));
     }
 

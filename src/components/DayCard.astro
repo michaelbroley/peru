@@ -95,7 +95,7 @@ const lbb = day.lbb.flatMap((categoryId) => {
     <DayStatus day={day} route={route} peak={peak} />
   </summary>
 
-  <div class="day__body">
+  <div class:list={['day__body', { 'day__body--lonelbb': lbb.length === 1 }]}>
     <p class="day__weathernote">{day.weather.note}</p>
 
     {day.travel && <TravelCallout {...day.travel} />}
@@ -346,50 +346,72 @@ const lbb = day.lbb.flatMap((categoryId) => {
      A day is running prose, so every text block stays at a readable line
      length no matter how wide the column gets. */
   @media (min-width: 1080px) {
+    /* The text column is sized to the measure rather than left to stretch, so
+       the status panel sits right beside the words instead of across a gap.
+       The panel takes whatever is left — a full block, not a floating card. */
     .day__summary {
-      grid-template-columns: 64px minmax(0, 1fr) 232px;
-      gap: 0 24px;
+      grid-template-columns: 64px minmax(0, var(--measure)) minmax(264px, 1fr);
+      gap: 0 32px;
     }
 
     .day__summary > :global(.dstatus) {
       display: grid;
+      align-self: stretch;
     }
 
-    /* The chip duplicates what the panel now shows properly. */
-    .day__chip--elev {
+    /* Both chips duplicate what the panel now shows properly. */
+    .day__chip--elev,
+    .day__chips > :global(.wchip) {
       display: none;
     }
 
-    .day__glance,
-    .day__weathernote,
-    .day__logistics,
-    .day__note,
-    .day__picks {
-      max-width: var(--measure);
-    }
-
-    .day__meta {
-      max-width: var(--measure);
-    }
-  }
-
-  /* Wider still: the reference panels pair up beside each other rather than
-     stacking down a narrow strip. */
-  @media (min-width: 1200px) {
+    /* The body starts past the date gutter so an open day hangs off its own
+       title rather than floating back out to the card edge — that misalignment
+       is most of what made a day feel like loose pieces. */
     .day__body {
+      padding-left: 96px;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 32px;
       align-items: start;
-      column-gap: 22px;
     }
 
-    /* Everything that is prose, a banner or a map keeps the full width;
-       only the little-black-book panels share a row. */
+    /* Running text and the strong bands keep the full width; only the paired
+       things — picks, little-black-book panels — share a row. Prose still
+       stops at the measure, it just isn't boxed into half the card. */
     .day__body > .day__weathernote,
-    .day__body > .day__block,
     .day__body > .day__note,
+    .day__body > .day__block,
+    .day__body > :global(.travel),
     .day__body > :global(.journey),
     .day__body > :global(.reservation),
     .day__body > :global(.mapbox) {
+      grid-column: 1 / -1;
+    }
+
+    .day__weathernote,
+    .day__logistics,
+    .day__note {
+      max-width: var(--measure);
+    }
+
+    .day__picks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 32px;
+    }
+
+    /* An odd last card would otherwise leave a half-row hanging. */
+    .day__picks > :global(.place:last-child:nth-child(odd)) {
+      grid-column: 1 / -1;
+      max-width: var(--measure);
+    }
+
+    /* Two panels pair off — matched heights, so the row reads as one band. */
+    .day__body > :global(.lbb) {
+      align-self: stretch;
+    }
+
+    /* A single panel has no partner, so it takes the row. */
+    .day__body--lonelbb > :global(.lbb) {
       grid-column: 1 / -1;
     }
   }

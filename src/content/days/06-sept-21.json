@@ -21,6 +21,10 @@
     "lat": -13.1631,
     "lng": -72.545
   },
+  "elevation": {
+    "label": "2,000–2,900 m",
+    "metres": 2450
+  },
   "glance": "Early bus up the switchbacks for a guided tour of one of the Seven Wonders of the World, then train & drive back to Cusco.",
   "logistics": [
     "also water, bug spray, rain layer"

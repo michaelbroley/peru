@@ -21,6 +21,10 @@
     "lat": -13.532,
     "lng": -71.9675
   },
+  "elevation": {
+    "label": "3,450 m",
+    "metres": 3450
+  },
   "glance": "Your one truly flexible day. Big-adventure option (Rainbow Mountain, Humantay), a wildlife-and-art half-day on the Pisac road, or a relaxed art-market-and-café crawl through San Blas — a lighter day here is smart before Titicaca.",
   "logistics": [],
   "journey": [],

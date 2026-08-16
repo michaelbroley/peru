@@ -59,6 +59,8 @@ const days = defineCollection({
     /** Where you actually are that day — used for the live conditions lookup.
         Coordinates are the map pins', not new ones. */
     point: z.object({ label: z.string(), lat: z.number(), lng: z.number() }),
+    /** `label` is the source's own wording; `metres` only scales the gauge. */
+    elevation: z.object({ label: z.string(), metres: z.number() }),
     glance: z.string(),
     logistics: z.array(z.string()).default([]),
     /** Ordered stops: ["Cusco", "Sacred Valley", "(train)", "Aguas Calientes"]. */

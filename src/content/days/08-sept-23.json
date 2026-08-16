@@ -26,6 +26,10 @@
     "lat": -15.8402,
     "lng": -70.0219
   },
+  "elevation": {
+    "label": "3,800 m",
+    "metres": 3800
+  },
   "glance": "Long, scenic drive (~7.5 hrs) across the high Altiplano to Puno on Lake Titicaca. The landscape — endless plains, alpaca herds — is the attraction.",
   "logistics": [
     "try tonight: grilled trout (trucha)"

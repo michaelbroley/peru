@@ -113,11 +113,30 @@
       setIcon(day.weather.icon);
     }
 
-    function setIcon(name: string): void {
-      const svg = el.wicon?.querySelector('svg');
+    function paintIcon(target: Element | null | undefined, name: string): void {
+      const svg = target?.querySelector('svg');
       const source = document.querySelector(`.wicon[data-icon="${name}"]`);
-      if (svg && source) svg.innerHTML = source.innerHTML;
-      if (svg && source) svg.setAttribute('aria-label', source.getAttribute('aria-label') ?? '');
+      if (!svg || !source) return;
+      svg.innerHTML = source.innerHTML;
+      svg.setAttribute('aria-label', source.getAttribute('aria-label') ?? '');
+    }
+
+    function setIcon(name: string): void {
+      paintIcon(el.wicon, name);
+    }
+
+    /* The day's own status panel gets the same live reading — that panel is
+       what family are reading when they scroll the day list. */
+    const dayStatus = current ? document.querySelector<HTMLElement>(`[data-daystatus-wx="${current.slug}"]`) : null;
+
+    function showLiveOnDay(temp: number, code: number, at: number): void {
+      if (!dayStatus) return;
+      const temps = dayStatus.querySelector<HTMLElement>('[data-daystatus-temp]');
+      const note = dayStatus.parentElement?.querySelector<HTMLElement>('[data-daystatus-note]');
+      if (temps) temps.textContent = `${Math.round(temp)}° now`;
+      if (note) note.textContent = Date.now() - at > 3 * 3600_000 ? 'Reading, earlier' : 'Live reading';
+      dayStatus.dataset.live = 'true';
+      paintIcon(dayStatus.querySelector('[data-daystatus-wicon]'), iconForCode(code));
     }
 
     /** WMO weather codes → the five icons the guide draws. */
@@ -142,6 +161,7 @@
       // An hour-old reading is still worth showing; say when it's stale.
       el.wplace.textContent = age > 3 * 3600_000 ? `${label} · earlier` : label;
       setIcon(iconForCode(code));
+      showLiveOnDay(temp, code, at);
     }
 
     showAverage(focus);

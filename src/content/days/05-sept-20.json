@@ -21,6 +21,10 @@
     "lat": -13.1547,
     "lng": -72.5254
   },
+  "elevation": {
+    "label": "2,000–2,900 m",
+    "metres": 2450
+  },
   "glance": "Scenic run through the Sacred Valley with a community visit & lunch, then the train from Ollantaytambo to Aguas Calientes at the foot of Machu Picchu.",
   "logistics": [],
   "journey": [

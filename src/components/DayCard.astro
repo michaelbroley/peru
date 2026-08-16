@@ -9,6 +9,7 @@ import MapPanel from './MapPanel.astro';
 import RegionBar from './RegionBar.astro';
 import TravelCallout from './TravelCallout.astro';
 import Icon from './Icon.astro';
+import DayStatus from './DayStatus.astro';
 import { STAR } from '../lib/glyphs';
 
 interface Props {
@@ -16,11 +17,14 @@ interface Props {
   categories: CollectionEntry<'categories'>[];
   places: CollectionEntry<'places'>['data'][];
   maps: CollectionEntry<'maps'>[];
+  /** Every day's point, so each locator can draw the whole route behind it. */
+  route: { lat: number; lng: number }[];
+  peak: number;
   /** Sept 16 opens by default so the guide isn't a wall of closed rows. */
   open?: boolean;
   last?: boolean;
 }
-const { day, categories, places, maps, open = false, last = false } = Astro.props;
+const { day, categories, places, maps, route, peak, open = false, last = false } = Astro.props;
 
 const map = day.map ? maps.find((m) => m.id === day.map) : undefined;
 
@@ -71,6 +75,10 @@ const lbb = day.lbb.flatMap((categoryId) => {
       <p class="day__glance">{day.glance}</p>
 
       <div class="day__chips">
+        <span class="day__chip day__chip--elev">
+          <Icon name="mountain" size={13} />
+          {day.elevation.label}
+        </span>
         {
           day.travelDay && (
             <span class="day__chip day__chip--travel">
@@ -83,6 +91,8 @@ const lbb = day.lbb.flatMap((categoryId) => {
         <WeatherChip high={day.weather.high} low={day.weather.low} icon={day.weather.icon} />
       </div>
     </div>
+
+    <DayStatus day={day} route={route} peak={peak} />
   </summary>
 
   <div class="day__body">
@@ -154,6 +164,12 @@ const lbb = day.lbb.flatMap((categoryId) => {
     grid-template-columns: 54px 1fr;
     gap: 0 14px;
     align-items: start;
+  }
+
+  /* The status panel needs the room beside the summary, which only exists on
+     a wide screen; on a phone the elevation chip carries the same fact. */
+  .day__summary > :global(.dstatus) {
+    display: none;
   }
 
   .day__date {
@@ -331,8 +347,17 @@ const lbb = day.lbb.flatMap((categoryId) => {
      length no matter how wide the column gets. */
   @media (min-width: 1080px) {
     .day__summary {
-      grid-template-columns: 64px 1fr;
-      gap: 0 18px;
+      grid-template-columns: 64px minmax(0, 1fr) 232px;
+      gap: 0 24px;
+    }
+
+    .day__summary > :global(.dstatus) {
+      display: grid;
+    }
+
+    /* The chip duplicates what the panel now shows properly. */
+    .day__chip--elev {
+      display: none;
     }
 
     .day__glance,

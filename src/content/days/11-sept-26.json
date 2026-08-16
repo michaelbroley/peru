@@ -20,6 +20,10 @@
     "lat": -12.0464,
     "lng": -77.0428
   },
+  "elevation": {
+    "label": "Sea level",
+    "metres": 0
+  },
   "glance": "Flight home departs 8:25 AM — really a travel morning. Arrange an airport transfer the night before.",
   "logistics": [],
   "journey": [],

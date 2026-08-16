@@ -20,6 +20,10 @@
     "lat": -12.0464,
     "lng": -77.0428
   },
+  "elevation": {
+    "label": "Sea level",
+    "metres": 0
+  },
   "glance": "A full Lima day now you've recovered. Keep lunch light — tonight is Maido. Culture-heavy by day so you arrive hungry.",
   "logistics": [],
   "journey": [],

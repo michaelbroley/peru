@@ -1,0 +1,27 @@
+---
+import { PERU_PATH, NEIGHBOURS_PATH, MAP_WIDTH, MAP_HEIGHT } from '../lib/geo';
+
+/**
+ * The locator geometry, in the document once. Each day's locator draws it with
+ * <use> rather than repeating ~23 KB of path data eleven times over.
+ */
+---
+
+<svg class="mapsprite" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="geo-neighbours" d={NEIGHBOURS_PATH} />
+    <path id="geo-peru" d={PERU_PATH} />
+    <clipPath id="geo-frame">
+      <rect x="0" y="0" width={MAP_WIDTH} height={MAP_HEIGHT} />
+    </clipPath>
+  </defs>
+</svg>
+
+<style>
+  .mapsprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

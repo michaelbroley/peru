@@ -12,6 +12,7 @@ import PackingList from '../components/PackingList.astro';
 import VerifyList from '../components/VerifyList.astro';
 import MapPanel from '../components/MapPanel.astro';
 import MapLoader from '../components/MapLoader.astro';
+import MapSprite from '../components/MapSprite.astro';
 import TodayPanel from '../components/TodayPanel.astro';
 import TodayLoader from '../components/TodayLoader.astro';
 import { STAR } from '../lib/glyphs';
@@ -33,6 +34,10 @@ const maps = await getCollection('maps');
 const routeMap = maps.find((m) => m.id === 'peru');
 
 const placeData = places.map((p) => p.data);
+
+// Shared by every day's locator: the route to draw, and the trip's high point.
+const route = days.map((d) => ({ lat: d.data.point.lat, lng: d.data.point.lng }));
+const peak = days.reduce((max, d) => Math.max(max, d.data.elevation.metres), 0);
 
 // Anchors mirror the Quick Links TOC in Peru_Trip_Content.md.
 const sections = [
@@ -183,7 +188,12 @@ const description =
 
         <!-- ── 03 Day by day ──────────────────────────────────────────── -->
         <section class="section" id="day-by-day" data-section aria-labelledby="days-title">
-          <SectionHeader num="03" title="Day by day" cover="machu-picchu" />
+          <SectionHeader
+            num="03"
+            title="Day by day"
+            cover="machu-picchu"
+            lead="Each day shows where the plan puts us, how high up that is, and what the weather is doing — today's reading is live, the rest are September averages. It's the itinerary, not a GPS tracker."
+          />
           <h2 class="sr-only" id="days-title">Day by day</h2>
 
           <div class="day-controls">
@@ -199,6 +209,8 @@ const description =
                   categories={categories}
                   places={placeData}
                   maps={maps}
+                  route={route}
+                  peak={peak}
                   open={i === 0}
                   last={i === days.length - 1}
                 />
@@ -285,6 +297,7 @@ const description =
     </div>
   </div>
 
+  <MapSprite />
   <MapLoader />
   <TodayLoader />
 

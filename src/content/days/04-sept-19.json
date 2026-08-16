@@ -26,6 +26,10 @@
     "lat": -13.532,
     "lng": -71.9675
   },
+  "elevation": {
+    "label": "3,450 m",
+    "metres": 3450
+  },
   "glance": "Early flight to Cusco (5:30 AM hotel departure). Main job is acclimatising — go slow, coca tea, skip alcohol. Gentle orientation walk introduces the old town.",
   "logistics": [],
   "journey": [

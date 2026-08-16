@@ -21,6 +21,10 @@
     "lat": -12.0464,
     "lng": -77.0428
   },
+  "elevation": {
+    "label": "Sea level",
+    "metres": 0
+  },
   "glance": "Tour starts with a 2 PM welcome meeting and an easy leader-led walk downtown. You've already seen Lima well — today is about meeting the group.",
   "logistics": [
     "Welcome meeting 2:00 PM",

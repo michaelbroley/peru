@@ -26,6 +26,10 @@
     "lat": -12.0464,
     "lng": -77.0428
   },
+  "elevation": {
+    "label": "Sea level",
+    "metres": 0
+  },
   "glance": "Bus to Juliaca, flight to Lima, free final evening. A great chance for one more special meal — keep it in Barranco.",
   "logistics": [],
   "journey": [

@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import MegaNav from '../components/MegaNav.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import SnapshotTable from '../components/SnapshotTable.astro';
-import ReservationBanner from '../components/ReservationBanner.astro';
+import ReservationCard from '../components/ReservationCard.astro';
 import WeatherCard from '../components/WeatherCard.astro';
 import DayCard from '../components/DayCard.astro';
 import PlaceCard from '../components/PlaceCard.astro';
@@ -124,6 +124,16 @@ const description =
           <div class="stack">
             <SnapshotTable rows={[...trip.flights, ...trip.snapshot]} />
 
+            <section class="booked" aria-labelledby="booked-title">
+              <h3 class="booked__label" id="booked-title">
+                <Icon name="ticket" size={16} />
+                Booked reservations
+              </h3>
+              <div class="booked__grid">
+                {trip.reservations.map((res) => <ReservationCard {...res} />)}
+              </div>
+            </section>
+
             <div class="altitude on-ink">
               <p class="altitude__label">
                 <span class="altitude__dot" aria-hidden="true"></span>
@@ -145,17 +155,6 @@ const description =
               <div class="altitude__axis">
                 {trip.altitude.axis.map((tick) => <span>{tick}</span>)}
               </div>
-            </div>
-
-            <div class="booked">
-              <p class="booked__label"><span aria-hidden="true">{STAR}</span> Booked reservations</p>
-              {
-                trip.reservations.map((res, i) => (
-                  <div class:list={['booked__item', { 'booked__item--divided': i > 0 }]}>
-                    <ReservationBanner {...res} showTimeInEyebrow={false} showEyebrow={false} headingLevel="h3" />
-                  </div>
-                ))
-              }
             </div>
 
             {routeMap && <MapPanel view={routeMap.data} id="route" label="Route map" />}
@@ -472,25 +471,11 @@ const description =
     margin-top: 18px;
   }
 
-  /* Snapshot: the tall blocks sit side by side once there's room, with the
-     route map running full width underneath them. */
   @media (min-width: 860px) {
     .stack {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 20px;
-      align-items: start;
-    }
-    .stack > :global(.snapshot) {
-      grid-column: 1 / -1;
-    }
-    .stack > :global(.mapbox) {
-      grid-column: 1 / -1;
+      gap: 22px;
     }
   }
-
-  /* Two columns, not three: the stack holds exactly two side-by-side blocks
-     (altitude and the booked tables), so a third track would just leave a
-     hole beside them. The snapshot table splits into three internally. */
 
   /* ── Altitude profile ──────────────────────────────────────────────── */
   .altitude {
@@ -557,13 +542,11 @@ const description =
   }
 
   /* ── Booked reservations ───────────────────────────────────────────── */
-  .booked {
-    border: 2px solid var(--pink);
-    padding: 16px;
-  }
-
   .booked__label {
-    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
     font-weight: 700;
     font-size: var(--fs-label);
     line-height: 1;
@@ -572,15 +555,23 @@ const description =
     color: var(--pink);
   }
 
-  /* Nested banners drop their own box — the wrapper already frames them. */
-  .booked__item :global(.reservation) {
-    border: 0;
-    padding: 12px 0 0;
+  .booked__grid {
+    display: grid;
+    gap: 14px;
   }
-  .booked__item--divided {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--rule);
+
+  /* Two up on a tablet, then all three across on a desktop. */
+  @media (min-width: 700px) {
+    .booked__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .booked__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
   }
 
   /* ── Weather ───────────────────────────────────────────────────────── */

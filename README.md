@@ -56,7 +56,7 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 ### Components
 
-`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
+`MegaNav` · `TodayPanel` / `TodayLoader` · `SectionHeader` / `RegionBar` · `DayCard` · `TravelCallout` · `ReservationCard` · `Icon` · `PlaceCard` · `ReservationBanner` · `WeatherCard` / `WeatherChip` / `WeatherIcon` · `JourneyStrip` · `LbbPanel` · `MapPanel` / `MapLoader` · `SnapshotTable` · `PackingList` · `VerifyList`
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
@@ -72,7 +72,7 @@ Bands are sized to actually show the photograph: 285–420 px on a phone, 390–
 
 The hero image loads eagerly; of the ten section and leg covers, only the first does. A phone's initial load is ~134 KB including two images, and the rest arrive as you scroll. Print drops every photograph and returns the headings to the flow in black.
 
-Four images from the upload are unused and listed at the top of `covers.ts` if you want to swap any in.
+Four images from the first upload are unused and listed at the top of `covers.ts` if you want to swap any in.
 
 ### Travel days and iconography
 
@@ -82,7 +82,9 @@ Those facts moved out of `logistics` and into `travel` on the day. Nothing was d
 
 `Icon.astro` holds the set: travel modes, the snapshot's row labels, the packing groups, and one per recommendation category. They're inline SVG on the same 24×24 grid as the weather glyphs, decorative by default (each labels text that already says the same thing) and `aria-hidden` unless given a `label`.
 
-Reservations now say **Booked** on a pink chip with a ticket mark, and put the address and phone on their own row rather than threading them through the sentence — a long venue address wraps, and its full stop ends up stranded at the start of the next line.
+Reservations say **Booked** on a pink chip with a ticket mark, and put the address and phone on their own row rather than threading them through the sentence — a long venue address wraps, and its full stop ends up stranded at the start of the next line.
+
+There are two shapes of them. `ReservationCard` is the photographed card used for the row of three at the top of the snapshot, sitting above the altitude profile; `ReservationBanner` is the flatter block that interrupts a day. A reservation's photograph comes from the same `covers.ts` manifest as everything else, via `cover` on the trip entry.
 
 ### The header panel
 
@@ -119,10 +121,10 @@ Mobile is the comp, unchanged. Above that the card grows in steps and the extra 
 | From    | What changes                                                                                  |
 | ------- | --------------------------------------------------------------------------------------------- |
 | 600 px  | Card widens a little                                                                            |
-| 700 px  | Recommendations, weather, packing and the snapshot table go two-up                              |
+| 700 px  | Recommendations, weather, packing, the snapshot table and the booked cards go two-up            |
 | 720 px  | Menu panel goes to three columns                                                                |
 | 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair; checklist goes two-up |
-| 1080 px | Snapshot table goes three-up; day gutters widen                                                  |
+| 1080 px | Snapshot table and the booked cards go three-up; day gutters widen                               |
 | 1200 px | Recommendations go three-up; packing four-up; a day's Little Black Book panels pair side by side |
 | 1440 px | Card reaches 1320 px; weather goes four-up                                                       |
 
@@ -145,7 +147,7 @@ Pin links reuse the place's address where the content has one (`src/lib/addressB
 
 `public/sw.js` precaches the page, fonts, icons and Leaflet. Navigations are network-first (fresh copy when there's signal, cached copy in the Andes); everything else is cache-first. Map tiles use a separate capped cache that survives content releases. `public/manifest.webmanifest` makes it installable to the home screen as "Peru Field Guide".
 
-**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v5` → `v6`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
+**When the content changes, bump `CACHE` in `public/sw.js`** (`peru-guide-v6` → `v7`) so returning devices drop the old cache. Leave `TILE_CACHE` alone unless the tile source changes.
 
 ### Icons
 

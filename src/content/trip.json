@@ -126,19 +126,22 @@
         "time": "Wed Sept 16, 20:00",
         "address": "Lady Bee, Av. Pedro de Osma 205, Barranco, Lima",
         "phone": "+51 1 438 3775",
-        "note": "Peru's top-ranked cocktail bar; small plates too."
+        "note": "Peru's top-ranked cocktail bar; small plates too.",
+        "cover": "lady-bee"
       },
       {
         "name": "Maido",
         "time": "Thu Sept 17, evening",
         "address": "Maido, Calle San Martín 399, Miraflores, Lima",
-        "note": "Mitsuharu Tsumura's Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual."
+        "note": "Mitsuharu Tsumura's Nikkei tasting menu; reconfirm day before, flag dietary needs, smart-casual.",
+        "cover": "maido"
       },
       {
         "name": "Machu Picchu",
         "time": "Mon Sept 21, first bus 6:00 AM",
         "address": "Machu Picchu Historic Sanctuary, Cusco Region, Peru",
-        "note": "Guided tour of the citadel; passport checked at the gate."
+        "note": "Guided tour of the citadel; passport checked at the gate.",
+        "cover": "machu-picchu"
       }
     ],
     "farewell": {

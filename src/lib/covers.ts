@@ -11,6 +11,8 @@ import puno from '../images/view-puno-from-lake-titicaca-peru.webp';
 import terraces from '../images/scenic-view-mountains.webp';
 import urosIsland from '../images/totora-boat-titicaca-lake-near-puno-peru-1.webp';
 import alpaca from '../images/funny-alpaca-lama-pacos-near-vinicunca-mountain-famous-destination-andes-peru.webp';
+import ladyBee from '../images/lady-bee-peru.webp';
+import maido from '../images/maido-peru.webp';
 
 /**
  * Photographs used as section and leg headers, keyed so the content can
@@ -79,6 +81,16 @@ export const covers = {
     src: alpaca,
     alt: 'An alpaca standing on a ridge above the striped hills near Vinicunca in the Andes',
     focus: '62% 45%',
+  },
+  'lady-bee': {
+    src: ladyBee,
+    alt: 'A cocktail at Lady Bee — a coupe glass with an olive and a pearl onion on a copper pick',
+    focus: '50% 45%',
+  },
+  maido: {
+    src: maido,
+    alt: 'A Nikkei course at Maido — a dark bowl of small plated bites with herbs, on a wooden table',
+    focus: '50% 50%',
   },
   uros: {
     src: urosIsland,

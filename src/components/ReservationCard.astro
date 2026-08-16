@@ -1,0 +1,197 @@
+---
+import { Image } from 'astro:assets';
+import { gmapsUrl, telUrl, placeQuery } from '../lib/links';
+import { getCover } from '../lib/covers';
+import Icon from './Icon.astro';
+
+/**
+ * A booked table as a card, for the row of three in the trip snapshot.
+ * The in-day version stays a banner — there it interrupts a day's flow on
+ * purpose; here the three sit side by side and want equal weight.
+ */
+interface Props {
+  name: string;
+  time: string;
+  address?: string | undefined;
+  phone?: string | undefined;
+  note: string;
+  cover?: string | undefined;
+}
+const { name, time, address, phone, note, cover } = Astro.props;
+
+const image = getCover(cover);
+const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
+const telHref = phone ? telUrl(phone) : null;
+const addressLabel = address?.startsWith(`${name}, `) ? address.slice(name.length + 2) : address;
+
+// A third of the content column on a wide screen, full width on a phone.
+const sizes = '(min-width: 1080px) 400px, (min-width: 700px) 50vw, 100vw';
+---
+
+<article class="rcard">
+  {
+    image && (
+      <div class="rcard__media">
+        <Image
+          class="rcard__img"
+          src={image.src}
+          alt={image.alt}
+          widths={[300, 480, 700]}
+          sizes={sizes}
+          loading="lazy"
+          decoding="async"
+          style={image.focus ? `object-position:${image.focus}` : undefined}
+        />
+        <span class="rcard__scrim" aria-hidden="true" />
+        <p class="rcard__stamp">
+          <Icon name="ticket" size={13} />
+          Booked
+        </p>
+      </div>
+    )
+  }
+
+  <div class="rcard__body">
+    <p class="rcard__when">{time}</p>
+    <h3 class="rcard__name">{name}</h3>
+    <p class="rcard__note">{note}</p>
+
+    {
+      (mapHref || telHref) && (
+        <p class="rcard__links">
+          {mapHref && addressLabel && (
+            <a
+              class="rcard__link"
+              href={mapHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${name} in Google Maps — ${addressLabel}`}
+            >
+              {addressLabel}
+            </a>
+          )}
+          {telHref && phone && (
+            <a class="rcard__link" href={telHref} aria-label={`Call ${name} on ${phone}`}>
+              {phone}
+            </a>
+          )}
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .rcard {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--pink);
+    background: var(--cream);
+    min-width: 0;
+  }
+
+  .rcard__media {
+    position: relative;
+    /* Full-width on a phone, so it can afford a taller crop; in the row of
+       three it goes back to a band. */
+    height: clamp(160px, 46vw, 215px);
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  @media (min-width: 700px) {
+    .rcard__media {
+      height: 165px;
+    }
+  }
+
+  .rcard__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .rcard__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(18, 16, 15, 0.66) 0%, rgba(18, 16, 15, 0.1) 55%, transparent 100%);
+  }
+
+  /* The one thing you must not miss, stamped on the picture. */
+  .rcard__stamp {
+    position: absolute;
+    left: 0;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 6px 10px;
+    background: var(--pink);
+    color: var(--cream);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .rcard__body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 13px 15px 15px;
+    flex: 1;
+  }
+
+  .rcard__when {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pink);
+  }
+
+  .rcard__name {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--fs-resname);
+    line-height: 1.02;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .rcard__note {
+    margin: 2px 0 0;
+    font-size: var(--fs-note);
+    line-height: 1.45;
+  }
+
+  .rcard__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 14px;
+    /* Pinned to the bottom so three cards of unequal text still line up. */
+    margin: auto 0 0;
+    padding-top: 9px;
+    font-size: var(--fs-small);
+  }
+
+  .rcard__link {
+    display: inline-block;
+    padding: 3px 0;
+    min-height: 22px;
+  }
+
+  @media print {
+    .rcard__media {
+      display: none;
+    }
+    .rcard {
+      border-color: #000;
+    }
+  }
+</style>

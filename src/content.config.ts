@@ -153,6 +153,8 @@ const trip = defineCollection({
         address: z.string().optional(),
         phone: z.string().optional(),
         note: z.string(),
+        /** key in src/lib/covers.ts */
+        cover: z.string().optional(),
       }),
     ),
     farewell: z.object({ title: z.string(), text: z.string() }),

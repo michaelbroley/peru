@@ -104,6 +104,14 @@ Thirteen lists one after another, all set the same way on cream, was a wall you 
 
 That nests a level deeper than a day does (chapter → list → entry), so `PlaceCard` takes a `level` prop and the recommendations pass `5`. The section costs about 35% more height than the undifferentiated wall did, which is the trade: it's longer, but you can find your way down it — and the whole section folds away now.
 
+### Booked tables in the day list
+
+The three bookings — Lady Bee, Maido, the Machu Picchu tour — carry a photograph in their day as well as in the snapshot's booked row. `ReservationBanner` takes a `cover` key like the section heads do; without one it's the text-only pink box it always was, so nothing else that uses it changes.
+
+The picture takes 38% of the banner rather than a fixed width: the banner runs the full width of an open day, and 300 px of photograph across 1,100 is a strip, not a picture. A `min-height` stops a short booking flattening it. Below 700 px the photo goes on top. It's lazy and inside a `<details>`, so a shut day costs nothing — the initial payload is unchanged.
+
+The covers are per-reservation in the day JSON (`"cover": "lady-bee"`), so swapping in a different shot is one string. Print drops the photographs and keeps the booking.
+
 ### Folding a section away
 
 Every numbered section shuts to its cover photograph. It's a `<details>` — the cover band is the `<summary>` — so it works with no JavaScript, takes the keyboard for free, and Chrome opens it to show a find-in-page hit. A **Hide / Show** pill sits in the top corner of the band as the affordance; the whole band is the click target.

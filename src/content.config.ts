@@ -86,6 +86,8 @@ const days = defineCollection({
           address: z.string().optional(),
           phone: z.string().optional(),
           note: z.string(),
+          /** key in src/lib/covers.ts */
+          cover: z.string().optional(),
         }),
       )
       .default([]),

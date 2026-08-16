@@ -1,8 +1,17 @@
 ---
+import { Image } from 'astro:assets';
 import { gmapsUrl, telUrl, placeQuery } from '../lib/links';
+import { getCover } from '../lib/covers';
 import Icon from './Icon.astro';
 
-/** A booked table — Lady Bee and Maido. Pink-boxed, the design's loudest block. */
+/**
+ * A booked table — Lady Bee, Maido, the Machu Picchu tour. Pink-boxed, the
+ * design's loudest block, and the one thing on a day that can't be moved.
+ *
+ * With a photograph it becomes the day's centrepiece rather than another
+ * bordered paragraph. The picture sits beside the words on anything wider
+ * than a phone and above them below that.
+ */
 interface Props {
   name: string;
   time: string;
@@ -14,6 +23,8 @@ interface Props {
   /** Off inside the snapshot's "★ Booked reservations" box, which labels itself. */
   showEyebrow?: boolean;
   headingLevel?: 'h3' | 'h4';
+  /** Key in src/lib/covers.ts. Without one the banner is text, as before. */
+  cover?: string | undefined;
 }
 const {
   name,
@@ -24,7 +35,10 @@ const {
   showTimeInEyebrow = true,
   showEyebrow = true,
   headingLevel = 'h4',
+  cover,
 } = Astro.props;
+
+const image = getCover(cover);
 
 const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
 const telHref = phone ? telUrl(phone) : null;
@@ -34,7 +48,28 @@ const addressLabel = address?.startsWith(`${name}, `) ? address.slice(name.lengt
 const Heading = headingLevel;
 ---
 
-<aside class="reservation" aria-label={`Booked reservation: ${name}`}>
+<aside
+  class:list={['reservation', { 'reservation--photo': !!image }]}
+  aria-label={`Booked reservation: ${name}`}
+>
+  {
+    image && (
+      <div class="reservation__media">
+        <Image
+          class="reservation__img"
+          src={image.src}
+          alt={image.alt}
+          widths={[400, 640, 960]}
+          sizes="(min-width: 700px) 340px, 100vw"
+          loading="lazy"
+          decoding="async"
+          style={image.focus ? `object-position:${image.focus}` : undefined}
+        />
+      </div>
+    )
+  }
+
+  <div class="reservation__text">
   {showEyebrow && <p class="reservation__eyebrow"><Icon name="ticket" size={15} /><span class="reservation__booked">Booked</span>{showTimeInEyebrow ? <span class="reservation__when">{time}</span> : ''}</p>}
   <Heading class="reservation__name">{name}</Heading>
   {!showTimeInEyebrow && <p class="reservation__when-line">{time}</p>}
@@ -66,12 +101,81 @@ const Heading = headingLevel;
       </p>
     )
   }
+  </div>
 </aside>
 
 <style>
   .reservation {
     border: 2px solid var(--pink);
     padding: 14px;
+  }
+
+  /* With a photograph the border wraps the whole thing and the padding moves
+     inside, so the picture runs to the pink edge. */
+  .reservation--photo {
+    display: grid;
+    padding: 0;
+  }
+
+  .reservation--photo .reservation__text {
+    padding: 14px;
+  }
+
+  .reservation__media {
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .reservation__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .reservation--photo .reservation__media {
+    height: clamp(150px, 40vw, 210px);
+  }
+
+  /* Beside the words as soon as there's room for both to be worth reading.
+     A proportion rather than a fixed width: the banner runs the full width of
+     an open day, and 300px of photograph across 1,100 is a strip, not a
+     picture. The minimum height stops a short booking flattening it. */
+  @media (min-width: 700px) {
+    .reservation--photo {
+      grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+      align-items: stretch;
+      min-height: 190px;
+    }
+
+    .reservation--photo .reservation__media {
+      height: 100%;
+    }
+
+    .reservation--photo .reservation__text {
+      align-self: center;
+      padding: 16px 18px;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .reservation--photo {
+      min-height: 230px;
+    }
+  }
+
+  /* Photographs are screen furniture; the booking itself still prints. */
+  @media print {
+    .reservation__media {
+      display: none;
+    }
+    .reservation--photo {
+      display: block;
+      padding: 14px;
+    }
+    .reservation--photo .reservation__text {
+      padding: 0;
+    }
   }
 
   .reservation__eyebrow {

@@ -48,7 +48,8 @@
       "name": "Machu Picchu",
       "time": "First bus 6:00 AM",
       "address": "Machu Picchu Historic Sanctuary, Cusco Region, Peru",
-      "note": "Guided tour of the citadel — bring your passport, it's checked at the gate. The site opens after sunrise, and once the guided tour ends you have to exit."
+      "note": "Guided tour of the citadel — bring your passport, it's checked at the gate. The site opens after sunrise, and once the guided tour ends you have to exit.",
+      "cover": "machu-picchu"
     }
   ],
   "picksLabel": "Back in Cusco tonight",

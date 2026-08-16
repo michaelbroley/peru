@@ -162,7 +162,9 @@ The Lady Bee sign is only 711 px wide, which is the largest copy there is; it's 
 
 Every numbered section shuts to its cover photograph. It's a `<details>` — the cover band is the `<summary>` — so it works with no JavaScript, takes the keyboard for free, and Chrome opens it to show a find-in-page hit. A **Hide / Show** pill sits in the top corner of the band as the affordance; the whole band is the click target.
 
-Shut, the band comes down to `clamp(168px, 24vw, 300px)` and the lead paragraph goes with it. Six full-height covers stacked is a slideshow, not an index, and being able to scroll past a section is the point — all six shut, the page is ~2,550 px on a desktop and ~1,875 px on a phone.
+Shut, the band comes down to `clamp(168px, 24vw, 300px)` and the lead paragraph goes with it. Full-height covers stacked is a slideshow, not an index, and being able to scroll past a section is the point.
+
+A shut section also gives up its own vertical spacing, so the bands stack flush and the folded page reads as one strip of photographs rather than nine cards. That's why `.section` puts all its room on the bottom edge — `padding: 0 var(--pad) 40px` — instead of splitting it above and below: the gap then belongs to the *content*, and a `.section:has([data-section-fold]:not([open]))` rule can drop it in one line. Splitting it would need a previous-sibling selector, which CSS doesn't have. Two open sections are still 40 px apart, exactly as before.
 
 Which sections are shut is kept in `localStorage` under `peru-folded-sections`. The restore runs from an `is:inline` script sitting in the body after `</main>`, not from the bundled module: it has to execute while the parser is still there, or a section you left shut gets painted open first and the page jumps.
 

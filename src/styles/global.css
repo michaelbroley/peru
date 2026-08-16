@@ -231,8 +231,16 @@ summary::-webkit-details-marker {
   padding: 0 0 60px;
 }
 
+/* All the vertical room sits below a section rather than being split above
+   and below it. Same 40px between two open sections as before, but it means a
+   section that's been folded away can drop its own spacing and let the cover
+   bands stack flush — the gap belongs to the content, not to the photograph. */
 .section {
-  padding: 34px var(--pad) 6px;
+  padding: 0 var(--pad) 40px;
+}
+
+.section:has([data-section-fold]:not([open])) {
+  padding-bottom: 0;
 }
 
 /* Uppercase micro-label, used everywhere in the design. */

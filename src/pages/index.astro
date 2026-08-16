@@ -354,7 +354,7 @@ const description =
         </section>
 
         <!-- ── 06 Book ahead / verify ─────────────────────────────────── -->
-        <section class="section section--last" id="book-ahead-verify" data-section aria-labelledby="book-title">
+        <section class="section" id="book-ahead-verify" data-section aria-labelledby="book-title">
           <h2 class="sr-only" id="book-title">Book ahead and verify</h2>
           <SectionFold
             num="06"
@@ -411,7 +411,7 @@ const description =
 
         <!-- ── 09 Key Aymara phrases ──────────────────────────────────── -->
         <section
-          class="section section--last"
+          class="section"
           id="key-aymara-phrases-just-in-case"
           data-section
           aria-labelledby="aymara-title"
@@ -635,13 +635,10 @@ const description =
   }
 
   /* ── Sections ──────────────────────────────────────────────────────── */
-  .section:first-of-type {
+  /* Only when it's open: shut, the first band should meet the nav directly. */
+  .section:first-of-type:has([data-section-fold][open]) {
     padding-top: 30px;
   }
-  .section--last {
-    padding-bottom: 40px;
-  }
-
   .stack {
     display: grid;
     gap: 18px;

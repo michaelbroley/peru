@@ -37,9 +37,9 @@
     "category": "lima-ceviche",
     "order": 4,
     "name": "Barra Maretazo",
-    "area": "Barranco",
-    "note": "Casual, beachy cevichería; shrimp risotto and very fresh fish.",
-    "address": "Av. Pedro de Osma 301, Barranco, Lima",
+    "area": "Miraflores",
+    "note": "Casual, beachy cevichería; shrimp risotto and very fresh fish. Second branch at Calle Berlín 340, also Miraflores.",
+    "address": "Calle Alcanfores 373, Miraflores, Lima",
     "pick": false,
     "lens": "food"
   },
@@ -174,16 +174,6 @@
     "lens": "art"
   },
   {
-    "id": "mate-testino",
-    "category": "lima-art",
-    "order": 17,
-    "name": "MATE – Museo Mario Testino",
-    "area": "Barranco",
-    "note": "The Peruvian photographer's museum; sharp, stylish, compact.",
-    "pick": false,
-    "lens": "art"
-  },
-  {
     "id": "museo-pedro-de-osma",
     "category": "lima-art",
     "order": 18,
@@ -224,7 +214,8 @@
     "name": "Skate Outlet",
     "area": "Surco",
     "note": "Oldest/most complete shop in Peru (since 1998); Baker, Plan B, Real, Antihero.",
-    "verify": "VERIFY address before going. Listed: Av. Aviación 5096, Surco, Lima.",
+    "address": "Av. Aviación 5092, C.C. Santa Rosa, Tienda 4, Higuereta, Surco, Lima",
+    "phone": "+51 1 260 9684",
     "pick": false,
     "lens": "skate"
   },
@@ -306,8 +297,8 @@
     "order": 29,
     "name": "Cicciolina",
     "area": "Centre",
-    "note": "Creative Andean-Mediterranean upstairs on Calle Triunfo; Cusco's enduring favourite. Reserve.",
-    "address": "Calle Triunfo 393, Cusco",
+    "note": "Creative Andean-Mediterranean on the second floor of a restored colonial mansion; Cusco's enduring favourite. Reserve.",
+    "address": "Calle Palacio 110, 2nd floor, Cusco",
     "pick": false,
     "lens": "food"
   },

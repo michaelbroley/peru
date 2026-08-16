@@ -27,7 +27,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | File                        | Holds                                                        |
 | --------------------------- | ------------------------------------------------------------ |
 | `days/01-sept-16.json` … ×11 | One file per day: date, location point, weather, glance, logistics, journey, reservations, picks |
-| `places.json`               | The Little Black Book — 57 entries, each tagged with a category |
+| `places.json`               | The Little Black Book — 56 entries, each tagged with a category |
 | `categories.json`           | The 13 recommendation categories and their anchor slugs       |
 | `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables |
 | `weather.json`              | The September averages table                                  |

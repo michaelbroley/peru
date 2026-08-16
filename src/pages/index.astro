@@ -9,7 +9,6 @@ import WeatherCard from '../components/WeatherCard.astro';
 import DayCard from '../components/DayCard.astro';
 import PlaceCard from '../components/PlaceCard.astro';
 import PackingList from '../components/PackingList.astro';
-import VerifyList from '../components/VerifyList.astro';
 import MapPanel from '../components/MapPanel.astro';
 import MapLoader from '../components/MapLoader.astro';
 import MapSprite from '../components/MapSprite.astro';
@@ -36,7 +35,6 @@ const phrases = (await getCollection('phrases')).sort((a, b) => a.data.order - b
 const spanish = phrases.filter((p) => p.data.book === 'spanish').map((p) => p.data);
 const quechua = phrases.filter((p) => p.data.book === 'quechua').map((p) => p.data);
 const aymara = phrases.filter((p) => p.data.book === 'aymara').map((p) => p.data);
-const checklist = (await getCollection('checklist')).sort((a, b) => a.data.order - b.data.order);
 const maps = await getCollection('maps');
 const routeMap = maps.find((m) => m.id === 'peru');
 
@@ -57,10 +55,9 @@ const sections = [
     href: '#packing-tuned-to-this-trip-sea-level-to-3800-m-cold-nights-rustic-homestay-early-machu-picchu',
     label: 'Packing',
   },
-  { num: '06', href: '#book-ahead-verify', label: 'Book ahead' },
-  { num: '07', href: '#common-spanish-phrases', label: 'Spanish phrases' },
-  { num: '08', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
-  { num: '09', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
+  { num: '06', href: '#common-spanish-phrases', label: 'Spanish phrases' },
+  { num: '07', href: '#key-quechua-phrases-for-the-homestay', label: 'Quechua phrases' },
+  { num: '08', href: '#key-aymara-phrases-just-in-case', label: 'Aymara phrases' },
 ];
 
 const dayLinks = days.map((d) => ({
@@ -353,25 +350,11 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 06 Book ahead / verify ─────────────────────────────────── -->
-        <section class="section" id="book-ahead-verify" data-section aria-labelledby="book-title">
-          <h2 class="sr-only" id="book-title">Book ahead and verify</h2>
-          <SectionFold
-            num="06"
-            title="Book ahead / verify"
-            cover="titicaca-puno"
-            fold="book-ahead-verify"
-            lead="Tap to tick off — saved on this device. Lady Bee & Maido are already booked."
-          >
-            <VerifyList items={checklist} />
-          </SectionFold>
-        </section>
-
-        <!-- ── 07 Common Spanish phrases ──────────────────────────────── -->
+        <!-- ── 06 Common Spanish phrases ──────────────────────────────── -->
         <section class="section" id="common-spanish-phrases" data-section aria-labelledby="spanish-title">
           <h2 class="sr-only" id="spanish-title">Common Spanish phrases</h2>
           <SectionFold
-            num="07"
+            num="06"
             title="Spanish phrases"
             cover="parque-del-amor"
             fold="common-spanish-phrases"
@@ -381,11 +364,11 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 08 Key Quechua phrases ─────────────────────────────────── -->
+        <!-- ── 07 Key Quechua phrases ─────────────────────────────────── -->
         <section class="section" id="key-quechua-phrases-for-the-homestay" data-section aria-labelledby="quechua-title">
           <h2 class="sr-only" id="quechua-title">Key Quechua phrases, for the homestay</h2>
           <SectionFold
-            num="08"
+            num="07"
             title="Quechua phrases"
             cover="uros"
             fold="key-quechua-phrases-for-the-homestay"
@@ -409,7 +392,7 @@ const description =
           </SectionFold>
         </section>
 
-        <!-- ── 09 Key Aymara phrases ──────────────────────────────────── -->
+        <!-- ── 08 Key Aymara phrases ──────────────────────────────────── -->
         <section
           class="section"
           id="key-aymara-phrases-just-in-case"
@@ -418,7 +401,7 @@ const description =
         >
           <h2 class="sr-only" id="aymara-title">Key Aymara phrases, just in case</h2>
           <SectionFold
-            num="09"
+            num="08"
             title="Aymara phrases"
             cover="titicaca-puno"
             fold="key-aymara-phrases-just-in-case"

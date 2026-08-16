@@ -32,8 +32,7 @@
   .lens,
   .day-controls,
   .skip-link,
-  .back-to-top,
-  .checkbox {
+  .back-to-top {
     display: none !important;
   }
 

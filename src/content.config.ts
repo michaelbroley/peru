@@ -246,12 +246,4 @@ const phrases = defineCollection({
   }),
 });
 
-const checklist = defineCollection({
-  loader: file('./src/content/checklist.json'),
-  schema: z.object({
-    order: z.number().int(),
-    label: z.string(),
-  }),
-});
-
-export const collections = { days, places, categories, trip, weatherRows, packing, phrases, checklist, maps };
+export const collections = { days, places, categories, trip, weatherRows, packing, phrases, maps };

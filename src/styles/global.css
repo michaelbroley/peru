@@ -109,10 +109,14 @@
   --fs-label-sm: 10px;
   --fs-label-xs: 9px;
 
-  /* Space & layout */
+  /* Space & layout.
+     --wrap is the whole card; --measure keeps running text to a readable
+     line length no matter how wide the card gets. */
   --wrap: 520px;
   --pad: 22px;
   --gap: 16px;
+  --measure: 68ch;
+  --rail: 0px;
 
   /* Radii — the design is square-edged; pills are the only exception. */
   --radius: 0px;
@@ -264,14 +268,56 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-/* --- Wider screens ------------------------------------------------------ */
-/* The design is a 520px phone column. On a desktop we let it breathe a
-   little and give the recommendations room for two columns — nothing else
-   about the composition changes. */
-@media (min-width: 900px) {
+/* --- Wider screens ------------------------------------------------------
+   The comp is a 520px phone frame. Rather than stretch that one column
+   across a monitor, the card grows in steps and the space buys layout:
+   first multi-column grids, then a permanent nav rail beside the content.
+   Running text never widens past --measure at any size. */
+
+/* Large phone / small tablet: just a little more room. */
+@media (min-width: 600px) {
   :root {
-    --wrap: 660px;
-    --pad: 30px;
+    --wrap: 620px;
+    --pad: 28px;
+  }
+}
+
+/* Tablet: grids start doubling up. */
+@media (min-width: 860px) {
+  :root {
+    --wrap: 800px;
+    --pad: 32px;
+  }
+}
+
+/* Desktop: the nav leaves the top and becomes a sticky rail on the left. */
+@media (min-width: 1080px) {
+  :root {
+    --wrap: 1120px;
+    --pad: 40px;
+    --rail: 232px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --wrap: 1320px;
+    --pad: 48px;
+    --rail: 264px;
+  }
+}
+
+/* The two-column shell. Below the rail breakpoint --rail is 0 and this is a
+   plain single column, with the nav sticking to the top as before. */
+@media (min-width: 1080px) {
+  .layout {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    align-items: start;
+    /* The nav is sticky and only as tall as its own content, so paint the
+       rail column ink for the full height of the row — otherwise cream shows
+       through beneath it on a long page. */
+    background: linear-gradient(to right, var(--ink) 0 var(--rail), transparent var(--rail));
   }
 }
 

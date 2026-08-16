@@ -71,4 +71,18 @@ function splitRow(text: string): [string, string] {
     display: inline;
     padding: 2px 0;
   }
+
+  /* Short label/value pairs waste a full-width row on a wide screen; the
+     1px gaps keep drawing the hairline grid however many columns there are. */
+  @media (min-width: 700px) {
+    .snapshot {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .snapshot {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
 </style>

@@ -71,6 +71,19 @@ const { items } = Astro.props;
     border: 1px solid var(--rule);
   }
 
+  /* The 1px gaps keep drawing the hairline grid in two columns. */
+  @media (min-width: 860px) {
+    .verify {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* An odd number of items would leave the final cell empty, showing the
+       rule colour as a grey block — let the last one run the full width. */
+    .verify__row:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
   .verify__row {
     background: var(--cream);
   }

@@ -87,10 +87,17 @@ const { sections, days, categories } = Astro.props;
   const panel = document.querySelector<HTMLElement>('[data-toc-panel]');
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
 
+  /* On desktop the nav is a rail beside the content, not a bar above it:
+     nothing is overlapped, and the whole jump list is permanently visible. */
+  const railQuery = window.matchMedia('(min-width: 1080px)');
+  const isRail = () => railQuery.matches;
+
   /* --- Keep --nav-h honest so scroll-margin-top always clears the header. --- */
   if (nav) {
     const setNavHeight = () => {
-      document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+      // The rail is a full-height column — measuring it would push every
+      // anchor a screen too far down.
+      document.documentElement.style.setProperty('--nav-h', isRail() ? '0px' : `${nav.offsetHeight}px`);
     };
     setNavHeight();
     if (typeof ResizeObserver === 'function') {
@@ -98,11 +105,12 @@ const { sections, days, categories } = Astro.props;
     } else {
       window.addEventListener('resize', setNavHeight, { passive: true });
     }
+    railQuery.addEventListener('change', setNavHeight);
   }
 
-  /* --- Collapsible full TOC ------------------------------------------------ */
+  /* --- Collapsible full TOC (bar layout only) ------------------------------ */
   function closePanel(): void {
-    if (!panel || !toggle) return;
+    if (!panel || !toggle || isRail()) return;
     panel.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
   }
@@ -112,6 +120,18 @@ const { sections, days, categories } = Astro.props;
     const open = panel.hidden;
     panel.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  // The panel ships with `hidden` so it stays collapsed without JS on a phone;
+  // on the rail it's the main content, so drop the attribute rather than relying
+  // on CSS to out-shout it.
+  if (panel && isRail()) panel.hidden = false;
+
+  // Crossing the breakpoint: the rail shows everything, the bar starts closed.
+  railQuery.addEventListener('change', () => {
+    if (!panel || !toggle) return;
+    panel.hidden = !isRail();
+    toggle.setAttribute('aria-expanded', 'false');
   });
 
   document.addEventListener('keydown', (event) => {
@@ -373,11 +393,113 @@ const { sections, days, categories } = Astro.props;
     color: var(--gold);
   }
 
-  /* Two columns of jump links once there's room. */
-  @media (min-width: 620px) {
+  /* Two columns of jump links once there's room — but not in the narrow
+     desktop rail, which is handled below. */
+  @media (min-width: 620px) and (max-width: 1079px) {
     .toc__list {
       grid-template-columns: 1fr 1fr;
       gap: 2px 20px;
+    }
+  }
+
+  /* ── Desktop: a sticky rail down the left ──────────────────────────────
+     The full jump list is always visible here, so the "All sections"
+     toggle has nothing left to do and the chips become a vertical list. */
+  @media (min-width: 1080px) {
+    .toc {
+      top: 0;
+      align-self: start;
+      max-height: 100vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      box-shadow: none;
+      border-right: 1px solid var(--cream-28);
+      scrollbar-width: thin;
+      scrollbar-color: var(--cream-28) transparent;
+    }
+
+    .toc__bar {
+      gap: 14px;
+      padding: 26px 20px 6px;
+    }
+
+    .toc__chips {
+      flex-direction: column;
+      gap: 3px;
+      overflow: visible;
+    }
+
+    .toc__chip {
+      border: 0;
+      border-left: 2px solid transparent;
+      border-radius: 0;
+      padding: 7px 10px;
+      letter-spacing: 0.1em;
+    }
+    .toc__chip:hover {
+      border-left-color: var(--gold);
+      background: rgba(255, 251, 245, 0.06);
+    }
+    .toc__chip.is-active {
+      background: transparent;
+      border-left-color: var(--pink);
+      color: var(--gold);
+    }
+
+    .toc__tools {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 7px;
+      padding-top: 14px;
+      border-top: 1px solid var(--cream-28);
+    }
+
+    .toc__more {
+      display: none;
+    }
+
+    .toc__lens {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+
+    .toc__lens-label {
+      margin-bottom: 2px;
+    }
+
+    .toc__pill {
+      text-align: left;
+      border-radius: 0;
+      padding: 7px 10px;
+    }
+
+    /* Always open on the rail; the toggle is hidden, so `hidden` must not
+       win here — the panel is the rail's main content. */
+    .toc__panel,
+    .toc__panel[hidden] {
+      display: grid;
+      max-height: none;
+      overflow: visible;
+      border-top: 0;
+      padding: 2px 20px 28px;
+      gap: 0;
+    }
+
+    .toc__grouplabel {
+      margin: 18px 0 6px;
+    }
+
+    .toc__list {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .toc__link {
+      padding: 7px 0;
+      font-size: var(--fs-micro);
+      line-height: 1.35;
+      border-bottom: 0;
     }
   }
 </style>

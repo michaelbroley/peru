@@ -84,9 +84,10 @@ const description =
         </dl>
       </header>
 
-      <TocNav sections={sections} days={dayLinks} categories={categoryLinks} />
+      <div class="layout">
+        <TocNav sections={sections} days={dayLinks} categories={categoryLinks} />
 
-      <main id="main">
+        <main id="main">
         <!-- ── 01 Trip snapshot ───────────────────────────────────────── -->
         <section class="section" id="trip-snapshot" data-section aria-labelledby="trip-snapshot-title">
           <SectionHeader num="01" title="Trip snapshot" />
@@ -246,7 +247,8 @@ const description =
             <p class="farewell__text" set:html={trip.farewell.text} />
           </div>
         </section>
-      </main>
+        </main>
+      </div>
     </div>
   </div>
 
@@ -320,6 +322,47 @@ const description =
     border: 1px solid var(--cream-30);
   }
 
+  /* Masthead: the wordmark grows with the card, and on a wide screen the
+     blurb and the stats sit beside it instead of stacking. */
+  @media (min-width: 860px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: 40px;
+      align-items: end;
+      padding-top: 48px;
+      padding-bottom: 40px;
+    }
+    .hero__dates,
+    .hero__title,
+    .hero__names {
+      grid-column: 1;
+    }
+    .hero__intro {
+      grid-column: 2;
+      grid-row: 2 / 4;
+      align-self: center;
+      margin-top: 0;
+      font-size: var(--fs-body);
+    }
+    .hero__stats {
+      grid-column: 1 / -1;
+      margin-top: 30px;
+    }
+    .hero__title {
+      font-size: clamp(74px, 11vw, 132px);
+    }
+    .hero__names {
+      font-size: clamp(25px, 3vw, 34px);
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .hero__stats {
+      max-width: 560px;
+    }
+  }
+
   .hero__stat {
     background: var(--pink);
     padding: 11px 10px;
@@ -355,6 +398,26 @@ const description =
     gap: 18px;
     margin-top: 18px;
   }
+
+  /* Snapshot: the tall blocks sit side by side once there's room, with the
+     route map running full width underneath them. */
+  @media (min-width: 860px) {
+    .stack {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .stack > :global(.snapshot) {
+      grid-column: 1 / -1;
+    }
+    .stack > :global(.mapbox) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Two columns, not three: the stack holds exactly two side-by-side blocks
+     (altitude and the booked tables), so a third track would just leave a
+     hole beside them. The snapshot table splits into three internally. */
 
   /* ── Altitude profile ──────────────────────────────────────────────── */
   .altitude {
@@ -454,6 +517,18 @@ const description =
     margin-top: 18px;
   }
 
+  @media (min-width: 700px) {
+    .weather-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .weather-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
   /* ── Days ──────────────────────────────────────────────────────────── */
   .day-controls {
     display: flex;
@@ -493,6 +568,10 @@ const description =
     margin-top: 8px;
   }
 
+  /* The day column itself runs full width — the running text inside it is
+     what's capped to a readable measure (see DayCard), so the extra room
+     goes to the maps and little-black-book panels instead of being empty. */
+
   /* ── Recommendations ───────────────────────────────────────────────── */
   .cats {
     display: grid;
@@ -523,11 +602,22 @@ const description =
     margin-top: 12px;
   }
 
-  /* Two columns once the column is wide enough to hold them comfortably. */
-  @media (min-width: 720px) {
+  /* Two columns once the column is wide enough to hold them comfortably,
+     three once it's genuinely wide. */
+  @media (min-width: 700px) {
     .cat__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px 22px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .cats {
+      gap: 30px;
+    }
+    .cat__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px 26px;
     }
   }
 
@@ -549,6 +639,7 @@ const description =
 
   .farewell__text {
     margin: 8px 0 0;
+    max-width: var(--measure);
     font-size: var(--fs-note);
     line-height: 1.5;
   }

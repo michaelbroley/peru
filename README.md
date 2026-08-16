@@ -59,6 +59,21 @@ Initial payload: ~35 KB gzipped HTML plus fonts. Leaflet adds ~43 KB gzipped, bu
 
 Link helpers live in `src/lib/links.ts`: `gmapsUrl(q)`, `telUrl(phone)`, `waUrl(phone)`. Phone numbers default to `tel:` because nearly all of them are Lima landlines; `waUrl` is there for any mobile number added later.
 
+### Responsive layout
+
+Mobile is the comp, unchanged. Above that the card grows in steps and the extra width buys layout rather than longer lines — running text is capped at `--measure` everywhere, so nothing ever stretches to an unreadable line length.
+
+| From    | What changes                                                                                  |
+| ------- | --------------------------------------------------------------------------------------------- |
+| 600 px  | Card widens a little                                                                            |
+| 700 px  | Recommendations, weather, packing and the snapshot table go two-up                              |
+| 860 px  | Masthead splits (wordmark left, blurb right); snapshot blocks pair; checklist goes two-up       |
+| 1080 px | **Nav becomes a sticky rail down the left**, always showing every day and category; snapshot table goes three-up; day gutters widen |
+| 1200 px | Recommendations go three-up; packing four-up; a day's Little Black Book panels pair side by side |
+| 1440 px | Card reaches 1320 px; weather goes four-up                                                       |
+
+The one JS consequence is the nav: on the rail there's nothing to collapse and nothing overlapping the content, so the "All sections" toggle hides itself and the sticky-scroll offset drops to zero. Crossing the breakpoint in either direction re-syncs both.
+
 ### Maps
 
 Five pinned maps: the whole route in the snapshot, and one each inside the Lima, Cusco, Sacred Valley and Puno days. Gold pins are the ★ picks; tapping one opens a popup with a Google Maps link.
@@ -104,6 +119,6 @@ The site is private: `noindex` meta, `X-Robots-Tag` header, and a `robots.txt` t
 The layout follows the supplied Claude Design comp — palette (`#12100F` ink, `#FFFBF5` cream, `#E4007C` pink, `#FFC300` gold), Anton/Work Sans, square edges, numbered sections, the 520 px phone column. Two deliberate departures:
 
 1. **Recommendations is its own section (04).** The comp folded the Little Black Book into the day cards. Both are here: each category still appears on the day it's useful, *and* all twelve get a full section with the TOC's anchor ids, as the brief requires. The in-day panels link through to it.
-2. **The column widens to 660 px above 900 px**, and the recommendations go to two columns above 720 px. The comp is a fixed 520 px phone frame; everything else about the composition is unchanged.
+2. **It has a desktop layout.** The comp is a fixed 520 px phone frame; stretching that one column across a monitor would have left most of the screen empty. See below.
 
 The comp embedded its maps as iframes pointing at a separate page. Here they're inline components instead, sharing the page's tokens and lazy-loading a self-hosted Leaflet — same maps, same pins, same coordinates, without the second document or the CDN dependency.

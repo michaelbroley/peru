@@ -342,4 +342,47 @@ const lbb = day.lbb.flatMap((categoryId) => {
     text-transform: uppercase;
     color: var(--pink);
   }
+
+  /* ── Wide screens ──────────────────────────────────────────────────────
+     A day is running prose, so every text block stays at a readable line
+     length no matter how wide the column gets. */
+  @media (min-width: 1080px) {
+    .day__summary {
+      grid-template-columns: 64px 1fr;
+      gap: 0 18px;
+    }
+
+    .day__glance,
+    .day__weathernote,
+    .day__logistics,
+    .day__note,
+    .day__picks {
+      max-width: var(--measure);
+    }
+
+    .day__meta {
+      max-width: var(--measure);
+    }
+  }
+
+  /* Wider still: the reference panels pair up beside each other rather than
+     stacking down a narrow strip. */
+  @media (min-width: 1200px) {
+    .day__body {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      column-gap: 22px;
+    }
+
+    /* Everything that is prose, a banner or a map keeps the full width;
+       only the little-black-book panels share a row. */
+    .day__body > .day__weathernote,
+    .day__body > .day__block,
+    .day__body > .day__note,
+    .day__body > :global(.journey),
+    .day__body > :global(.reservation),
+    .day__body > :global(.mapbox) {
+      grid-column: 1 / -1;
+    }
+  }
 </style>

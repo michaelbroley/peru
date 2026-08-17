@@ -48,6 +48,14 @@
   "map": "lima",
   "reservations": [
     {
+      "name": "Isolina",
+      "time": "6:00 PM",
+      "address": "Isolina, Av. San Martín 101, Barranco, Lima",
+      "phone": "+51 943 833 031",
+      "note": "Wed Sept 16, 18:00. Nostalgic Limeño taberna — unfussy, generous plates of the classics; outdoor tables. Reservations required. S/ 60–160 pp, two hours before Lady Bee.",
+      "cover": "isolina-table"
+    },
+    {
       "name": "Lady Bee",
       "time": "8:00 PM",
       "address": "Lady Bee, Av. Pedro de Osma 205, Barranco, Lima",
@@ -74,7 +82,7 @@
     },
     {
       "name": "Ceviche lunch",
-      "note": "Get the classic in today so Maido stands alone tomorrow. See La Mar, Canta Rana and Isolina below.",
+      "note": "Get the classic in today so Maido stands alone tomorrow. See La Mar and Canta Rana below — Isolina is booked for tonight.",
       "pick": false,
       "lens": "food"
     }

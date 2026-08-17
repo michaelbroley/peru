@@ -19,6 +19,8 @@ import parqueDelAmor from '../images/parque-del-amor-lima-peru.webp';
 import limaCathedral from '../images/basilica-cathedral-lima-landmark-plaza-mayor-square-lima-peru-south-america.webp';
 import urosBoat from '../images/totora-boat-titicaca-lake-near-puno-peru.webp';
 import urubambaMarket from '../images/peruvian-market-culture-peru-market-urubamba-peru.webp';
+import isolinaDish from '../images/isolina-dish.webp';
+import isolinaTable from '../images/isolina-table.webp';
 
 /**
  * Photographs used as section and leg headers, keyed so the content can
@@ -51,6 +53,19 @@ export const covers = {
     src: limaPlaza,
     alt: "Lima's Plaza Mayor, the cathedral and palm trees in the historic centre",
     focus: '50% 55%',
+  },
+  /* Both Isolina frames are portrait and the card crops a landscape band out
+     of the middle, so the focus is pushed down onto the food rather than left
+     on the tabletop above it. */
+  'isolina-dish': {
+    src: isolinaDish,
+    alt: 'A bowl of causa with herbs and a glass of red wine on a marble table at Isolina',
+    focus: '50% 58%',
+  },
+  'isolina-table': {
+    src: isolinaTable,
+    alt: "An outdoor table at Isolina — sharing plates and white wine, a guest laughing over the menu",
+    focus: '50% 62%',
   },
   'urubamba-market': {
     src: urubambaMarket,

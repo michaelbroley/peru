@@ -838,7 +838,10 @@ const description =
     gap: 14px;
   }
 
-  /* Two up on a tablet, then all three across on a desktop. */
+  /* Two up from a tablet and two up on a desktop — a 2×2 block rather than a
+     row. Four tables across a wide card leaves each one too narrow to show its
+     photograph, and the row reads as a strip of thumbnails; paired, each card
+     keeps a usable crop and the group holds together as one thing. */
   @media (min-width: 700px) {
     .booked__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -847,7 +850,6 @@ const description =
 
   @media (min-width: 1080px) {
     .booked__grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 18px;
     }
   }

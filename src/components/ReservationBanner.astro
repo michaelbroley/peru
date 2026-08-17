@@ -148,8 +148,19 @@ const Heading = headingLevel;
       min-height: 190px;
     }
 
+    /* The image is taken out of flow so the row is sized by the words and the
+       minimum below, not by the photograph. With `height: 100%` resolving to
+       `auto` against an auto-height row, a portrait cover set its own height —
+       every cover here was landscape until Isolina's, which came in at twice
+       the height of the banner under it. */
     .reservation--photo .reservation__media {
+      position: relative;
       height: 100%;
+    }
+
+    .reservation--photo .reservation__img {
+      position: absolute;
+      inset: 0;
     }
 
     .reservation--photo .reservation__text {

@@ -5,9 +5,9 @@ import { getCover } from '../lib/covers';
 import Icon from './Icon.astro';
 
 /**
- * A booked table as a card, for the row of three in the trip snapshot.
+ * A booked table as a card, for the 2×2 block in the trip snapshot.
  * The in-day version stays a banner — there it interrupts a day's flow on
- * purpose; here the three sit side by side and want equal weight.
+ * purpose; here they sit together and want equal weight.
  */
 interface Props {
   name: string;
@@ -24,8 +24,8 @@ const mapHref = address ? gmapsUrl(placeQuery(name, address)) : null;
 const telHref = phone ? telUrl(phone) : null;
 const addressLabel = address?.startsWith(`${name}, `) ? address.slice(name.length + 2) : address;
 
-// A third of the content column on a wide screen, full width on a phone.
-const sizes = '(min-width: 1080px) 400px, (min-width: 700px) 50vw, 100vw';
+// Half the content column from a tablet up, full width on a phone.
+const sizes = '(min-width: 1080px) 520px, (min-width: 700px) 50vw, 100vw';
 ---
 
 <article class="rcard">
@@ -92,8 +92,8 @@ const sizes = '(min-width: 1080px) 400px, (min-width: 700px) 50vw, 100vw';
 
   .rcard__media {
     position: relative;
-    /* Full-width on a phone, so it can afford a taller crop; in the row of
-       three it goes back to a band. */
+    /* Full-width on a phone, so it can afford a taller crop; paired up it goes
+       back to a band. */
     height: clamp(160px, 46vw, 215px);
     overflow: hidden;
     background: var(--ink);

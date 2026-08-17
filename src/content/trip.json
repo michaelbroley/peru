@@ -122,6 +122,14 @@
     },
     "reservations": [
       {
+        "name": "Isolina",
+        "time": "Wed Sept 16, 18:00",
+        "address": "Isolina, Av. San Martín 101, Barranco, Lima",
+        "phone": "+51 943 833 031",
+        "note": "Nostalgic Limeño taberna; huge sharing plates of the classics. Book at isolina.pe. S/ 60–160 pp.",
+        "cover": "isolina-dish"
+      },
+      {
         "name": "Lady Bee",
         "time": "Wed Sept 16, 20:00",
         "address": "Lady Bee, Av. Pedro de Osma 205, Barranco, Lima",

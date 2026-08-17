@@ -232,6 +232,11 @@ Headings nest section → list → entry, the same depth a day does, so `PlaceCa
 
 ### Booked tables in the day list
 
+The trip snapshot carries them as a **2×2 block** from a tablet up rather than a row. Four across a wide card leaves each one too narrow to show its photograph and the group reads as a strip of thumbnails; paired, every card keeps a usable crop and the four hold together as one thing.
+
+**A banner's height is set by its words, not its photograph.** `.reservation__media` was `height: 100%` against an auto-height row, which resolves to `auto` — so the image's own aspect ratio drove the row. Every cover was landscape until Isolina's, which is portrait and came in at 480px against the 230 of the banner beneath it. The image is absolutely positioned now, out of the flow entirely, and `resv.mjs` fails if any booking is more than 1.6× the height of the shortest.
+
+
 The three bookings — Lady Bee, Maido, the Machu Picchu tour — carry a photograph in their day as well as in the snapshot's booked row. `ReservationBanner` takes a `cover` key like the section heads do; without one it's the text-only pink box it always was, so nothing else that uses it changes.
 
 The picture takes 38% of the banner rather than a fixed width: the banner runs the full width of an open day, and 300 px of photograph across 1,100 is a strip, not a picture. A `min-height` stops a short booking flattening it. Below 700 px the photo goes on top. It's lazy and inside a `<details>`, so a shut day costs nothing — the initial payload is unchanged.

@@ -250,6 +250,15 @@ const description =
             ))
           }
         </dl>
+
+        {/* Script-only, so it ships hidden rather than as two dead buttons.
+            Thirteen sections is enough that "shut everything and show me the
+            shape of it" — or the reverse, before a print or a find — is worth
+            a control at the top rather than thirteen clicks. */}
+        <div class="hero__controls" data-fold-all hidden>
+          <button class="herobtn herobtn--solid" type="button" data-fold-open>Expand all</button>
+          <button class="herobtn" type="button" data-fold-shut>Minimize all</button>
+        </div>
       </header>
 
       <MegaNav sections={sections} days={dayLinks} categories={categoryLinks} />
@@ -580,6 +589,33 @@ const description =
     document
       .querySelector('[data-days-collapse]')
       ?.addEventListener('click', () => days().forEach((d) => (d.open = false)));
+
+    /* The masthead pair works on the thirteen section folds rather than the
+       days — from the top of the page "all" means the guide, and the day
+       buttons are still there beside the days where they belong.
+
+       Setting `.open` fires each fold's own toggle listener, so the choice is
+       written to localStorage without this knowing that it is. */
+    const controls = document.querySelector<HTMLElement>('[data-fold-all]');
+    if (controls) {
+      const sections = () =>
+        Array.from(document.querySelectorAll<HTMLDetailsElement>('[data-section-fold]'));
+      const setAll = (open: boolean) => {
+        for (const fold of sections()) {
+          // Only where it's a change, so a fold that's already right doesn't
+          // fire a toggle and rewrite the store for nothing.
+          if (fold.open !== open) fold.open = open;
+        }
+      };
+      controls.hidden = false;
+      controls.querySelector('[data-fold-open]')?.addEventListener('click', () => setAll(true));
+      controls.querySelector('[data-fold-shut]')?.addEventListener('click', () => {
+        setAll(false);
+        // Shutting the guide from the masthead should leave you looking at the
+        // masthead, not halfway down a page that just got much shorter.
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
   </script>
 </Base>
 
@@ -713,6 +749,68 @@ const description =
   @media (min-width: 1080px) {
     .hero__stats {
       max-width: 560px;
+    }
+  }
+
+  /* --- Expand / minimize every section ----------------------------------- */
+  .hero__controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .hero__controls[hidden] {
+    display: none;
+  }
+
+  /* Its own buttons rather than .btn: those are ink-on-cream and this block is
+     pink, where an ink outline reads as a hole rather than a control. */
+  .herobtn {
+    font-family: var(--text);
+    font-weight: 700;
+    font-size: var(--fs-label-sm);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid var(--cream-50);
+    padding: 11px 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .herobtn:hover {
+    border-color: var(--cream);
+    background: rgba(255, 251, 245, 0.14);
+  }
+
+  .herobtn--solid {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+
+  .herobtn--solid:hover {
+    background: var(--ink);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .herobtn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 860px) {
+    .hero__controls {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media print {
+    .hero__controls {
+      display: none !important;
     }
   }
 

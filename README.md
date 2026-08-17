@@ -49,7 +49,7 @@ Anchor `slug` values match the Quick Links TOC in `Peru_Trip_Content.md` exactly
 ## How it's put together
 
 - **Astro 7**, static output, no adapter, no UI framework.
-- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), expand/collapse-all, checklist persistence, the map loader, and service-worker registration — all vanilla, all inlined into the HTML by the build. The only separate JS file is Leaflet, and it's only fetched if you scroll to a map.
+- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), the two expand/collapse-all pairs, checklist persistence, the map loader, and service-worker registration — all vanilla, all inlined into the HTML by the build. The only separate JS file is Leaflet, and it's only fetched if you scroll to a map.
 - **CSS custom properties** in `src/styles/global.css` hold every design token (colour, type scale, spacing, radii). Nothing hard-codes a hex.
 - **Self-hosted fonts** — Anton and Work Sans (variable, 400–700), subset to latin + latin-ext, in `public/fonts/`.
 - **Inlined stylesheet**, so the page has no render-blocking request.
@@ -254,6 +254,10 @@ Shut, the band comes down to `clamp(168px, 24vw, 300px)` and the lead paragraph 
 A shut section also gives up its own vertical spacing, so the bands stack flush and the folded page reads as one strip of photographs rather than nine cards. That's why `.section` puts all its room on the bottom edge — `padding: 0 var(--pad) 40px` — instead of splitting it above and below: the gap then belongs to the *content*, and a `.section:has([data-section-fold]:not([open]))` rule can drop it in one line. Splitting it would need a previous-sibling selector, which CSS doesn't have. Two open sections are still 40 px apart, exactly as before.
 
 Which sections are shut is kept in `localStorage` under `peru-folded-sections`. The restore runs from an `is:inline` script sitting in the body after `</main>`, not from the bundled module: it has to execute while the parser is still there, or a section you left shut gets painted open first and the page jumps.
+
+**Expand all / Minimize all sits in the masthead.** Thirteen sections is enough that "shut everything and show me the shape of it" — or the reverse, before a print or a find-in-page — is worth a control at the top rather than thirteen clicks. It works on the section folds; the **Expand all / Collapse all** pair inside section 03 still works on the days, and neither touches the other's business. Minimize also scrolls you back to the top, because shutting the guide from the masthead should leave you looking at the masthead rather than halfway down a page that just got much shorter.
+
+It writes nothing to `localStorage` itself. Setting `.open` fires each fold's own `toggle` listener, which is what saves — so the two can't disagree about what's shut. It also skips folds that are already in the wanted state, so a no-op click doesn't rewrite the store. Like the calculators, it ships `hidden` and script reveals it: with no JavaScript you get the per-section pills rather than two dead buttons.
 
 `MegaNav`'s `openTarget` walks *every* disclosure above the destination rather than the nearest one — a day is a `<details>` inside a section's fold — and opens a section's own fold when you jump at the section itself.
 

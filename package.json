@@ -9,7 +9,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "export": "astro build && node scripts/export-bundle.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

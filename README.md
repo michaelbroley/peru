@@ -32,7 +32,6 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables |
 | `weather.json`              | The September averages table                                  |
 | `packing.json`              | Packing groups                                                |
-| `checklist.json`            | Book-ahead / verify list                                      |
 | `currency.json`             | The soles/dollars reference rate, and Peru's coins and notes   |
 | `tipping.json`              | What to leave, in three groups                                 |
 | `maps.json`                 | The five map views — route, Lima, Cusco, valley, Puno — and their pins |
@@ -44,12 +43,24 @@ Two conventions worth knowing:
 - **`order`** on `places` and `weather` entries preserves source order — the content loader keys entries by `id`, so without it the list would render alphabetically.
 - **Map pins carry their own coordinates**, taken from the design comp's map page rather than derived from the addresses. A pin and its address are therefore two independent records of the same place; if they ever disagree, the address is the one to trust.
 
+### Exporting all of it
+
+```bash
+npm run export        # builds, then writes peru-guide.json
+```
+
+`scripts/export-bundle.mjs` flattens every collection into one JSON file — days, places, lists, regions, weather, packing, all three phrasebooks, currency, tipping, maps and pins, the four bookings, and a manifest of every photograph with its alt text and crop. About 86 KB. It's for rebuilding this content somewhere else (a native app, a widget, a print job) without having to re-derive the parts the site works out at build time.
+
+Read-only: nothing in it is a source of truth, and re-running after a content edit reproduces it exactly. The output is gitignored so a stale copy can't be committed by accident.
+
+Two things in it are derived rather than authored — the region grouping and the section order — so the script keeps its own copy and then **checks that copy against `dist/index.html`**, failing loudly if the two have drifted. That's why `npm run export` builds first. It strips `<script>` blocks before matching, because the inline fold-restore carries `data-section-fold` in its own source and would otherwise count as a fourteenth section.
+
 Anchor `slug` values match the Quick Links TOC in `Peru_Trip_Content.md` exactly, so links written against the original document still resolve.
 
 ## How it's put together
 
 - **Astro 7**, static output, no adapter, no UI framework.
-- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), the two expand/collapse-all pairs, checklist persistence, the map loader, and service-worker registration — all vanilla, all inlined into the HTML by the build. The only separate JS file is Leaflet, and it's only fetched if you scroll to a map.
+- **Zero component-framework JS.** The only scripts are a sticky-nav island (active-section tracking, the collapsible TOC, the lens filter), the two expand/collapse-all pairs, the fold memory, the map loader, and service-worker registration — all vanilla, all inlined into the HTML by the build. The only separate JS file is Leaflet, and it's only fetched if you scroll to a map.
 - **CSS custom properties** in `src/styles/global.css` hold every design token (colour, type scale, spacing, radii). Nothing hard-codes a hex.
 - **Self-hosted fonts** — Anton and Work Sans (variable, 400–700), subset to latin + latin-ext, in `public/fonts/`.
 - **Inlined stylesheet**, so the page has no render-blocking request.
@@ -320,7 +331,7 @@ Mobile is the comp, unchanged. Above that the card grows in steps and the extra 
 | 600 px  | Card widens a little                                                                            |
 | 700 px  | Recommendations, weather, packing, the snapshot table and the booked cards go two-up            |
 | 720 px  | Menu panel goes to three columns                                                                |
-| 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair; checklist goes two-up |
+| 860 px  | Masthead splits (wordmark left, today panel right); snapshot blocks pair |
 | 1080 px | Snapshot table and the booked cards go three-up; day gutters widen                               |
 | 1200 px | Recommendations go three-up; packing four-up; a day's Little Black Book panels pair side by side |
 | 1440 px | Card reaches 1320 px; weather goes four-up                                                       |

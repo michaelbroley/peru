@@ -626,7 +626,9 @@ const description =
     isolation: isolate;
     background: var(--pink);
     color: var(--cream);
-    padding: 34px var(--pad) 26px;
+    /* The pink runs under the status bar — that's the look — but the dates and
+       the wordmark start below it. */
+    padding: calc(34px + var(--safe-top)) var(--pad) 26px;
     overflow: hidden;
   }
 
@@ -720,7 +722,7 @@ const description =
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       column-gap: 40px;
       align-items: end;
-      padding-top: 48px;
+      padding-top: calc(48px + var(--safe-top));
       padding-bottom: 40px;
     }
     .hero__dates,

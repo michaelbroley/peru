@@ -275,6 +275,18 @@ The covers are per-reservation in the day JSON (`"cover": "lady-bee-sign"`), so 
 
 The Lady Bee sign is only 711 px wide, which is the largest copy there is; it's sharp on a phone and slightly soft on a 2× desktop. Astro won't upscale past the source.
 
+### The notch, and the home indicator
+
+Installed to the home screen the guide runs with `apple-mobile-web-app-status-bar-style: black-translucent` and `viewport-fit=cover`, so the page genuinely starts at the top of the glass. Anything at `y=0` sits behind the clock and the Dynamic Island — which is what it did, on both the masthead and the sticky bar.
+
+Everything that touches an edge reads `--safe-top` / `--safe-bottom` rather than `env()` directly. One place to change, and a test can set a real iPhone's insets on a browser that reports zero for `env()` — which Chromium does, so this is otherwise unverifiable.
+
+**The pink still runs under the status bar; only the text moves down.** That's the native look, and stopping the masthead below the clock would leave a strip of nothing above it.
+
+**The bar takes the inset only while it's stuck.** In flow it sits under the masthead, nowhere near the top of the screen, and the same padding would just be a band of dead ink. CSS can't ask whether a sticky element is currently stuck, so a zero-height sentinel above it answers the question through an IntersectionObserver.
+
+**`ResizeObserver` needs `{ box: 'border-box' }` here.** Going sticky only changes the bar's *padding* — the text inside is the same height — so the default content-box observer never fires. `--nav-h` then keeps the unstuck number, the menu panel opens at the wrong height, and every in-page jump lands *behind* the bar it was meant to clear. That's three separate symptoms from one default.
+
 ### Folding a section away
 
 Every numbered section shuts to its cover photograph. It's a `<details>` — the cover band is the `<summary>` — so it works with no JavaScript, takes the keyboard for free, and Chrome opens it to show a find-in-page hit. A **Hide / Show** pill sits in the top corner of the band as the affordance; the whole band is the click target.

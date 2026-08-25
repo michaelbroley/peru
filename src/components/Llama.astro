@@ -55,7 +55,7 @@ const days = JSON.stringify(LLAMA_DAYS);
     /* The hooves plant on row 38 of the 40px cell, so the cell's bottom two
        logical pixels are empty — drop it by that much and she stands on the
        floor rather than hovering above it. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) - 4px);
+    bottom: calc(var(--safe-bottom) - 4px);
     z-index: 900;
     /* Never in the way of the guide: only her own hit box takes a click. */
     pointer-events: none;

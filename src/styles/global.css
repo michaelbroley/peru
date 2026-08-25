@@ -126,6 +126,18 @@
   /* Sticky-header offset for in-page jumps. Overridden by the nav at runtime. */
   --nav-h: 58px;
   --scroll-offset: calc(var(--nav-h) + 12px);
+
+  /**
+   * The notch, the Dynamic Island and the home indicator.
+   *
+   * Installed to the home screen the guide runs with a translucent status bar,
+   * so the page really does start at the top of the glass and anything at
+   * y=0 sits under the clock. Everything that touches an edge reads these
+   * rather than env() directly, which keeps it in one place and lets a test
+   * set an inset on a browser that hasn't got one.
+   */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 *,

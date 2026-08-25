@@ -33,8 +33,12 @@ interface Props {
 const { sections, days, categories } = Astro.props;
 ---
 
+{/* Watches the top edge so the bar knows when it has gone sticky. Zero-height
+    and out of the flow, so it changes nothing about the layout. */}
+<span class="nav__sentinel" data-nav-sentinel aria-hidden="true"></span>
+
 <nav class="nav" id="toc" aria-label="Guide">
-  <div class="nav__bar">
+  <div class="nav__bar" data-nav-bar>
     <p class="nav__here">
       <span class="nav__here-label">You're in</span>
       <span class="nav__here-value" data-nav-current>Trip snapshot</span>
@@ -134,6 +138,14 @@ const { sections, days, categories } = Astro.props;
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
   const current = document.querySelector<HTMLElement>('[data-nav-current]');
 
+  /* --- Stuck to the top? --------------------------------------------------
+     Installed to the home screen the page runs under a translucent status bar,
+     so a bar sitting at y=0 has its first line of text behind the clock. CSS
+     can't ask whether a sticky element is currently stuck, so a zero-height
+     sentinel above it answers the question: once that scrolls out of view, the
+     bar is at the top and takes the inset. */
+  const sentinel = document.querySelector('[data-nav-sentinel]');
+
   /* --- Sticky offset ------------------------------------------------------
      Only the bar overlaps the content; the panel floats over it. */
   if (nav) {
@@ -142,8 +154,31 @@ const { sections, days, categories } = Astro.props;
       document.documentElement.style.setProperty('--nav-h', `${bar?.offsetHeight ?? 0}px`);
     };
     setNavHeight();
-    if (typeof ResizeObserver === 'function' && bar) new ResizeObserver(setNavHeight).observe(bar);
-    else window.addEventListener('resize', setNavHeight, { passive: true });
+    if (typeof ResizeObserver === 'function' && bar) {
+      /* border-box, not the default content-box. Going sticky only changes the
+         bar's padding — the text inside is the same height — so a content-box
+         observer never fires, --nav-h keeps the unstuck number, and every jump
+         from the menu lands behind the bar it was supposed to clear. */
+      new ResizeObserver(setNavHeight).observe(bar, { box: 'border-box' });
+    } else {
+      window.addEventListener('resize', setNavHeight, { passive: true });
+    }
+
+    /* Installed to the home screen the page runs under a translucent status
+       bar, so a bar sitting at y=0 has its first line of text behind the clock.
+       CSS can't ask whether a sticky element is currently stuck, so a
+       zero-height sentinel above it answers the question. */
+    if (sentinel && 'IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          nav.classList.toggle('is-stuck', !entry!.isIntersecting);
+          // Belt and braces: the observer above should catch the padding
+          // change, but the offset must never lag a frame behind the bar.
+          setNavHeight();
+        },
+        { threshold: 0 },
+      ).observe(sentinel);
+    }
   }
 
   /* --- Open / close -------------------------------------------------------- */
@@ -307,6 +342,11 @@ const { sections, days, categories } = Astro.props;
 </script>
 
 <style>
+  .nav__sentinel {
+    display: block;
+    height: 0;
+  }
+
   .nav {
     position: sticky;
     top: 0;
@@ -324,6 +364,18 @@ const { sections, days, categories } = Astro.props;
     background: var(--ink);
     color: var(--cream);
     box-shadow: var(--shadow-nav);
+  }
+
+  /**
+   * Stuck to the top of the glass, the bar's own top edge is behind the clock
+   * and the Dynamic Island, so it takes the inset as extra padding — the ink
+   * runs up under the status bar and the words start below it.
+   *
+   * Only while stuck. In flow it sits under the masthead, nowhere near the
+   * top of the screen, and the same padding would just be a band of dead ink.
+   */
+  .nav.is-stuck .nav__bar {
+    padding-top: calc(9px + var(--safe-top));
   }
 
   .nav__here {

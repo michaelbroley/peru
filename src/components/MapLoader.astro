@@ -70,8 +70,44 @@
         attributionControl: true,
       });
 
-      const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd',
+      /* Baked tiles first, the network only for what isn't baked.
+         `public/tiles/` holds every tile the five maps ask for at their
+         default view, two zooms in and three out, with a one-tile ring at the
+         city zooms — about 300 of them. That's what makes the maps work on a
+         plane. Anything outside that set (pan far enough, zoom right in) falls
+         back to CARTO, which is exactly the old behaviour. */
+      const SUBDOMAINS = ['a', 'b', 'c', 'd'];
+      const remote = (c: { x: number; y: number; z: number }) =>
+        `https://${SUBDOMAINS[Math.abs(c.x + c.y) % 4]}.basemaps.cartocdn.com/light_all/${c.z}/${c.x}/${c.y}.png`;
+
+      /* The fallback has to be wired inside createTile, not on the layer's
+         `tileerror`. By the time that event fires Leaflet has finished with the
+         image, and re-pointing its src does nothing — the tile never reloads
+         and the map just stays blank. Owning the error handler means the retry
+         happens before Leaflet is told anything went wrong. */
+      const BakedFirst = L.TileLayer.extend({
+        createTile(coords: { x: number; y: number; z: number }, done: () => void) {
+          const tile = document.createElement('img');
+          tile.alt = '';
+          let triedRemote = false;
+
+          L.DomEvent.on(tile, 'load', L.Util.bind((this as any)._tileOnLoad, this, done, tile));
+          L.DomEvent.on(tile, 'error', () => {
+            // Not a tile we baked — one shot at the network before giving up.
+            if (!triedRemote) {
+              triedRemote = true;
+              tile.src = remote(coords);
+              return;
+            }
+            (this as any)._tileOnError(done, tile, new Error('tile unavailable'));
+          });
+
+          tile.src = (this as any).getTileUrl(coords);
+          return tile;
+        },
+      });
+
+      const tiles = new BakedFirst('/tiles/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap contributors © CARTO',
       }).addTo(map);

@@ -11,7 +11,7 @@
  * Bump CACHE when the content changes — old caches are dropped on activate.
  */
 
-const CACHE = 'peru-guide-v35';
+const CACHE = 'peru-guide-v36';
 
 /**
  * Map tiles live in their own capped cache: they're third-party, there can be
@@ -22,6 +22,18 @@ const CACHE = 'peru-guide-v35';
 const TILE_CACHE = 'peru-tiles-v1';
 const TILE_LIMIT = 400;
 const TILE_HOSTS = ['basemaps.cartocdn.com', 'tile.openstreetmap.de', 'tile.openstreetmap.org'];
+
+/**
+ * The tiles that ship with the build, under /tiles/ — about 300 of them,
+ * enough for every map at its default view, two zooms in and three out.
+ *
+ * They get a cache of their own, uncapped: TILE_CACHE evicts oldest-first at
+ * 400, and a wander around the Lima map would otherwise quietly throw away the
+ * very tiles that make the guide work on a plane. Bump the version when the
+ * tile set changes; nothing else drops it.
+ */
+const BAKED_TILES = 'peru-tiles-baked-v1';
+const BAKED_MANIFEST = '/tiles/manifest.json';
 
 const PRECACHE = [
   '/',
@@ -58,14 +70,56 @@ self.addEventListener('install', (event) => {
   );
 });
 
+/**
+ * Pull the baked tiles down in the background.
+ *
+ * Deliberately not part of install: it's a few megabytes, and holding up the
+ * service worker — and with it the offline guarantee for the guide itself —
+ * behind a pile of map tiles gets the priority backwards. The maps also cache
+ * on view, so this is a head start rather than the only way they get there.
+ *
+ * A deploy with no tiles baked in just 404s on the manifest and does nothing,
+ * which is the behaviour before any of this existed.
+ */
+async function warmBakedTiles() {
+  try {
+    const manifest = await fetch(BAKED_MANIFEST, { cache: 'no-cache' });
+    if (!manifest.ok) return;
+    const tiles = await manifest.json();
+    if (!Array.isArray(tiles)) return;
+
+    const cache = await caches.open(BAKED_TILES);
+    for (const tile of tiles) {
+      const url = `/tiles/${tile}.png`;
+      if (await cache.match(url)) continue;
+      try {
+        const response = await fetch(url);
+        if (response.ok) await cache.put(url, response);
+      } catch {
+        /* one missing tile is a hole in a map, not a reason to stop */
+      }
+    }
+  } catch {
+    /* no manifest, no signal, no problem */
+  }
+}
+
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((key) => key !== CACHE && key !== TILE_CACHE).map((key) => caches.delete(key))),
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE && key !== TILE_CACHE && key !== BAKED_TILES)
+            .map((key) => caches.delete(key)),
+        ),
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
+      // Not awaited: activation shouldn't wait on megabytes of map.
+      .then(() => {
+        warmBakedTiles();
+      }),
   );
 });
 
@@ -105,6 +159,25 @@ self.addEventListener('fetch', (event) => {
 
   if (TILE_HOSTS.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))) {
     event.respondWith(tileFirst(request));
+    return;
+  }
+
+  // Baked tiles: cache first out of their own cache, then the file itself.
+  if (url.origin === self.location.origin && url.pathname.startsWith('/tiles/')) {
+    event.respondWith(
+      caches.open(BAKED_TILES).then((cache) =>
+        cache.match(request).then((hit) => {
+          if (hit) return hit;
+          return fetch(request)
+            .then((response) => {
+              if (response.ok) cache.put(request, response.clone());
+              return response;
+            })
+            // Not baked and no signal — Leaflet's handler falls back to the CDN.
+            .catch(() => Response.error());
+        }),
+      ),
+    );
     return;
   }
 

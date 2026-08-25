@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "export": "astro build && node scripts/export-bundle.mjs"
+    "export": "astro build && node scripts/export-bundle.mjs",
+    "tiles": "node scripts/fetch-tiles.mjs",
+    "tiles:plan": "node scripts/plan-tiles.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

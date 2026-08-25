@@ -43,6 +43,25 @@ Two conventions worth knowing:
 - **`order`** on `places` and `weather` entries preserves source order — the content loader keys entries by `id`, so without it the list would render alphabetically.
 - **Map pins carry their own coordinates**, taken from the design comp's map page rather than derived from the addresses. A pin and its address are therefore two independent records of the same place; if they ever disagree, the address is the one to trust.
 
+### Offline maps
+
+```bash
+npm run tiles          # downloads ~315 map tiles into public/tiles/ (~3.7 MB)
+npm run tiles:plan     # only when the maps or their pins change
+```
+
+Everything else in the guide works with no signal; the five Leaflet maps were the one hole, because their tiles came from a CDN. `public/tiles/` closes it.
+
+**The tile list isn't guessed.** `plan-tiles.mjs` drives the real page in a real browser at three widths, visits every map, works the zoom control two steps in and three out, and records every tile Leaflet asks for. Then it adds a one-tile ring at the city zooms so a small pan doesn't hit a hole — not at the wide zooms, where the fitted view already covers Peru and a good deal of the Pacific and ringing it would triple the download for nothing. 221 requested plus 94 for pan tolerance: 315 tiles, about 3.7 MB. Commit them, so the deployed guide has them too.
+
+**Baked first, network for the rest.** The layer points at `/tiles/{z}/{x}/{y}.png` and falls back to CARTO for anything outside the set — zoom right in, or pan a long way, and it behaves exactly as it used to. With nothing baked at all it falls back for everything, which is the behaviour before any of this. With neither, the "map tiles need a signal" note still shows.
+
+That fallback has to be wired inside `createTile`, **not** on the layer's `tileerror`. By the time that event fires Leaflet has finished with the image, and re-pointing its `src` does nothing — the tile never reloads and the map just stays blank.
+
+The baked tiles get their own uncapped `peru-tiles-baked-v1` cache. `TILE_CACHE` evicts oldest-first at 400, and a wander around the Lima map would otherwise quietly throw away the very tiles that make the guide work on a plane. The service worker warms it in the background after activating rather than during install — a few megabytes of map shouldn't hold up the offline guarantee for the guide itself, and the maps cache on view anyway, so it's a head start rather than the only route.
+
+Attribution stays on the map: © OpenStreetMap contributors © CARTO. The fetch identifies itself, runs four at a time with a pause, and is resumable — a few hundred tiles for one personal trip, not a scrape.
+
 ### Exporting all of it
 
 ```bash

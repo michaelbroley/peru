@@ -147,6 +147,8 @@ const bundle = {
     snapshot: trip.snapshot,
     altitude: trip.altitude,
     reservations: trip.reservations,
+    hotelCode: trip.hotelCode,
+    hotels: trip.hotels,
   },
   days,
   regions,
@@ -175,6 +177,6 @@ console.log(
 );
 console.log(
   `  ${Object.values(bundle.phrases).flat().reduce((n, g) => n + g.items.length, 0)} phrases · ` +
-    `${bundle.maps.length} maps · ${bundle.trip.reservations.length} bookings · ` +
+    `${bundle.maps.length} maps · ${bundle.trip.reservations.length} bookings · ${bundle.trip.hotels.length} hotels · ` +
     `${Object.keys(bundle.images).length} images`,
 );

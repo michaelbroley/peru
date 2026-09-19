@@ -29,7 +29,7 @@ All copy lives in typed content collections under `src/content/`, not in templat
 | `days/01-sept-16.json` … ×11 | One file per day: date, location point, weather, glance, logistics, journey, reservations, picks |
 | `places.json`               | The Little Black Book — 56 entries, each tagged with a category |
 | `categories.json`           | The 13 recommendation categories and their anchor slugs       |
-| `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables |
+| `trip.json`                 | Snapshot: flights, meeting point, meals, luggage, altitude, booked tables, hotels |
 | `weather.json`              | The September averages table                                  |
 | `packing.json`              | Packing groups                                                |
 | `currency.json`             | The soles/dollars reference rate, and Peru's coins and notes   |
@@ -68,7 +68,7 @@ Attribution stays on the map: © OpenStreetMap contributors © CARTO. The fetch 
 npm run export        # builds, then writes peru-guide.json
 ```
 
-`scripts/export-bundle.mjs` flattens every collection into one JSON file — days, places, lists, regions, weather, packing, all three phrasebooks, currency, tipping, maps and pins, the four bookings, and a manifest of every photograph with its alt text and crop. About 86 KB. It's for rebuilding this content somewhere else (a native app, a widget, a print job) without having to re-derive the parts the site works out at build time.
+`scripts/export-bundle.mjs` flattens every collection into one JSON file — days, places, lists, regions, weather, packing, all three phrasebooks, currency, tipping, maps and pins, the four bookings, the seven hotel stays, and a manifest of every photograph with its alt text and crop. About 86 KB. It's for rebuilding this content somewhere else (a native app, a widget, a print job) without having to re-derive the parts the site works out at build time.
 
 Read-only: nothing in it is a source of truth, and re-running after a content edit reproduces it exactly. The output is gitignored so a stale copy can't be committed by accident.
 
@@ -274,6 +274,17 @@ The picture takes 38% of the banner rather than a fixed width: the banner runs t
 The covers are per-reservation in the day JSON (`"cover": "lady-bee-sign"`), so swapping in a different shot is one string. The two venues deliberately use a *different* photograph in the day than on the snapshot card — the room and the sign in the day list, the dish and the cocktail on the cards — so the same shot never appears twice on one page. Print drops the photographs and keeps the booking.
 
 The Lady Bee sign is only 711 px wide, which is the largest copy there is; it's sharp on a phone and slightly soft on a 2× desktop. Astro won't upscale past the source.
+
+### Where you're staying
+
+The tour operator's hotel bookings live once in `trip.json` as `hotels` — the itinerary table verbatim, in check-in order, dates as ISO. They surface in two places, and both read the same array so they can't disagree:
+
+- **A consolidated block in the trip snapshot** — hotel, city, date range and night count for all seven stays, under the booking code. This is the thing you show a front desk or a taxi.
+- **A chip on each day**, showing the night's hotel with a bed icon. It's derived, not stored per-day: `hotelForNight(iso)` in `index.astro` finds the stay whose `checkIn ≤ that night < checkOut`, so a two-night stay (Cusco, Sept 21–23) lights up on both days from one record, and the departure morning — a checkout with no new night — correctly shows nothing.
+
+The self-arranged nights before the tour (Sept 16–17) have no booking, so their day chip falls back to the old `overnight` string, and a footnote on the block says the tour's hotels run the 18th–26th. The hotel chip keeps the light base with a pink bed rather than a third solid band — today's *movement* (route, travel) is the loud dark chip; where you *sleep* is a quieter fact.
+
+`hotels.mjs` checks the block and every day's chip against the table, including the two-night stay landing on both dates and the departure day staying blank.
 
 ### The notch, and the home indicator
 

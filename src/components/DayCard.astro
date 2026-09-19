@@ -19,11 +19,14 @@ interface Props {
   /** Every day's point, so each locator can draw the whole route behind it. */
   route: { lat: number; lng: number }[];
   peak: number;
+  /** The night's hotel, matched from the booking table by date. Absent on the
+      self-arranged nights and the departure day, which fall back to `overnight`. */
+  hotel?: { city: string; name: string; checkIn: string; checkOut: string; nights: number } | undefined;
   /** Sept 16 opens by default so the guide isn't a wall of closed rows. */
   open?: boolean;
   last?: boolean;
 }
-const { day, categories, places, maps, route, peak, open = false, last = false } = Astro.props;
+const { day, categories, places, maps, route, peak, hotel, open = false, last = false } = Astro.props;
 
 const map = day.map ? maps.find((m) => m.id === day.map) : undefined;
 
@@ -103,7 +106,14 @@ const lbb = day.lbb.flatMap((categoryId) => {
             </span>
           )
         }
-        {day.overnight && <span class="day__chip">{day.overnight}</span>}
+        {hotel ? (
+          <span class="day__chip day__chip--hotel">
+            <Icon name="bed" size={13} />
+            {hotel.name}
+          </span>
+        ) : (
+          day.overnight && <span class="day__chip">{day.overnight}</span>
+        )}
         <WeatherChip high={day.weather.high} low={day.weather.low} icon={day.weather.icon} />
       </div>
     </div>
@@ -316,6 +326,20 @@ const lbb = day.lbb.flatMap((categoryId) => {
 
   .day__chip--route :global(svg) {
     color: var(--gold);
+  }
+
+  /* Where you sleep. The dark chips are today's movement; the hotel is a
+     quieter fact, so it keeps the light base with a gold marker rather than
+     stacking a third solid band. */
+  .day__chip--hotel {
+    background: var(--ink-07);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+
+  .day__chip--hotel :global(svg) {
+    color: var(--pink);
   }
 
   .day__body {

@@ -151,6 +151,58 @@
         "note": "Guided tour of the citadel; passport checked at the gate.",
         "cover": "machu-picchu"
       }
+    ],
+    "hotelCode": "GGSD260918",
+    "hotels": [
+      {
+        "city": "Lima",
+        "name": "Señorial Hotel",
+        "checkIn": "2026-09-18",
+        "checkOut": "2026-09-19",
+        "nights": 1
+      },
+      {
+        "city": "Cusco",
+        "name": "San Agustín Internacional",
+        "checkIn": "2026-09-19",
+        "checkOut": "2026-09-20",
+        "nights": 1
+      },
+      {
+        "city": "Aguas Calientes",
+        "name": "Mamasara Mapi",
+        "checkIn": "2026-09-20",
+        "checkOut": "2026-09-21",
+        "nights": 1
+      },
+      {
+        "city": "Cusco",
+        "name": "San Agustín Internacional",
+        "checkIn": "2026-09-21",
+        "checkOut": "2026-09-23",
+        "nights": 2
+      },
+      {
+        "city": "Puno",
+        "name": "Casona Plaza Centro",
+        "checkIn": "2026-09-23",
+        "checkOut": "2026-09-24",
+        "nights": 1
+      },
+      {
+        "city": "Lake Titicaca",
+        "name": "Homestay",
+        "checkIn": "2026-09-24",
+        "checkOut": "2026-09-25",
+        "nights": 1
+      },
+      {
+        "city": "Lima",
+        "name": "Señorial Hotel",
+        "checkIn": "2026-09-25",
+        "checkOut": "2026-09-26",
+        "nights": 1
+      }
     ]
   }
 ]

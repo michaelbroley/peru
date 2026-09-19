@@ -161,6 +161,25 @@ const trip = defineCollection({
         cover: z.string().optional(),
       }),
     ),
+    /** The tour operator's booking reference for the hotel block. */
+    hotelCode: z.string().optional(),
+    /**
+     * The hotels booked by the tour, in check-in order — the itinerary table
+     * verbatim. Each day derives its own hotel from these by ISO date, so the
+     * per-day chip and the snapshot list can never disagree. Dates are ISO;
+     * `nights` is only for display.
+     */
+    hotels: z
+      .array(
+        z.object({
+          city: z.string(),
+          name: z.string(),
+          checkIn: z.string(),
+          checkOut: z.string(),
+          nights: z.number().int(),
+        }),
+      )
+      .default([]),
   }),
 });
 

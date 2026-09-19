@@ -39,7 +39,8 @@ export type IconName =
   | 'camera'
   | 'bird'
   | 'speech'
-  | 'first-aid';
+  | 'first-aid'
+  | 'bed';
 
 interface Props {
   name: IconName;
@@ -320,6 +321,16 @@ const { name, size = 20, label, class: className = '' } = Astro.props;
         <rect x="3.2" y="6.4" width="17.6" height="13.4" rx="2.2" />
         <path d="M9 6.4V5.2a1.4 1.4 0 011.4-1.4h3.2A1.4 1.4 0 0115 5.2v1.2" />
         <path d="M12 10.2v5.6M9.2 13h5.6" />
+      </>
+    )
+  }
+  {
+    name === 'bed' && (
+      <>
+        <path d="M3 8.5v11" />
+        <path d="M3 12.5h18v7" />
+        <path d="M3 15.5h18" />
+        <path d="M6.5 12.5v-2.2a1.6 1.6 0 011.6-1.6h4.2a1.6 1.6 0 011.6 1.6v2.2" />
       </>
     )
   }

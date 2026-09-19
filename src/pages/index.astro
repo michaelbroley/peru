@@ -29,6 +29,18 @@ const tripEntry = await getEntry('trip', 'snapshot');
 if (!tripEntry) throw new Error('Missing trip snapshot content');
 const trip = tripEntry.data;
 
+/**
+ * The hotel you sleep at on a given date, from the booking table — a stay
+ * covers checkIn ≤ that night < checkOut. One source of truth: the per-day
+ * chip and the snapshot list below both read it, so they can't drift.
+ */
+const hotelForNight = (iso: string) =>
+  trip.hotels.find((h) => h.checkIn <= iso && iso < h.checkOut);
+
+/** "18 Sep" — noon UTC so the date never slips a day across a timezone. */
+const fmtStay = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-CA', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+
 const rateEntry = await getEntry('currency', 'rate');
 if (!rateEntry) throw new Error('Missing currency rate content');
 const rate = rateEntry.data;
@@ -281,6 +293,37 @@ const description =
               </div>
             </section>
 
+            {
+              trip.hotels.length > 0 && (
+                <section class="hotels" aria-labelledby="hotels-title">
+                  <h3 class="booked__label" id="hotels-title">
+                    <Icon name="bed" size={16} />
+                    Where you're staying
+                    {trip.hotelCode && <span class="hotels__code">{trip.hotelCode}</span>}
+                  </h3>
+                  <ol class="hotels__list">
+                    {trip.hotels.map((h) => (
+                      <li class="hotels__row">
+                        <span class="hotels__where">
+                          <span class="hotels__name">{h.name}</span>
+                          <span class="hotels__city">{h.city}</span>
+                        </span>
+                        <span class="hotels__when">
+                          <span class="hotels__dates">
+                            {fmtStay(h.checkIn)} – {fmtStay(h.checkOut)}
+                          </span>
+                          <span class="hotels__nights">
+                            {h.nights} night{h.nights === 1 ? '' : 's'}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                  <p class="hotels__foot">The tour's hotels run Sept 18–26. The first two Lima nights (Sept 16–17) are your own arrangement.</p>
+                </section>
+              )
+            }
+
             <div class="altitude on-ink">
               <p class="altitude__label">
                 <span class="altitude__dot" aria-hidden="true"></span>
@@ -355,6 +398,7 @@ const description =
                   maps={maps}
                   route={route}
                   peak={peak}
+                  hotel={hotelForNight(day.data.iso)}
                   open={i === 0}
                   last={i === days.length - 1}
                 />
@@ -952,6 +996,85 @@ const description =
     .booked__grid {
       gap: 18px;
     }
+  }
+
+  /* ── Where you're staying ──────────────────────────────────────────────
+     The booking table, once, in check-in order. The per-day chip reads the
+     same data, so this is the consolidated view — the thing you show a front
+     desk or a taxi. */
+  .hotels__code {
+    margin-left: auto;
+    font-size: var(--fs-label-xs);
+    letter-spacing: 0.14em;
+    color: var(--ink-40);
+  }
+
+  .hotels__list {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .hotels__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 14px;
+    padding: 12px 14px;
+    background: var(--cream);
+  }
+
+  .hotels__where {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    min-width: 0;
+  }
+
+  .hotels__name {
+    font-weight: 700;
+    font-size: var(--fs-body);
+    color: var(--ink);
+  }
+
+  .hotels__city {
+    font-size: var(--fs-note);
+    color: var(--ink-50);
+  }
+
+  .hotels__when {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .hotels__dates {
+    font-weight: 600;
+    font-size: var(--fs-body-sm);
+    color: var(--ink-72);
+    white-space: nowrap;
+  }
+
+  .hotels__nights {
+    font-size: var(--fs-label-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pink);
+    white-space: nowrap;
+  }
+
+  .hotels__foot {
+    margin: 10px 0 0;
+    font-size: var(--fs-note);
+    line-height: 1.5;
+    color: var(--ink-50);
   }
 
   /* ── Weather ───────────────────────────────────────────────────────── */
